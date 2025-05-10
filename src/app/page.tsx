@@ -32,7 +32,7 @@ const personalInfo = {
   title: "computer science student @ McMaster University",
   bio: "focused on building meaningful products with impact",
   email: "govindag@mcmaster.ca",
-  github: "github.com/goshanrajg",
+  github: "github.com/goshanraj-g",
   linkedin: "linkedin.com/in/goshanrajgovindaraj",
   location: "Toronto, ON",
 };
@@ -48,6 +48,16 @@ const projects = [
     image: "/images/projects/calculation-preview.png",
     featured: true,
   },
+  {
+    id: 2,
+    title: "FastFahr",
+    description:
+      "A modern, purpose-built platform for buying and selling German cars with clean design, smooth experience",
+    tags: ["React.js", "CSS", "PHP", "MySQL"],
+    link: "https://github.com/goshanraj-g/fast-fahr",
+    image: "/images/projects/fast-fahr.png",
+    featured: false,
+  },
 ];
 
 const experiences = [
@@ -57,7 +67,7 @@ const experiences = [
     role: "Community and Code Ambassador",
     period: "2024 - Present",
     description:
-      "Organized and led high-impact software workshops and tech events",
+      "Organized and led high-impact tech events and workshops, driving 30% growth in community engagement and reaching 100+ attendees per session",
     image: "/images/experiences/gdsc.png",
   },
 ];
@@ -145,46 +155,51 @@ export default function Page() {
                   <Link href={project.link} className="group block">
                     <div className="flex justify-center">
                       <div className="relative">
-                        <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-purple-400 rounded-lg blur opacity-30 group-hover:opacity-70 transition duration-1000" />
-                        <div className="relative w-100 h-50">
-                          <Image
-                            src="/images/projects/calculation-preview.png"
-                            alt="Profile picture"
-                            fill
-                            priority
-                            sizes="(max-width: 640px) 50vw, 192px"
-                            className="object-cover rounded"
-                          />
+                        <div className="relative w-[318px]  h-[312px] sm:w-[380px] sm:h-[372px] md:w-[440px] md:h-[432px] lg:w-[480px] lg:h-[472px]  xl:w-[500px] xl:h-[475px] group">
+                          <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-purple-400 rounded-lg blur opacity-30 group-hover:opacity-70 transition duration-1000" />
+                          <div className="relative w-full h-full">
+                            <Image
+                              src="/images/projects/calculation-preview.png"
+                              alt="Calculation preview"
+                              fill
+                              priority
+                              sizes="(max-width: 640px) 80vw, (max-width: 1024px) 50vw, 635px"
+                              className="object-cover rounded"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </Link>
-                  <div className="flex flex-col justify-center">
-                    <h3 className="text-2xl font-semibold mb-3 text-white">
+                  <div className="flex flex-col justify-center max-w-3xl">
+                    <h3 className="text-4xl font-bold text-white mb-4 mt-30 tracking-tight">
                       {project.title}
                     </h3>
-                    <p className="text-gray-300 mb-5 leading-relaxed">
+
+                    <p className="text-lg text-gray-300 mb-6 leading-relaxed">
                       {project.description}
                     </p>
+
                     <div className="flex flex-wrap gap-2 mb-6">
                       {project.tags.map((tag) => (
                         <Badge
                           key={tag}
                           variant="outline"
-                          className="bg-gray-800 text-gray-200 border-gray-700 hover:bg-gray-700"
+                          className="bg-gray-800 text-gray-100 border-gray-700 hover:bg-gray-700"
                         >
                           {tag}
                         </Badge>
                       ))}
                     </div>
+
                     <Link
                       href={project.link}
-                      className="inline-flex items-center font-medium text-purple-400 hover:text-purple-300 transition-colors group"
+                      className="inline-flex items-center gap-1 text-purple-400 hover:text-purple-300 font-medium transition group"
                     >
-                      View Project{" "}
+                      View Project
                       <ArrowUpRight
-                        size={14}
-                        className="ml-1 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+                        size={16}
+                        className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
                       />
                     </Link>
                   </div>
@@ -206,7 +221,7 @@ export default function Page() {
                   key={project.id}
                   className="bg-gradient-to-br from-gray-900 to-gray-950 border border-gray-800 hover:border-gray-700 transition-colors group overflow-hidden"
                 >
-                  <div className="relative w-full h-48">
+                  <div className="relative w-full h-60">
                     <Image
                       src={project.image}
                       alt={project.title}
@@ -224,7 +239,7 @@ export default function Page() {
                       {project.description}
                     </p>
                     <div className="flex flex-wrap gap-1 mt-4">
-                      {project.tags.slice(0, 2).map((tag) => (
+                      {project.tags.map((tag) => (
                         <Badge
                           key={tag}
                           variant="outline"
@@ -233,14 +248,6 @@ export default function Page() {
                           {tag}
                         </Badge>
                       ))}
-                      {project.tags.length > 2 && (
-                        <Badge
-                          variant="outline"
-                          className="bg-gray-800 text-gray-300 border-gray-700 text-xs"
-                        >
-                          +{project.tags.length - 2}
-                        </Badge>
-                      )}
                     </div>
                   </CardContent>
                   <CardFooter>
@@ -278,7 +285,6 @@ export default function Page() {
                   <div className="flex flex-row md:flex-col items-center md:w-40 space-y-3">
                     <div className="absolute left-0 md:left-40 transform -translate-x-1/2 mt-1">
                       <div className="w-4 h-4 rounded-full bg-purple-500"></div>
-                      <div className="absolute w-4 h-4 rounded-full bg-purple-400 animate-ping opacity-75"></div>
                     </div>
 
                     <div className="flex items-center text-sm text-purple-200 font-medium">
@@ -320,36 +326,107 @@ export default function Page() {
           </div>
         </section>
 
-        <section className="mb-24">
-          <div className="flex items-center gap-3 mb-10">
+        <section className="mb-32">
+          <div className="flex items-center gap-3 mb-12">
             <BookOpen className="text-purple-400 w-6 h-6" />
-            <h2 className="text-3xl font-bold text-white">Education</h2>
+            <h2 className="text-4xl font-bold text-white tracking-tight">
+              Education
+            </h2>
           </div>
 
           <div className="space-y-12">
-            <div className="relative">
-              <div className="relative bg-gradient-to-br from-gray-900 to-gray-950 rounded-lg p-6 border border-gray-800 hover:border-gray-700 transition-all duration-300 hover:shadow-lg hover:shadow-purple-900/10">
-                <div className="grid md:grid-cols-4 gap-6">
-                  <div className="text-sm text-purple-300 font-medium flex items-center">
-                    <Calendar className="w-4 h-4 mr-2 text-purple-400" />
-                    <span>September 2024 – Present</span>
-                  </div>
-                  <div className="md:col-span-3 flex items-center gap-6">
-                    <div className="relative w-12 h-12 hidden md:block">
-                      <Image
-                        src="/images/education/mcmaster.png"
-                        alt="McMaster University"
-                        fill
-                        className="object-contain"
-                      />
+            <div className="relative group transition-all">
+              {/* Subtle glow effect on hover */}
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-purple-400 rounded-2xl blur opacity-0 group-hover:opacity-20 transition duration-500"></div>
+
+              <div className="relative bg-gradient-to-br from-gray-900 to-gray-950 rounded-2xl p-8 border border-gray-800 group-hover:border-gray-700 shadow-md group-hover:shadow-purple-900/20 transition-all duration-300">
+                <div className="grid md:grid-cols-4 gap-8">
+                  <div className="md:col-span-1">
+                    <div className="flex flex-col space-y-6">
+                      <div className="flex items-center space-x-3">
+                        <div className="relative w-12 h-12">
+                          <Image
+                            src="/images/education/mcmaster.png"
+                            alt="McMaster University"
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                        <h4 className="text-purple-300 text-lg font-medium">
+                          McMaster University
+                        </h4>
+                      </div>
+
+                      <div className="text-sm text-purple-300 font-medium flex items-center justify-start">
+                        <Calendar className="w-4 h-4 mr-2 text-purple-400" />
+                        <span>September 2024 – Present</span>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-white">
-                        Computer Science
-                      </h3>
-                      <p className="text-purple-300 mb-2 font-medium">
-                        McMaster University
-                      </p>
+                  </div>
+
+                  <div className="md:col-span-3">
+                    <h3 className="text-2xl font-semibold text-white mb-6">
+                      Computer Science
+                    </h3>
+
+                    <div className="mb-6">
+                      <div className="flex items-center mb-3">
+                        <div className="w-1 h-5 bg-purple-500 rounded-full mr-3"></div>
+                        <h5 className="text-white font-medium">
+                          Relevant Coursework
+                        </h5>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pl-4">
+                        <div className="bg-gray-800/30 rounded-lg p-3 border border-gray-700/50 hover:border-purple-500/30 transition-all">
+                          <span className="text-purple-300 font-medium block mb-1">
+                            Introduction to Web Development
+                          </span>
+                          <span className="text-sm text-gray-300">
+                            HTML, CSS, JS, PHP, SQL
+                          </span>
+                        </div>
+
+                        <div className="bg-gray-800/30 rounded-lg p-3 border border-gray-700/50 hover:border-purple-500/30 transition-all">
+                          <span className="text-purple-300 font-medium block mb-1">
+                            Introduction to Development Basics
+                          </span>
+                          <span className="text-sm text-gray-300">
+                            C, Linux
+                          </span>
+                        </div>
+
+                        <div className="bg-gray-800/30 rounded-lg p-3 border border-gray-700/50 hover:border-purple-500/30 transition-all">
+                          <span className="text-purple-300 font-medium block mb-1">
+                            Introduction to Computational Thinking
+                          </span>
+                          <span className="text-sm text-gray-300">Haskell</span>
+                        </div>
+
+                        <div className="bg-gray-800/30 rounded-lg p-3 border border-gray-700/50 hover:border-purple-500/30 transition-all">
+                          <span className="text-purple-300 font-medium block mb-1">
+                            Introduction to Programming
+                          </span>
+                          <span className="text-sm text-gray-300">Python</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <div className="flex items-center bg-purple-900/10 rounded-lg px-4 py-2 border border-purple-500/20">
+                        <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
+                        <span className="text-white text-sm font-medium">
+                          Dean's Honour List
+                        </span>
+                      </div>
+
+                      <div className="flex items-center bg-purple-900/10 rounded-lg px-4 py-2 border border-purple-500/20">
+                        <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
+                        <span className="text-white text-sm font-medium">
+                          GPA:{" "}
+                          <span className="text-purple-300">3.9 / 4.0</span>
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -366,7 +443,6 @@ export default function Page() {
               © {new Date().getFullYear()} {"Goshanraj Govindaraj"}
             </p>
           </div>
-
         </footer>
       </main>
     </div>
