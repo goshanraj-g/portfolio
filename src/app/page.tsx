@@ -29,7 +29,7 @@ import { Separator } from "@/components/ui/separator";
 
 const personalInfo = {
   name: "Goshanraj Govindaraj",
-  title: "computer science student @ McMaster University",
+  title: "Computer Science Student @ McMaster University",
   bio: "focused on building meaningful products with impact",
   email: "govindag@mcmaster.ca",
   github: "github.com/goshanraj-g",
