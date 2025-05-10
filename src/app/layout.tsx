@@ -2,7 +2,7 @@ import "./globals.css";
 
 export const metadata = {
   title: "Portfolio - Goshanraj Govindaraj",
-  description: "Goshanraj Govindaraj Portfolio",
+  description: "Goshanraj Govindaraj's Developer Portfolio",
   icons: {
     icon: "images/favicon.png",
   },
