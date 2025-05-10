@@ -1,5 +1,4 @@
 "use client";
-import Head from "next/head";
 import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -424,7 +423,7 @@ export default function Page() {
                         <div className="flex items-center bg-purple-900/10 rounded-lg px-4 py-2 border border-purple-500/20">
                           <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
                           <span className="text-white text-sm font-medium">
-                            Dean's Honour List
+                            Dean&apos;s Honour List
                           </span>
                         </div>
 
