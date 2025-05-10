@@ -88,7 +88,7 @@ export default function Page() {
           <div className="w-full md:w-1/3 flex justify-center">
             <div className="relative group">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-purple-400 rounded-xl blur opacity-40 group-hover:opacity-70 transition duration-1000"></div>
-              <div className="relative w-40 h-40 md:w-48 md:h-64 overflow-hidden rounded-xl shadow-xl">
+              <div className="relative w-40 h-48 md:w-48 md:h-64 overflow-hidden rounded-xl shadow-xl">
                 <Image
                   src="/images/profile-picture/profilepicture.png"
                   alt="Profile picture"
@@ -155,8 +155,8 @@ export default function Page() {
                   <Link href={project.link} className="group block">
                     <div className="flex justify-center">
                       <div className="relative">
-                        <div className="relative w-[318px]  h-[312px] sm:w-[380px] sm:h-[372px] md:w-[440px] md:h-[432px] lg:w-[480px] lg:h-[472px]  xl:w-[500px] xl:h-[475px] group">
-                          <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-purple-400 rounded-lg blur opacity-30 group-hover:opacity-70 transition duration-1000" />
+                        <div className="relative w-[318px] h-[312px] sm:w-[380px] sm:h-[372px] md:w-[440px] md:h-[432px] lg:w-[480px] lg:h-[472px] xl:w-[500px] xl:h-[475px] group transform transition-transform duration-500 ease-out hover:scale-[1.015]">
+                          <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-purple-400 rounded-lg blur opacity-30 group-hover:opacity-70 transition-opacity duration-500 ease-in-out" />
                           <div className="relative w-full h-full">
                             <Image
                               src="/images/projects/calculation-preview.png"
@@ -172,7 +172,7 @@ export default function Page() {
                     </div>
                   </Link>
                   <div className="flex flex-col justify-center max-w-3xl">
-                    <h3 className="text-4xl font-bold text-white mb-4 mt-30 tracking-tight">
+                    <h3 className="text-4xl font-bold text-white mb-4 tracking-tight">
                       {project.title}
                     </h3>
 
