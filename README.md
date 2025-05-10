@@ -6,7 +6,7 @@ A modern, responsive developer portfolio built with **Next.js**, **TailwindCSS**
 
 ## 🚀 Live Demo
 
-🔗 [[https://your-username.vercel.app](https://portfolio-goshanraj-gs-projects.vercel.app/)]([https://your-username.vercel.app](https://portfolio-goshanraj-gs-projects.vercel.app/))
+🔗 [https://portfolio-goshanraj-gs-projects.vercel.app/](https://portfolio-goshanraj-gs-projects.vercel.app/)
 
 ---
 
