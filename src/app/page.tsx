@@ -40,13 +40,23 @@ const personalInfo = {
 const projects = [
   {
     id: 1,
+    title: "Multi-threaded Terminal Chat App",
+    description:
+      "A chat room written in C++17 on top of Winsock 2 using socket programming and multi-threading",
+    tags: ["C++", "Multi-threading", "Socket Programming"],
+    link: "https://github.com/goshanraj-g/terminal-chat",
+    image: "/images/projects/calculation-preview.png",
+    featured: true,
+  },
+  {
+    id: 2,
     title: "Gradely",
     description:
       "Skip the spreadsheets, Gradely is a smart, interactive dashboard that helps students track their grades, set academic goals, and plan for success, all in one place",
     tags: ["Next.js", "TailwindCSS", "React", "FastAPI", "PostgreSQL"],
     link: "https://github.com/goshanraj-g/gradely",
     image: "/images/projects/calculation-preview.png",
-    featured: true,
+    featured: false,
   },
   {
     id: 2,
