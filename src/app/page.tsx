@@ -40,15 +40,37 @@ const personalInfo = {
 const projects = [
   {
     id: 1,
+    title: "Trackie",
+    description:
+      "Ditch the job hunt clutter! Trackie is a smarter way to manage applications, stay organized, and land your next role, all from one clean, interactive dashboard. It features a custom AI-powered NLP model to streamline data entry and a sleek, intuitive UI so you can finally say goodbye to spreadsheets!",
+    tags: [
+      "Typescript",
+      "Next.js",
+      "TailwindCSS",
+      "React",
+      "Java",
+      "Spring Boot",
+      "AWS",
+      "Python",
+      "spaCy",
+      "FastAPI",
+      "PostgreSQL",
+    ],
+    link: "https://github.com/goshanraj-g/trackie",
+    image: "/images/projects/trackie-preview.png",
+    featured: true,
+  },
+  {
+    id: 3,
     title: "Gradely",
     description:
       "Skip the spreadsheets, Gradely is a smart, interactive dashboard that helps students track their grades, set academic goals, and plan for success, all in one place",
     tags: ["Next.js", "TailwindCSS", "React", "FastAPI", "PostgreSQL"],
     link: "https://github.com/goshanraj-g/gradely",
     image: "/images/projects/calculation-preview.png",
-    featured: true,
+    featured: false,
   },
-    {
+  {
     id: 2,
     title: "Multi-threaded Terminal Chat App",
     description:
@@ -59,7 +81,7 @@ const projects = [
     featured: false,
   },
   {
-    id: 3,
+    id: 4,
     title: "FastFahr",
     description:
       "A modern, purpose-built platform for buying and selling German cars with clean design, smooth experience",
@@ -172,8 +194,8 @@ export default function Page() {
                             <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-purple-400 rounded-lg blur opacity-30 group-hover:opacity-70 transition-opacity duration-500 ease-in-out" />
                             <div className="relative w-full h-full">
                               <Image
-                                src="/images/projects/calculation-preview.png"
-                                alt="Calculation preview"
+                                src="/images/projects/trackie-preview.png"
+                                alt="Trackie preview"
                                 fill
                                 priority
                                 sizes="(max-width: 640px) 80vw, (max-width: 1024px) 50vw, 635px"
@@ -234,7 +256,7 @@ export default function Page() {
                     key={project.id}
                     className="bg-gradient-to-br from-gray-900 to-gray-950 border border-gray-800 hover:border-gray-700 transition-colors group overflow-hidden"
                   >
-                    <div className="relative w-full h-60">
+                    <div className="relative w-full h-100">
                       <Image
                         src={project.image}
                         alt={project.title}
