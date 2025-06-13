@@ -486,7 +486,6 @@ export default function Page() {
           <footer className="container mx-auto px-6 mt-16 text-center">
             <Separator className="bg-gray-800 mb-8" />
             <div className="flex items-center justify-center mb-4">
-              <Sparkles className="text-blue-400 w-4 h-4 mr-2" />
               <p className="text-gray-300 text-sm">
                 © {new Date().getFullYear()} {"Goshanraj Govindaraj"}
               </p>
