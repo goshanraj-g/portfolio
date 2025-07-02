@@ -124,7 +124,7 @@ export default function Page() {
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-purple-400 rounded-xl blur opacity-40 group-hover:opacity-70 transition duration-1000"></div>
                 <div className="relative w-40 h-48 md:w-48 md:h-64 overflow-hidden rounded-xl shadow-xl">
                   <Image
-                    src="/images/profile-picture/profilepicture.png"
+                    src="/images/profile-picture/profilepicture.JPG"
                     alt="Profile picture"
                     fill
                     className="object-cover"
