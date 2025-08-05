@@ -14,7 +14,6 @@ import {
   BookOpen,
   Code,
   Monitor,
-  Sparkles,
 } from "lucide-react";
 
 import {
