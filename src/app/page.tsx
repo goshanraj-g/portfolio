@@ -94,8 +94,17 @@ const projects = [
 ];
 
 const experiences = [
-  {
+    {
     id: 1,
+    company: "McMaster University",
+    role: "Undergraduate Research Assistant",
+    period: "2025 - Present",
+    description:
+      "Sports Analytics Research",
+    image: "/images/experiences/mcmaster.png",
+  },
+  {
+    id: 2,
     company: "Google Developer Groups",
     role: "Community and Code Ambassador",
     period: "2024 - Present",
