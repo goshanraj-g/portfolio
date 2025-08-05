@@ -61,7 +61,27 @@ const projects = [
     featured: true,
   },
   {
+    id: 2,
+    title: "Medinator",
+    description:
+      "Akinator for your health; an AI assistant that spots lifestyle risks before they hit",
+    tags: ["Next.js", "TailwindCSS", "React", "Flask", "scikit-learn", "Gemini"],
+    link: "https://github.com/goshanraj-g/medinator",
+    image: "/images/projects/medinator-demo.png",
+    featured: false,
+  },
+    {
     id: 3,
+    title: "Look Alive",
+    description:
+      "Real-time eye tracking that helps you beat screen fatigue with the 20-20-20 rule",
+    tags: ["OpenCV", "Mediapipe", "Python"],
+    link: "https://github.com/goshanraj-g/lookalive",
+    image: "/images/projects/lookalive.png",
+    featured: false,
+  },
+  {
+    id: 4,
     title: "Gradely",
     description:
       "Skip the spreadsheets, Gradely is a smart, interactive dashboard that helps students track their grades, set academic goals, and plan for success, all in one place",
@@ -71,7 +91,7 @@ const projects = [
     featured: false,
   },
   {
-    id: 2,
+    id: 5,
     title: "Multi-threaded Terminal Chat App",
     description:
       "A chat room written in C++17 on top of Winsock 2 using socket programming and multi-threading",
@@ -81,7 +101,7 @@ const projects = [
     featured: false,
   },
   {
-    id: 4,
+    id: 6,
     title: "FastFahr",
     description:
       "A modern, purpose-built platform for buying and selling German cars with clean design, smooth experience",
@@ -93,14 +113,13 @@ const projects = [
 ];
 
 const experiences = [
-    {
+  {
     id: 1,
     company: "McMaster University",
     role: "Undergraduate Research Assistant",
     period: "2025 - Present",
-    description:
-      "Sports Analytics Research",
-    image: "/images/experiences/mcmaster.png",
+    description: "Sports Analytics Research",
+    image: "/images/education/mcmaster.png",
   },
   {
     id: 2,
@@ -108,7 +127,7 @@ const experiences = [
     role: "Community and Code Ambassador",
     period: "2024 - Present",
     description:
-      "Organized and led high-impact tech events and workshops, driving 30% growth in community engagement and reaching 100+ attendees per session",
+      "Leading and Organizing Tech Workshops",
     image: "/images/experiences/gdsc.png",
   },
 ];
@@ -353,7 +372,7 @@ export default function Page() {
                                 src={exp.image}
                                 alt={exp.company}
                                 fill
-                                className="object-cover"
+                                className="object-contain"
                               />
                             </div>
                           </div>
