@@ -65,12 +65,19 @@ const projects = [
     title: "Medinator",
     description:
       "Akinator for your health; an AI assistant that spots lifestyle risks before they hit",
-    tags: ["Next.js", "TailwindCSS", "React", "Flask", "scikit-learn", "Gemini"],
+    tags: [
+      "Next.js",
+      "TailwindCSS",
+      "React",
+      "Flask",
+      "scikit-learn",
+      "Gemini",
+    ],
     link: "https://github.com/goshanraj-g/medinator",
     image: "/images/projects/medinator-demo.png",
     featured: false,
   },
-    {
+  {
     id: 3,
     title: "Look Alive",
     description:
@@ -126,8 +133,7 @@ const experiences = [
     company: "Google Developer Groups",
     role: "Community and Code Ambassador",
     period: "2024 - Present",
-    description:
-      "Leading and Organizing Tech Workshops",
+    description: "Leading and Organizing Tech Workshops",
     image: "/images/experiences/gdsc.png",
   },
 ];
