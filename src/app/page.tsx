@@ -446,53 +446,6 @@ export default function Page() {
                         Computer Science
                       </h3>
 
-                      <div className="mb-6">
-                        <div className="flex items-center mb-3">
-                          <div className="w-1 h-5 bg-purple-500 rounded-full mr-3"></div>
-                          <h5 className="text-white font-medium">
-                            Relevant Coursework
-                          </h5>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pl-4">
-                          <div className="bg-gray-800/30 rounded-lg p-3 border border-gray-700/50 hover:border-purple-500/30 transition-all">
-                            <span className="text-purple-300 font-medium block mb-1">
-                              Introduction to Web Development
-                            </span>
-                            <span className="text-sm text-gray-300">
-                              HTML, CSS, JS, PHP, SQL
-                            </span>
-                          </div>
-
-                          <div className="bg-gray-800/30 rounded-lg p-3 border border-gray-700/50 hover:border-purple-500/30 transition-all">
-                            <span className="text-purple-300 font-medium block mb-1">
-                              Introduction to Development Basics
-                            </span>
-                            <span className="text-sm text-gray-300">
-                              C, Linux
-                            </span>
-                          </div>
-
-                          <div className="bg-gray-800/30 rounded-lg p-3 border border-gray-700/50 hover:border-purple-500/30 transition-all">
-                            <span className="text-purple-300 font-medium block mb-1">
-                              Introduction to Computational Thinking
-                            </span>
-                            <span className="text-sm text-gray-300">
-                              Haskell
-                            </span>
-                          </div>
-
-                          <div className="bg-gray-800/30 rounded-lg p-3 border border-gray-700/50 hover:border-purple-500/30 transition-all">
-                            <span className="text-purple-300 font-medium block mb-1">
-                              Introduction to Programming
-                            </span>
-                            <span className="text-sm text-gray-300">
-                              Python
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
                       <div className="flex flex-col sm:flex-row gap-4">
                         <div className="flex items-center bg-purple-900/10 rounded-lg px-4 py-2 border border-purple-500/20">
                           <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
