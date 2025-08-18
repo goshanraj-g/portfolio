@@ -201,7 +201,7 @@ export default function Page() {
                   LinkedIn
                 </Link>
                 <Link
-                  href={`/resume.pdf`}
+                  href={`/files/GoshanrajGovindarajResume25.pdf`}
                   target="_blank"
                   className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-full text-gray-200 hover:text-white transition-all"
                 >
