@@ -6,7 +6,6 @@ import {
   Linkedin,
   ExternalLink,
   MapPin,
-  Star,
 } from "lucide-react";
 
 const personalInfo = {
@@ -100,7 +99,7 @@ export default function Page() {
             </div>
             <div className="text-center md:text-left flex-1">
               <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight font-mono">
-                hey i'm gosh
+                hey i&apos;m gosh
               </h1>
               <p className="text-xl text-gray-300 mb-4">{personalInfo.title}</p>
               <p className="text-gray-400 mb-6">{personalInfo.bio}</p>
@@ -145,16 +144,16 @@ export default function Page() {
           <ul className="space-y-2 text-gray-300">
             <li>→ currently doing research in sports analytics & data @ McMaster University</li>
             <li>→ studying computer science at McMaster University</li>
-            <li>→ i'm into fitness, music, sports and exploring new places</li>
+            <li>→ i&apos;m into fitness, music, sports and exploring new places</li>
           </ul>
         </section>
 
         {/* Open Source Contributions */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">Projects I've Contributed to</h2>
-          <div className="border border-gray-700 rounded-lg p-6 bg-gray-900">
+          <div className="border border-gray-700 rounded-lg p-6 bg-gray-900 hover:border-gray-600 hover:bg-gray-800 transition-all duration-300">
             {openSourceContributions.map((contribution, index) => (
-              <div key={index} className="flex items-center gap-4">
+              <div key={index} className="flex items-center gap-4 group">
                 <div className="flex-1">
                   <Link
                     href={contribution.url}
@@ -175,23 +174,23 @@ export default function Page() {
           <h2 className="text-2xl font-semibold mb-4">Personal Projects</h2>
           <div className="grid gap-6">
             {projects.map((project) => (
-              <div key={project.id} className="border border-gray-700 rounded-lg p-6 bg-gray-900">
+              <div key={project.id} className="border border-gray-700 rounded-lg p-6 bg-gray-900 hover:border-gray-600 hover:bg-gray-800 transition-all duration-300 group">
                 <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-xl font-medium text-white">{project.title}</h3>
+                  <h3 className="text-xl font-medium text-white group-hover:text-gray-100 transition-colors">{project.title}</h3>
                   <Link
                     href={project.link}
                     target="_blank"
-                    className="text-gray-300 hover:text-white"
+                    className="text-gray-300 hover:text-white hover:scale-110 transition-all duration-200"
                   >
                     <ExternalLink size={18} />
                   </Link>
                 </div>
-                <p className="text-gray-300 mb-3">{project.description}</p>
+                <p className="text-gray-300 mb-3 group-hover:text-gray-200 transition-colors">{project.description}</p>
                 <div className="flex flex-wrap gap-2">
                   {project.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-2 py-1 bg-gray-800 text-gray-300 text-sm rounded border border-gray-600"
+                      className="px-2 py-1 bg-gray-800 text-gray-300 text-sm rounded border border-gray-600 hover:bg-gray-700 hover:border-gray-500 transition-colors"
                     >
                       {tag}
                     </span>
@@ -206,10 +205,10 @@ export default function Page() {
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">Experience</h2>
           <div className="space-y-4">
-            <div className="border border-gray-700 rounded-lg p-6 bg-gray-900">
+            <div className="border border-gray-700 rounded-lg p-6 bg-gray-900 hover:border-gray-600 hover:bg-gray-800 transition-all duration-300 group">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <div className="relative w-12 h-12 rounded bg-gray-800 p-2">
+                  <div className="relative w-12 h-12 rounded bg-gray-800 p-2 group-hover:bg-gray-700 transition-colors">
                     <Image
                       src="/images/education/mcmaster.png"
                       alt="McMaster University"
@@ -219,16 +218,16 @@ export default function Page() {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-medium text-white">Associate Software Engineer</h3>
+                  <h3 className="text-xl font-medium text-white group-hover:text-gray-100 transition-colors">Associate Software Engineer</h3>
                   <p className="text-gray-400 mb-2">McMaster University • 2025 - Present</p>
-                  <p className="text-gray-300">building machine learning models to predict and prevent athlete injuries 📊</p>
+                  <p className="text-gray-300 group-hover:text-gray-200 transition-colors">building machine learning models to predict and prevent athlete injuries 📊</p>
                 </div>
               </div>
             </div>
-            <div className="border border-gray-700 rounded-lg p-6 bg-gray-900">
+            <div className="border border-gray-700 rounded-lg p-6 bg-gray-900 hover:border-gray-600 hover:bg-gray-800 transition-all duration-300 group">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <div className="relative w-12 h-12 rounded bg-gray-800 p-2">
+                  <div className="relative w-12 h-12 rounded bg-gray-800 p-2 group-hover:bg-gray-700 transition-colors">
                     <Image
                       src="/images/experiences/gdsc.png"
                       alt="Google Developer Groups"
@@ -238,9 +237,9 @@ export default function Page() {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-medium text-white">Community Manager</h3>
+                  <h3 className="text-xl font-medium text-white group-hover:text-gray-100 transition-colors">Community Manager</h3>
                   <p className="text-gray-400 mb-2">Google Developer Groups • 2024 - 2025</p>
-                  <p className="text-gray-300">leading and organizing tech workshops 🛠</p>
+                  <p className="text-gray-300 group-hover:text-gray-200 transition-colors">leading and organizing tech workshops 🛠</p>
                 </div>
               </div>
             </div>
@@ -250,12 +249,12 @@ export default function Page() {
         {/* Education */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">Education</h2>
-          <div className="border border-gray-700 rounded-lg p-6 bg-gray-900">
-            <h3 className="text-xl font-medium text-white">Computer Science</h3>
+          <div className="border border-gray-700 rounded-lg p-6 bg-gray-900 hover:border-gray-600 hover:bg-gray-800 transition-all duration-300 group">
+            <h3 className="text-xl font-medium text-white group-hover:text-gray-100 transition-colors">Computer Science</h3>
             <p className="text-gray-400 mb-2">McMaster University • September 2024 – Present</p>
             <div className="flex gap-4 text-sm">
-              <span className="bg-gray-800 text-gray-300 px-2 py-1 rounded border border-gray-600">Dean's Honour List</span>
-              <span className="bg-gray-800 text-gray-300 px-2 py-1 rounded border border-gray-600">GPA: 3.9 / 4.0</span>
+              <span className="bg-gray-800 text-gray-300 px-2 py-1 rounded border border-gray-600 hover:bg-gray-700 hover:border-gray-500 transition-colors">Dean&apos;s Honour List</span>
+              <span className="bg-gray-800 text-gray-300 px-2 py-1 rounded border border-gray-600 hover:bg-gray-700 hover:border-gray-500 transition-colors">GPA: 3.92 / 4.0</span>
             </div>
           </div>
         </section>
