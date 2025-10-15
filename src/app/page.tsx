@@ -1,5 +1,3 @@
-"use client";
-import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -7,478 +5,261 @@ import {
   Mail,
   Linkedin,
   ExternalLink,
-  ArrowUpRight,
-  Briefcase,
-  Calendar,
-  FileText,
-  BookOpen,
-  Code,
-  Monitor,
+  MapPin,
+  Star,
 } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-
 const personalInfo = {
-  name: "Goshanraj Govindaraj",
-  title: "Computer Science Student @ McMaster University",
-  bio: "focused on building meaningful products with impact",
+  name: "hey, I'm Gosh",
+  title: "computer Science @ McMaster University",
+  bio: "interested in software development and machine learning",
   email: "govindag@mcmaster.ca",
   github: "github.com/goshanraj-g",
   linkedin: "linkedin.com/in/goshanrajgovindaraj",
   location: "Toronto, ON",
 };
 
+const openSourceContributions = [
+  {
+    name: "LlamaIndex",
+    description: "~5 million downloads/month",
+    url: "https://github.com/run-llama/llama_index",
+    stats: "5M+ monthly downloads",
+  },
+];
+
 const projects = [
   {
     id: 1,
-    title: "Trackie",
-    description:
-      "Ditch the job hunt clutter! Trackie is a smarter way to manage applications, stay organized, and land your next role, all from one clean, interactive dashboard. It features a custom AI-powered NLP model to streamline data entry and a sleek, intuitive UI so you can finally say goodbye to spreadsheets!",
-    tags: [
-      "Typescript",
-      "Next.js",
-      "TailwindCSS",
-      "React",
-      "Java",
-      "Spring Boot",
-      "AWS",
-      "Python",
-      "spaCy",
-      "FastAPI",
-      "PostgreSQL",
-    ],
-    link: "https://github.com/goshanraj-g/trackie",
-    image: "/images/projects/trackie-preview.png",
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "Medinator",
-    description:
-      "Akinator for your health; an AI assistant that spots lifestyle risks before they hit",
-    tags: [
-      "Next.js",
-      "TailwindCSS",
-      "React",
-      "Flask",
-      "scikit-learn",
-      "Gemini",
-    ],
-    link: "https://github.com/goshanraj-g/medinator",
-    image: "/images/projects/medinator-demo.png",
-    featured: false,
-  },
-  {
-    id: 3,
     title: "Look Alive",
-    description:
-      "Real-time eye tracking that helps you beat screen fatigue with the 20-20-20 rule",
+    description: "real-time eye tracking for screen fatigue prevention",
     tags: ["OpenCV", "Mediapipe", "Python"],
     link: "https://github.com/goshanraj-g/lookalive",
     image: "/images/projects/lookalive.png",
-    featured: false,
   },
   {
-    id: 4,
-    title: "Gradely",
-    description:
-      "Skip the spreadsheets, Gradely is a smart, interactive dashboard that helps students track their grades, set academic goals, and plan for success, all in one place",
-    tags: ["Next.js", "TailwindCSS", "React", "FastAPI", "PostgreSQL"],
-    link: "https://github.com/goshanraj-g/gradely",
-    image: "/images/projects/calculation-preview.png",
-    featured: false,
+    id: 2,
+    title: "Medinator", 
+    description: "AI health assistant for lifestyle risk assessment",
+    tags: ["Next.js", "Flask", "scikit-learn"],
+    link: "https://github.com/goshanraj-g/medinator",
+    image: "/images/projects/medinator-demo.png",
   },
   {
-    id: 5,
+    id: 3,
     title: "Multi-threaded Terminal Chat App",
-    description:
-      "A chat room written in C++17 on top of Winsock 2 using socket programming and multi-threading",
+    description: "chat room written in C++17 on top of Winsock 2 using socket programming and multi-threading",
     tags: ["C++", "Multi-threading", "Socket Programming"],
     link: "https://github.com/goshanraj-g/terminal-chat",
     image: "/images/projects/terminal-chat.png",
-    featured: false,
+  },
+  {
+    id: 4,
+    title: "Trackie",
+    description:
+      "job application tracker with AI-powered NLP model for streamlined data entry",
+    tags: ["TypeScript", "Next.js", "Spring Boot", "Python", "PostgreSQL"],
+    link: "https://github.com/goshanraj-g/trackie",
+    image: "/images/projects/trackie-preview.png",
+  },
+  {
+    id: 5,
+    title: "Gradely",
+    description: "smart, interactive dashboard that helps students track their grades, set academic goals, and plan for success",
+    tags: ["Next.js", "TailwindCSS", "React", "FastAPI", "PostgreSQL"],
+    link: "https://github.com/goshanraj-g/gradely",
+    image: "/images/projects/calculation-preview.png",
   },
   {
     id: 6,
     title: "FastFahr",
-    description:
-      "A modern, purpose-built platform for buying and selling German cars with clean design, smooth experience",
+    description: "modern, purpose-built platform for buying and selling German cars with clean design, smooth experience",
     tags: ["React.js", "CSS", "PHP", "MySQL"],
     link: "https://github.com/goshanraj-g/fast-fahr",
     image: "/images/projects/fast-fahr.png",
-    featured: false,
-  },
-];
-
-const experiences = [
-  {
-    id: 1,
-    company: "McMaster University",
-    role: "Undergraduate Research Assistant",
-    period: "2025 - Present",
-    description: "Sports Analytics Research",
-    image: "/images/education/mcmaster.png",
-  },
-  {
-    id: 2,
-    company: "Google Developer Groups",
-    role: "Community and Code Ambassador",
-    period: "2024 - Present",
-    description: "Leading and Organizing Tech Workshops",
-    image: "/images/experiences/gdsc.png",
   },
 ];
 
 export default function Page() {
-  useEffect(() => {
-    document.documentElement.classList.add("dark");
-  }, []);
-
   return (
-    <>
-      <div className="min-h-screen bg-black text-gray-200 pb-20">
-        <div className="fixed inset-0 bg-gradient-to-b from-purple-900/10 via-black to-black -z-10 pointer-events-none"></div>
-        <div className="fixed w-96 h-96 rounded-full bg-purple-700/15 blur-3xl top-0 -right-48 -z-10 pointer-events-none"></div>
-        <div className="fixed w-96 h-96 rounded-full bg-purple-800/10 blur-3xl -bottom-20 -left-48 -z-10 pointer-events-none"></div>
-
-        <header className="container mx-auto px-6 py-16 md:py-20">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="w-full md:w-1/3 flex justify-center">
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-purple-400 rounded-xl blur opacity-40 group-hover:opacity-70 transition duration-1000"></div>
-                <div className="relative w-40 h-48 md:w-48 md:h-64 overflow-hidden rounded-xl shadow-xl">
-                  <Image
-                    src="/images/profile-picture/profilepicture.JPG"
-                    alt="Profile picture"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-4xl mx-auto px-6 py-16">
+        
+        {/* Header */}
+        <header className="mb-10">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
+            <div className="flex-shrink-0">
+              <div className="relative w-40 h-48 md:w-52 md:h-64 overflow-hidden rounded-lg">
+                <Image
+                  src="/images/profile-picture/profilepicture.JPG"
+                  alt="Profile picture"
+                  fill
+                  className="object-cover"
+                />
               </div>
             </div>
-
-            <div className="w-full md:w-2/3 text-center md:text-left">
-              <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
-                {personalInfo.name}
+            <div className="text-center md:text-left flex-1">
+              <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight font-mono">
+                hey i'm gosh
               </h1>
-              <p className="text-xl text-purple-300 mb-4 font-medium">
-                {personalInfo.title}
-              </p>
-              <p className="max-w-xl text-gray-300 leading-relaxed mb-6">
-                {personalInfo.bio}
-              </p>
-              <div className="flex flex-wrap justify-center md:justify-start items-center gap-4">
+              <p className="text-xl text-gray-300 mb-4">{personalInfo.title}</p>
+              <p className="text-gray-400 mb-6">{personalInfo.bio}</p>
+              
+              <div className="flex items-center justify-center md:justify-start gap-2 text-gray-400 mb-6">
+                <MapPin size={16} />
+                <span>{personalInfo.location}</span>
+              </div>
+
+              <div className="flex flex-wrap justify-center md:justify-start gap-3">
                 <Link
                   href={`mailto:${personalInfo.email}`}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-full text-gray-200 hover:text-white transition-all"
+                  className="flex items-center gap-2 text-gray-300 hover:text-white border border-gray-700 hover:border-gray-600 px-3 py-2 rounded"
                 >
-                  <Mail size={16} className="text-purple-400" />
-                  <span>{personalInfo.email}</span>
+                  <Mail size={16} />
+                  Email
                 </Link>
                 <Link
                   href={`https://${personalInfo.github}`}
                   target="_blank"
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-full text-gray-200 hover:text-white transition-all"
+                  className="flex items-center gap-2 text-gray-300 hover:text-white border border-gray-700 hover:border-gray-600 px-3 py-2 rounded"
                 >
-                  <Github size={16} className="text-purple-400" />
+                  <Github size={16} />
                   GitHub
                 </Link>
                 <Link
                   href={`https://${personalInfo.linkedin}`}
                   target="_blank"
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-full text-gray-200 hover:text-white transition-all"
+                  className="flex items-center gap-2 text-gray-300 hover:text-white border border-gray-700 hover:border-gray-600 px-3 py-2 rounded"
                 >
-                  <Linkedin size={16} className="text-purple-400" />
+                  <Linkedin size={16} />
                   LinkedIn
-                </Link>
-                <Link
-                  href={`/files/GoshanrajGovindarajResume25.pdf`}
-                  target="_blank"
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-full text-gray-200 hover:text-white transition-all"
-                >
-                  <FileText size={16} className="text-purple-400" />
-                  Resume
                 </Link>
               </div>
             </div>
           </div>
         </header>
 
-        <main className="container mx-auto px-6">
-          <section className="mb-24">
-            <div className="flex items-center gap-3 mb-8">
-              <Monitor className="text-purple-400 w-6 h-6" />
-              <h2 className="text-3xl font-bold text-white">
-                Featured Project
-              </h2>
-            </div>
-            <div className="space-y-16">
-              {projects
-                .filter((project) => project.featured)
-                .map((project) => (
-                  <div
-                    key={project.id}
-                    className="grid md:grid-cols-2 gap-8 items-start"
+        {/* About Me */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4">About Me</h2>
+          <ul className="space-y-2 text-gray-300">
+            <li>→ currently doing research in sports analytics & data @ McMaster University</li>
+            <li>→ studying computer science at McMaster University</li>
+            <li>→ i'm into fitness, music, sports and exploring new places</li>
+          </ul>
+        </section>
+
+        {/* Open Source Contributions */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4">Projects I've Contributed to</h2>
+          <div className="border border-gray-700 rounded-lg p-6 bg-gray-900">
+            {openSourceContributions.map((contribution, index) => (
+              <div key={index} className="flex items-center gap-4">
+                <div className="flex-1">
+                  <Link
+                    href={contribution.url}
+                    target="_blank"
+                    className="text-gray-200 hover:text-white font-medium"
                   >
-                    <Link href={project.link} className="group block">
-                      <div className="flex justify-center">
-                        <div className="relative">
-                          <div className="relative w-[318px] h-[312px] sm:w-[380px] sm:h-[372px] md:w-[440px] md:h-[432px] lg:w-[480px] lg:h-[472px] xl:w-[500px] xl:h-[475px] group transform transition-transform duration-500 ease-out hover:scale-[1.015]">
-                            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-purple-400 rounded-lg blur opacity-30 group-hover:opacity-70 transition-opacity duration-500 ease-in-out" />
-                            <div className="relative w-full h-full">
-                              <Image
-                                src="/images/projects/trackie-preview.png"
-                                alt="Trackie preview"
-                                fill
-                                priority
-                                sizes="(max-width: 640px) 80vw, (max-width: 1024px) 50vw, 635px"
-                                className="object-cover rounded"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                    <div className="flex flex-col justify-center max-w-3xl">
-                      <h3 className="text-4xl font-bold text-white mb-4 tracking-tight">
-                        {project.title}
-                      </h3>
-
-                      <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-                        {project.description}
-                      </p>
-
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        {project.tags.map((tag) => (
-                          <Badge
-                            key={tag}
-                            variant="outline"
-                            className="bg-gray-800 text-gray-100 border-gray-700 hover:bg-gray-700"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-
-                      <Link
-                        href={project.link}
-                        className="inline-flex items-center gap-1 text-purple-400 hover:text-purple-300 font-medium transition group"
-                      >
-                        View Project
-                        <ArrowUpRight
-                          size={16}
-                          className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
-                        />
-                      </Link>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </section>
-
-          <section className="mb-24">
-            <div className="flex items-center gap-3 mb-8">
-              <Code className="text-purple-400 w-6 h-6" />
-              <h2 className="text-3xl font-bold text-white">Other Projects</h2>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {projects
-                .filter((project) => !project.featured)
-                .map((project) => (
-                  <Card
-                    key={project.id}
-                    className="bg-gradient-to-br from-gray-900 to-gray-950 border border-gray-800 hover:border-gray-700 transition-colors group overflow-hidden"
-                  >
-                    <div className="relative w-full h-100">
-                      <Image
-                        src={project.image}
-                        alt={project.title}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    </div>
-                    <CardHeader>
-                      <CardTitle className="text-xl text-white group-hover:text-purple-200 transition-colors">
-                        {project.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-gray-300 text-sm">
-                        {project.description}
-                      </p>
-                      <div className="flex flex-wrap gap-1 mt-4">
-                        {project.tags.map((tag) => (
-                          <Badge
-                            key={tag}
-                            variant="outline"
-                            className="bg-gray-800 text-gray-300 border-gray-700 text-xs"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardContent>
-                    <CardFooter>
-                      <Link
-                        href={project.link}
-                        className="inline-flex items-center text-sm font-medium text-purple-400 hover:text-purple-300 group/link"
-                      >
-                        <ExternalLink
-                          size={14}
-                          className="mr-1 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform"
-                        />
-                        View Project
-                      </Link>
-                    </CardFooter>
-                  </Card>
-                ))}
-            </div>
-          </section>
-
-          <section className="mb-24">
-            <div className="flex items-center gap-3 mb-12">
-              <Briefcase className="text-purple-400 w-6 h-6" />
-              <h2 className="text-3xl font-bold text-white">Experience</h2>
-            </div>
-
-            <div className="relative">
-              <div className="absolute left-0 md:left-40 top-0 bottom-0 w-px bg-gray-700/70"></div>
-
-              <div className="space-y-16">
-                {experiences.map((exp) => (
-                  <div
-                    key={exp.id}
-                    className="relative flex flex-col md:flex-row gap-6 pl-8 md:pl-0"
-                  >
-                    <div className="flex flex-row md:flex-col items-center md:w-40 space-y-3">
-                      <div className="absolute left-0 md:left-40 transform -translate-x-1/2 mt-1">
-                        <div className="w-4 h-4 rounded-full bg-purple-500"></div>
-                      </div>
-
-                      <div className="flex items-center text-sm text-purple-200 font-medium">
-                        <Calendar className="w-4 h-4 mr-2 text-purple-400" />
-                        <span>{exp.period}</span>
-                      </div>
-
-                      {exp.image && (
-                        <div className="hidden md:block">
-                          <div className="relative w-16 h-16">
-                            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-purple-400 rounded-md blur opacity-30"></div>
-                            <div className="relative w-full h-full rounded-md overflow-hidden border border-gray-700 bg-gray-800/70 p-1">
-                              <Image
-                                src={exp.image}
-                                alt={exp.company}
-                                fill
-                                className="object-contain"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex-1 bg-gradient-to-br from-gray-900 to-gray-950 rounded-lg p-6 border border-gray-800 hover:border-gray-700 transition-all duration-300 hover:shadow-lg hover:shadow-purple-900/10 group">
-                      <h3 className="text-xl font-semibold text-white mb-1 group-hover:text-purple-200 transition-colors">
-                        {exp.role}
-                      </h3>
-                      <p className="text-purple-300 mb-4 font-medium">
-                        {exp.company}
-                      </p>
-                      <p className="text-gray-300 leading-relaxed">
-                        {exp.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                    → {contribution.name}
+                  </Link>
+                  <span className="text-gray-400 ml-2">{contribution.description}</span>
+                </div>
               </div>
-            </div>
-          </section>
+            ))}
+          </div>
+        </section>
 
-          <section className="mb-32">
-            <div className="flex items-center gap-3 mb-12">
-              <BookOpen className="text-purple-400 w-6 h-6" />
-              <h2 className="text-4xl font-bold text-white tracking-tight">
-                Education
-              </h2>
-            </div>
+        {/* Personal Projects */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4">Personal Projects</h2>
+          <div className="grid gap-6">
+            {projects.map((project) => (
+              <div key={project.id} className="border border-gray-700 rounded-lg p-6 bg-gray-900">
+                <div className="flex items-start justify-between mb-3">
+                  <h3 className="text-xl font-medium text-white">{project.title}</h3>
+                  <Link
+                    href={project.link}
+                    target="_blank"
+                    className="text-gray-300 hover:text-white"
+                  >
+                    <ExternalLink size={18} />
+                  </Link>
+                </div>
+                <p className="text-gray-300 mb-3">{project.description}</p>
+                <div className="flex flex-wrap gap-2">
+                  {project.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-2 py-1 bg-gray-800 text-gray-300 text-sm rounded border border-gray-600"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-            <div className="space-y-12">
-              <div className="relative group transition-all">
-                {/* Subtle glow effect on hover */}
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-purple-400 rounded-2xl blur opacity-0 group-hover:opacity-20 transition duration-500"></div>
-
-                <div className="relative bg-gradient-to-br from-gray-900 to-gray-950 rounded-2xl p-8 border border-gray-800 group-hover:border-gray-700 shadow-md group-hover:shadow-purple-900/20 transition-all duration-300">
-                  <div className="grid md:grid-cols-4 gap-8">
-                    <div className="md:col-span-1">
-                      <div className="flex flex-col space-y-6">
-                        <div className="flex items-center space-x-3">
-                          <div className="relative w-12 h-12">
-                            <Image
-                              src="/images/education/mcmaster.png"
-                              alt="McMaster University"
-                              fill
-                              className="object-contain"
-                            />
-                          </div>
-                          <h4 className="text-purple-300 text-lg font-medium">
-                            McMaster University
-                          </h4>
-                        </div>
-
-                        <div className="text-sm text-purple-300 font-medium flex items-center justify-start">
-                          <Calendar className="w-4 h-4 mr-2 text-purple-400" />
-                          <span>September 2024 – Present</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="md:col-span-3">
-                      <h3 className="text-2xl font-semibold text-white mb-6">
-                        Computer Science
-                      </h3>
-
-                      <div className="flex flex-col sm:flex-row gap-4">
-                        <div className="flex items-center bg-purple-900/10 rounded-lg px-4 py-2 border border-purple-500/20">
-                          <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
-                          <span className="text-white text-sm font-medium">
-                            Dean&apos;s Honour List
-                          </span>
-                        </div>
-
-                        <div className="flex items-center bg-purple-900/10 rounded-lg px-4 py-2 border border-purple-500/20">
-                          <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
-                          <span className="text-white text-sm font-medium">
-                            GPA:{" "}
-                            <span className="text-purple-300">3.9 / 4.0</span>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+        {/* Experience */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4">Experience</h2>
+          <div className="space-y-4">
+            <div className="border border-gray-700 rounded-lg p-6 bg-gray-900">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <div className="relative w-12 h-12 rounded bg-gray-800 p-2">
+                    <Image
+                      src="/images/education/mcmaster.png"
+                      alt="McMaster University"
+                      fill
+                      className="object-contain"
+                    />
                   </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-medium text-white">Associate Software Engineer</h3>
+                  <p className="text-gray-400 mb-2">McMaster University • 2025 - Present</p>
+                  <p className="text-gray-300">building machine learning models to predict and prevent athlete injuries 📊</p>
                 </div>
               </div>
             </div>
-          </section>
-
-          <footer className="container mx-auto px-6 mt-16 text-center">
-            <Separator className="bg-gray-800 mb-8" />
-            <div className="flex items-center justify-center mb-4">
-              <p className="text-gray-300 text-sm">
-                © {new Date().getFullYear()} {"Goshanraj Govindaraj"}
-              </p>
+            <div className="border border-gray-700 rounded-lg p-6 bg-gray-900">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <div className="relative w-12 h-12 rounded bg-gray-800 p-2">
+                    <Image
+                      src="/images/experiences/gdsc.png"
+                      alt="Google Developer Groups"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-medium text-white">Community Manager</h3>
+                  <p className="text-gray-400 mb-2">Google Developer Groups • 2024 - 2025</p>
+                  <p className="text-gray-300">leading and organizing tech workshops 🛠</p>
+                </div>
+              </div>
             </div>
-          </footer>
-        </main>
+          </div>
+        </section>
+
+        {/* Education */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4">Education</h2>
+          <div className="border border-gray-700 rounded-lg p-6 bg-gray-900">
+            <h3 className="text-xl font-medium text-white">Computer Science</h3>
+            <p className="text-gray-400 mb-2">McMaster University • September 2024 – Present</p>
+            <div className="flex gap-4 text-sm">
+              <span className="bg-gray-800 text-gray-300 px-2 py-1 rounded border border-gray-600">Dean's Honour List</span>
+              <span className="bg-gray-800 text-gray-300 px-2 py-1 rounded border border-gray-600">GPA: 3.9 / 4.0</span>
+            </div>
+          </div>
+        </section>
       </div>
-    </>
+    </div>
   );
 }
