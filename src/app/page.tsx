@@ -4,7 +4,6 @@ import {
   Github,
   Mail,
   Linkedin,
-  ExternalLink,
   MapPin,
   FolderGit2,
 } from "lucide-react";
