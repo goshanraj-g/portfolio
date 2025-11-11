@@ -6,6 +6,7 @@ import {
   Linkedin,
   ExternalLink,
   MapPin,
+  FolderGit2,
 } from "lucide-react";
 
 const personalInfo = {
@@ -81,14 +82,14 @@ const projects = [
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="max-w-4xl mx-auto px-6 py-16">
+    <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 text-gray-900">
+      <div className="max-w-3xl mx-auto px-6 py-20">
         
         {/* Header */}
-        <header className="mb-10">
+        <header className="mb-16">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
             <div className="flex-shrink-0">
-              <div className="relative w-40 h-48 md:w-52 md:h-64 overflow-hidden rounded-lg">
+              <div className="relative w-40 h-48 md:w-52 md:h-64 overflow-hidden rounded-2xl shadow-lg ring-1 ring-gray-900/5">
                 <Image
                   src="/images/profile-picture/profilepicture.JPG"
                   alt="Profile picture"
@@ -98,40 +99,40 @@ export default function Page() {
               </div>
             </div>
             <div className="text-center md:text-left flex-1">
-              <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight font-mono">
-                hey i&apos;m gosh
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3 leading-tight tracking-tight">
+                hey, i&apos;m gosh!
               </h1>
-              <p className="text-xl text-gray-300 mb-4">{personalInfo.title}</p>
-              <p className="text-gray-400 mb-6">{personalInfo.bio}</p>
+              <p className="text-xl text-gray-600 mb-3">{personalInfo.title}</p>
+              <p className="text-gray-500 mb-6 leading-relaxed">{personalInfo.bio}</p>
               
-              <div className="flex items-center justify-center md:justify-start gap-2 text-gray-400 mb-6">
-                <MapPin size={16} />
+              <div className="flex items-center justify-center md:justify-start gap-2 text-gray-500 mb-6 text-sm">
+                <MapPin size={14} className="text-gray-400" />
                 <span>{personalInfo.location}</span>
               </div>
 
               <div className="flex flex-wrap justify-center md:justify-start gap-3">
                 <Link
                   href={`mailto:${personalInfo.email}`}
-                  className="flex items-center gap-2 text-gray-300 hover:text-white border border-gray-700 hover:border-gray-600 px-3 py-2 rounded"
+                  className="flex items-center gap-2 text-gray-700 hover:text-gray-900 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 px-4 py-2 rounded-lg transition-all shadow-sm hover:shadow"
                 >
                   <Mail size={16} />
-                  Email
+                  <span className="text-sm font-medium">Email</span>
                 </Link>
                 <Link
                   href={`https://${personalInfo.github}`}
                   target="_blank"
-                  className="flex items-center gap-2 text-gray-300 hover:text-white border border-gray-700 hover:border-gray-600 px-3 py-2 rounded"
+                  className="flex items-center gap-2 text-gray-700 hover:text-gray-900 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 px-4 py-2 rounded-lg transition-all shadow-sm hover:shadow"
                 >
                   <Github size={16} />
-                  GitHub
+                  <span className="text-sm font-medium">GitHub</span>
                 </Link>
                 <Link
                   href={`https://${personalInfo.linkedin}`}
                   target="_blank"
-                  className="flex items-center gap-2 text-gray-300 hover:text-white border border-gray-700 hover:border-gray-600 px-3 py-2 rounded"
+                  className="flex items-center gap-2 text-gray-700 hover:text-gray-900 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 px-4 py-2 rounded-lg transition-all shadow-sm hover:shadow"
                 >
                   <Linkedin size={16} />
-                  LinkedIn
+                  <span className="text-sm font-medium">LinkedIn</span>
                 </Link>
               </div>
             </div>
@@ -139,30 +140,44 @@ export default function Page() {
         </header>
 
         {/* About Me */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">About Me</h2>
-          <ul className="space-y-2 text-gray-300">
-            <li>→ currently doing research in sports analytics & data @ McMaster University</li>
-            <li>→ studying computer science at McMaster University</li>
-            <li>→ i&apos;m into fitness, music, sports and exploring new places</li>
+        <section className="mb-16">
+          <h2 className="text-2xl font-semibold mb-5 text-gray-900">About Me</h2>
+          <ul className="space-y-3 text-gray-600 leading-relaxed">
+            <li className="flex items-start gap-2">
+              <span className="text-gray-400 mt-1">→</span>
+              <span>currently doing research in sports analytics & data @ McMaster University</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-gray-400 mt-1">→</span>
+              <span>studying computer science at McMaster University</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-gray-400 mt-1">→</span>
+              <span>i&apos;m into fitness, music, sports and exploring new places</span>
+            </li>
           </ul>
         </section>
 
         {/* Open Source Contributions */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Projects I&apos;ve Contributed to</h2>
-          <div className="border border-gray-700 rounded-lg p-6 bg-gray-900 hover:border-gray-650 hover:bg-gray-850 transition-all duration-300">
+        <section className="mb-16">
+          <h2 className="text-2xl font-semibold mb-5 text-gray-900">Projects I&apos;ve Contributed to</h2>
+          <div className="space-y-5">
             {openSourceContributions.map((contribution, index) => (
-              <div key={index} className="flex items-center gap-4 group">
+              <div key={index} className="group flex items-start gap-3">
+                <div className="flex-shrink-0 mt-1">
+                  <Github className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                </div>
                 <div className="flex-1">
-                  <Link
-                    href={contribution.url}
-                    target="_blank"
-                    className="text-gray-200 hover:text-gray-100 font-medium"
-                  >
-                    → {contribution.name}
-                  </Link>
-                  <span className="text-gray-400 ml-2">{contribution.description}</span>
+                  <h3 className="text-lg mb-2">
+                    <Link
+                      href={contribution.url}
+                      target="_blank"
+                      className="text-gray-900 font-medium underline decoration-gray-300 decoration-2 underline-offset-4 hover:decoration-blue-500 hover:text-blue-600 transition-all"
+                    >
+                      {contribution.name}
+                    </Link>
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">{contribution.description}</p>
                 </div>
               </div>
             ))}
@@ -170,31 +185,28 @@ export default function Page() {
         </section>
 
         {/* Personal Projects */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Personal Projects</h2>
-          <div className="grid gap-6">
+        <section className="mb-16">
+          <h2 className="text-2xl font-semibold mb-5 text-gray-900">Personal Projects</h2>
+          <div className="space-y-6">
             {projects.map((project) => (
-              <div key={project.id} className="border border-gray-700 rounded-lg p-6 bg-gray-900 hover:border-gray-650 hover:bg-gray-850 transition-all duration-300 group">
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-xl font-medium text-white group-hover:text-gray-50 transition-colors">{project.title}</h3>
-                  <Link
-                    href={project.link}
-                    target="_blank"
-                    className="text-gray-300 hover:text-gray-200 hover:scale-105 transition-all duration-200"
-                  >
-                    <ExternalLink size={18} />
-                  </Link>
+              <div key={project.id} className="group flex items-start gap-3">
+                <div className="flex-shrink-0 mt-1">
+                  <FolderGit2 className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
                 </div>
-                <p className="text-gray-300 mb-3 group-hover:text-gray-250 transition-colors">{project.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-2 py-1 bg-gray-800 text-gray-300 text-sm rounded border border-gray-600 hover:bg-gray-750 hover:border-gray-550 transition-colors"
+                <div className="flex-1">
+                  <h3 className="text-lg mb-2">
+                    <Link
+                      href={project.link}
+                      target="_blank"
+                      className="text-gray-900 font-medium underline decoration-gray-300 decoration-2 underline-offset-4 hover:decoration-blue-500 hover:text-blue-600 transition-all"
                     >
-                      {tag}
-                    </span>
-                  ))}
+                      {project.title}
+                    </Link>
+                  </h3>
+                  <p className="text-gray-600 mb-3 leading-relaxed">{project.description}</p>
+                  <p className="text-gray-500 text-sm">
+                    {project.tags.join(" • ")}
+                  </p>
                 </div>
               </div>
             ))}
@@ -202,60 +214,79 @@ export default function Page() {
         </section>
 
         {/* Experience */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Experience</h2>
-          <div className="space-y-4">
-            <div className="border border-gray-700 rounded-lg p-6 bg-gray-900 hover:border-gray-650 hover:bg-gray-850 transition-all duration-300 group">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0">
-                  <div className="relative w-12 h-12 rounded bg-gray-800 p-2 group-hover:bg-gray-750 transition-colors">
-                    <Image
-                      src="/images/education/mcmaster.png"
-                      alt="McMaster University"
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-medium text-white group-hover:text-gray-50 transition-colors">Associate Software Engineer</h3>
-                  <p className="text-gray-400 mb-2">McMaster University • 2025 - Present</p>
-                  <p className="text-gray-300 group-hover:text-gray-250 transition-colors">building machine learning models to predict and prevent athlete injuries 📊</p>
+        <section className="mb-16">
+          <h2 className="text-2xl font-semibold mb-5 text-gray-900">Experience</h2>
+          <div className="space-y-6">
+            <div className="group flex items-start gap-3">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-white shadow-sm ring-1 ring-gray-900/5 p-1.5 flex items-center justify-center group-hover:shadow transition-shadow">
+                  <Image
+                    src="/images/education/mcmaster.png"
+                    alt="McMaster University"
+                    width={28}
+                    height={28}
+                    className="object-contain"
+                  />
                 </div>
               </div>
+              <div className="flex-1">
+                <h3 className="text-lg mb-2">
+                  <Link
+                    href="https://www.mcmaster.ca/"
+                    target="_blank"
+                    className="text-gray-900 font-medium underline decoration-gray-300 decoration-2 underline-offset-4 hover:decoration-blue-500 hover:text-blue-600 transition-all"
+                  >
+                    Associate Software Engineer
+                  </Link>
+                </h3>
+                <p className="text-gray-600 mb-2 leading-relaxed">building machine learning models to predict and prevent athlete injuries 📊</p>
+                <p className="text-gray-500 text-sm">McMaster University • 2025 - Present</p>
+              </div>
             </div>
-            <div className="border border-gray-700 rounded-lg p-6 bg-gray-900 hover:border-gray-650 hover:bg-gray-850 transition-all duration-300 group">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0">
-                  <div className="relative w-12 h-12 rounded bg-gray-800 p-2 group-hover:bg-gray-750 transition-colors">
-                    <Image
-                      src="/images/experiences/gdsc.png"
-                      alt="Google Developer Groups"
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
+            <div className="group flex items-start gap-3">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-white shadow-sm ring-1 ring-gray-900/5 p-1.5 flex items-center justify-center group-hover:shadow transition-shadow">
+                  <Image
+                    src="/images/experiences/gdsc.png"
+                    alt="Google Developer Groups"
+                    width={28}
+                    height={28}
+                    className="object-contain"
+                  />
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-medium text-white group-hover:text-gray-50 transition-colors">Community Manager</h3>
-                  <p className="text-gray-400 mb-2">Google Developer Groups • 2024 - 2025</p>
-                  <p className="text-gray-300 group-hover:text-gray-250 transition-colors">leading and organizing tech workshops 🛠</p>
-                </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg mb-2">
+                  <Link
+                    href="https://gdg.community.dev/"
+                    target="_blank"
+                    className="text-gray-900 font-medium underline decoration-gray-300 decoration-2 underline-offset-4 hover:decoration-blue-500 hover:text-blue-600 transition-all"
+                  >
+                    Community Manager
+                  </Link>
+                </h3>
+                <p className="text-gray-600 mb-2 leading-relaxed">leading and organizing tech workshops 🛠</p>
+                <p className="text-gray-500 text-sm">Google Developer Groups • 2024 - 2025</p>
               </div>
             </div>
           </div>
         </section>
 
         {/* Education */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Education</h2>
-          <div className="border border-gray-700 rounded-lg p-6 bg-gray-900 hover:border-gray-650 hover:bg-gray-850 transition-all duration-300 group">
-            <h3 className="text-xl font-medium text-white group-hover:text-gray-50 transition-colors">Computer Science</h3>
-            <p className="text-gray-400 mb-2">McMaster University • September 2024 – Present</p>
-            <div className="flex gap-4 text-sm">
-              <span className="bg-gray-800 text-gray-300 px-2 py-1 rounded border border-gray-600 hover:bg-gray-750 hover:border-gray-550 transition-colors">Dean&apos;s Honour List</span>
-              <span className="bg-gray-800 text-gray-300 px-2 py-1 rounded border border-gray-600 hover:bg-gray-750 hover:border-gray-550 transition-colors">GPA: 3.92 / 4.0</span>
-            </div>
+        <section className="mb-16">
+          <h2 className="text-2xl font-semibold mb-5 text-gray-900">Education</h2>
+          <div className="group">
+            <h3 className="text-lg mb-2">
+              <Link
+                href="https://www.mcmaster.ca/"
+                target="_blank"
+                className="text-gray-900 font-medium underline decoration-gray-300 decoration-2 underline-offset-4 hover:decoration-blue-500 hover:text-blue-600 transition-all"
+              >
+                Computer Science
+              </Link>
+            </h3>
+            <p className="text-gray-600 mb-2 leading-relaxed">McMaster University • September 2024 – Present</p>
+            <p className="text-gray-500 text-sm">Dean&apos;s Honour List • GPA: 3.92 / 4.0</p>
           </div>
         </section>
       </div>
