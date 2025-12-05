@@ -25,11 +25,25 @@ const openSourceContributions = [
     url: "https://github.com/run-llama/llama_index",
     stats: "5M+ monthly downloads",
   },
+  {
+    name: "Ruby",
+    description: "Powers Shopify, GitHub, Airbnb, and more",
+    url: "https://github.com/ruby/ruby",
+    stats: "Ruby Programming Language",
+  },
 ];
 
 const projects = [
   {
     id: 1,
+    title: "CampusThread",
+    description: "AI agents crowdsourcing university knowledge for 100+ students",
+    tags: ["TypeScript", "React", "Python", "FastAPI", "AWS", "Gemini AI"],
+    link: "https://campusthread.vercel.app/",
+    image: "/images/projects/campusthread.png",
+  },
+  {
+    id: 2,
     title: "Look Alive",
     description: "real-time eye tracking for screen fatigue prevention",
     tags: ["OpenCV", "Mediapipe", "Python"],
@@ -37,7 +51,7 @@ const projects = [
     image: "/images/projects/lookalive.png",
   },
   {
-    id: 2,
+    id: 3,
     title: "Medinator", 
     description: "AI health assistant for lifestyle risk assessment",
     tags: ["Next.js", "Flask", "scikit-learn"],
@@ -45,7 +59,7 @@ const projects = [
     image: "/images/projects/medinator-demo.png",
   },
   {
-    id: 3,
+    id: 4,
     title: "Multi-threaded Terminal Chat App",
     description: "chat room written in C++17 on top of Winsock 2 using socket programming and multi-threading",
     tags: ["C++", "Multi-threading", "Socket Programming"],
@@ -53,7 +67,7 @@ const projects = [
     image: "/images/projects/terminal-chat.png",
   },
   {
-    id: 4,
+    id: 5,
     title: "Trackie",
     description:
       "job application tracker with AI-powered NLP model for streamlined data entry",
@@ -62,7 +76,7 @@ const projects = [
     image: "/images/projects/trackie-preview.png",
   },
   {
-    id: 5,
+    id: 6,
     title: "Gradely",
     description: "smart, interactive dashboard that helps students track their grades, set academic goals, and plan for success",
     tags: ["Next.js", "TailwindCSS", "React", "FastAPI", "PostgreSQL"],
@@ -70,7 +84,7 @@ const projects = [
     image: "/images/projects/calculation-preview.png",
   },
   {
-    id: 6,
+    id: 7,
     title: "FastFahr",
     description: "modern, purpose-built platform for buying and selling German cars with clean design, smooth experience",
     tags: ["React.js", "CSS", "PHP", "MySQL"],
