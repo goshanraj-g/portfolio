@@ -33,7 +33,7 @@ const experiences = [
     title: "Software Engineering Intern",
     organization: "IBM",
     period: "January - Present",
-    description: "skills network 🧠",
+    description: "building the tools that teach the world 🧠",
     image: "/images/experiences/ibm.png",
     alt: "IBM",
     link: "https://ibm.com/",
@@ -43,8 +43,7 @@ const experiences = [
     title: "Machine Learning Research Assistant",
     organization: "McMaster University",
     period: "Aug. 2025 - Present",
-    description:
-      "building machine learning models to predict and prevent athlete injuries 📊",
+    description: "building models to predict and prevent athlete injuries 📊",
     image: "/images/education/mcmaster.png",
     alt: "McMaster University",
     link: "https://www.mcmaster.ca/",
@@ -98,15 +97,6 @@ const projects = [
   },
   {
     id: 5,
-    title: "Trackie",
-    description:
-      "job application tracker with AI-powered NLP model for streamlined data entry",
-    tags: ["TypeScript", "Next.js", "Spring Boot", "Python", "PostgreSQL"],
-    link: "https://github.com/goshanraj-g/trackie",
-    image: "/images/projects/trackie-preview.png",
-  },
-  {
-    id: 6,
     title: "Gradely",
     description:
       "smart, interactive dashboard that helps students track their grades, set academic goals, and plan for success",
@@ -115,7 +105,7 @@ const projects = [
     image: "/images/projects/calculation-preview.png",
   },
   {
-    id: 7,
+    id: 6,
     title: "FastFahr",
     description:
       "modern, purpose-built platform for buying and selling German cars with clean design, smooth experience",
@@ -194,13 +184,16 @@ export default function Page() {
             <li className="flex items-start gap-2">
               <span className="text-gray-400 mt-1">→</span>
               <span>
-                currently doing research in sports analytics & data @ McMaster
-                University
+                software engineering intern @ IBM to help build 
+                tools that teach 10M+ people
               </span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-gray-400 mt-1">→</span>
-              <span>studying computer science at McMaster University</span>
+              <span>
+                currently doing research in sports analytics & data @ McMaster
+                University
+              </span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-gray-400 mt-1">→</span>
