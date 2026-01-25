@@ -4,7 +4,7 @@ import { Github, Mail, Linkedin, MapPin, FolderGit2, User, Briefcase, Graduation
 
 const personalInfo = {
   name: "hey, I&apos;m Gosh!",
-  title: "computer science @ McMaster University",
+  title: "computer science student at McMaster University",
   bio: "interested in software development and building AI agents",
   email: "govindag@mcmaster.ca",
   github: "github.com/goshanraj-g",
@@ -15,13 +15,13 @@ const personalInfo = {
 const openSourceContributions = [
   {
     name: "LlamaIndex",
-    description: "framework for AI agents (5 million+ downloads/month)",
+    description: "integrated web tools for agentic web",
     url: "https://github.com/run-llama/llama_index",
     stats: "5M+ monthly downloads",
   },
   {
     name: "Ruby",
-    description: "programming language (powers GitHub, Shopify, Airbnb + more)",
+    description: "optimized the new ZJIT compiler",
     url: "https://github.com/ruby/ruby",
     stats: "Ruby Programming Language",
   },
@@ -286,7 +286,7 @@ export default function Page() {
         <section className="mb-10">
           <h2 className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-2">
             <FolderGit2 size={14} />
-            <span>Selected Projects</span>
+            <span>Projects</span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {projects.map((project) => (
