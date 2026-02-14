@@ -21,7 +21,8 @@ const openSourceContributions = [
   },
   {
     name: "Ruby",
-    description: "optimized the new ZJIT compiler",
+    description: "optimized the new ZJIT compiler, check out the article",
+    articleURL: "https://railsatscale.com/2025-12-24-launch-zjit/",
     url: "https://github.com/ruby/ruby",
     stats: "Ruby Programming Language",
   },
@@ -275,6 +276,19 @@ export default function Page() {
                   </h3>
                   <p className="text-xs text-gray-600 leading-relaxed">
                     {contribution.description}
+                    {contribution.articleURL && (
+                      <>
+                        {" "}
+                        <a
+                          href={contribution.articleURL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-700 underline"
+                        >
+                          here
+                        </a>
+                      </>
+                    )}
                   </p>
                 </div>
               </Link>
