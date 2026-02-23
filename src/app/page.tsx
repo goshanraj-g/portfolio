@@ -2,6 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Github, Mail, Linkedin, MapPin, FolderGit2, User, Briefcase, GraduationCap } from "lucide-react";
 
+const WEBRING_URL = process.env.NEXT_PUBLIC_WEBRING_URL!;
+const MY_SITE = process.env.NEXT_PUBLIC_MY_SITE!;
+
 const personalInfo = {
   name: "hey, I&apos;m Gosh!",
   title: "computer science student at McMaster University",
@@ -133,8 +136,8 @@ export default function Page() {
 
             <div className="flex items-center gap-4 text-gray-500 mb-5 text-sm">
               <div className="flex items-center gap-1.5">
-                 <MapPin size={14} className="text-gray-400" />
-                 <span>{personalInfo.location}</span>
+                <MapPin size={14} className="text-gray-400" />
+                <span>{personalInfo.location}</span>
               </div>
             </div>
 
@@ -164,7 +167,7 @@ export default function Page() {
               </Link>
             </div>
           </div>
-          
+
           <div className="flex-shrink-0">
             <div className="relative w-40 h-48 overflow-hidden rounded-xl shadow-sm border border-gray-100">
               <Image
@@ -187,7 +190,7 @@ export default function Page() {
             <li className="flex items-start gap-2">
               <span className="text-gray-400 mt-0.5">→</span>
               <span>
-                software engineering intern @ IBM to help build 
+                software engineering intern @ IBM to help build
                 tools that teach 10M+ people
               </span>
             </li>
@@ -328,7 +331,7 @@ export default function Page() {
                       {tag}
                     </span>
                   ))}
-                   {project.tags.length > 4 && (
+                  {project.tags.length > 4 && (
                     <span className="px-1.5 py-0.5 rounded bg-gray-50 text-gray-400 text-[10px] font-medium border border-gray-100">
                       +{project.tags.length - 4}
                     </span>
@@ -358,30 +361,50 @@ export default function Page() {
               </div>
             </div>
             <div className="flex-1">
-               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-0.5">
-                  <h3 className="font-medium text-gray-900 text-sm">
-                    <Link
-                      href="https://www.mcmaster.ca/"
-                      target="_blank"
-                      className="hover:underline hover:text-blue-600 transition-colors"
-                    >
-                      Computer Science
-                    </Link>
-                  </h3>
-                  <span className="text-xs text-gray-400 whitespace-nowrap tabular-nums">
-                    Sept. 2024 - Apr. 2028
-                  </span>
-               </div>
-               <div className="text-xs font-medium text-gray-500 mb-1">
-                 McMaster University
-               </div>
-               <p className="text-xs text-gray-600">
-                  Dean&apos;s Honour List • GPA: 3.92 / 4.0
-               </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-0.5">
+                <h3 className="font-medium text-gray-900 text-sm">
+                  <Link
+                    href="https://www.mcmaster.ca/"
+                    target="_blank"
+                    className="hover:underline hover:text-blue-600 transition-colors"
+                  >
+                    Computer Science
+                  </Link>
+                </h3>
+                <span className="text-xs text-gray-400 whitespace-nowrap tabular-nums">
+                  Sept. 2024 - Apr. 2028
+                </span>
+              </div>
+              <div className="text-xs font-medium text-gray-500 mb-1">
+                McMaster University
+              </div>
+              <p className="text-xs text-gray-600">
+                Dean&apos;s Honour List • GPA: 3.92 / 4.0
+              </p>
             </div>
           </div>
         </section>
       </div>
+
+      {/* McMaster CS & SE Webring Left Arrow */}
+      <a
+        href={`${WEBRING_URL}#${MY_SITE}?nav=prev`}
+        className="fixed bottom-4 left-4 z-50 text-gray-400 hover:text-gray-600 transition-colors"
+        style={{ fontSize: "1.25rem", textDecoration: "none" }}
+        title="Previous site"
+      >
+        ←
+      </a>
+
+      {/* McMaster CS & SE Webring Right Arrow */}
+      <a
+        href={`${WEBRING_URL}#${MY_SITE}?nav=next`}
+        className="fixed bottom-4 right-4 z-50 text-gray-400 hover:text-gray-600 transition-colors"
+        style={{ fontSize: "1.25rem", textDecoration: "none" }}
+        title="Next site"
+      >
+        →
+      </a>
     </div>
   );
 }
