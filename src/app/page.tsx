@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Github, Mail, Linkedin, MapPin, FolderGit2, User, Briefcase, GraduationCap } from "lucide-react";
 
-const WEBRING_URL = process.env.NEXT_PUBLIC_WEBRING_URL!;
-const MY_SITE = process.env.NEXT_PUBLIC_MY_SITE!;
+const WEBRING_URL = "https://mac-csse-webring.vercel.app/";
+const MY_SITE = "goshanraj.ca";
 
 const personalInfo = {
   name: "hey, I&apos;m Gosh!",
@@ -264,18 +264,15 @@ export default function Page() {
           </h2>
           <div className="space-y-4">
             {openSourceContributions.map((contribution, index) => (
-              <Link
-                key={index}
-                href={contribution.url}
-                target="_blank"
-                className="group flex gap-3"
-              >
+              <div key={index} className="group flex gap-3">
                 <div className="flex-shrink-0 mt-0.5">
                   <Github className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors mb-0.5">
-                    {contribution.name}
+                    <a href={contribution.url} target="_blank" rel="noopener noreferrer">
+                      {contribution.name}
+                    </a>
                   </h3>
                   <p className="text-xs text-gray-600 leading-relaxed">
                     {contribution.description}
@@ -294,7 +291,7 @@ export default function Page() {
                     )}
                   </p>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </section>
@@ -386,25 +383,25 @@ export default function Page() {
         </section>
       </div>
 
-      {/* McMaster CS & SE Webring Left Arrow */}
-      <a
-        href={`${WEBRING_URL}#${MY_SITE}?nav=prev`}
-        className="fixed bottom-4 left-4 z-50 text-gray-400 hover:text-gray-600 transition-colors"
-        style={{ fontSize: "1.25rem", textDecoration: "none" }}
-        title="Previous site"
-      >
-        ←
-      </a>
-
-      {/* McMaster CS & SE Webring Right Arrow */}
-      <a
-        href={`${WEBRING_URL}#${MY_SITE}?nav=next`}
-        className="fixed bottom-4 right-4 z-50 text-gray-400 hover:text-gray-600 transition-colors"
-        style={{ fontSize: "1.25rem", textDecoration: "none" }}
-        title="Next site"
-      >
-        →
-      </a>
+      {/* McMaster CS & SE Webring */}
+      <div className="flex justify-between items-center mt-6 mb-4 max-w-2xl mx-auto px-4">
+        <a
+          href={`${WEBRING_URL}#${MY_SITE}?nav=prev`}
+          className="text-gray-400 hover:text-gray-600 transition-colors text-sm"
+          style={{ textDecoration: "none" }}
+          title="Previous site"
+        >
+          ← prev
+        </a>
+        <a
+          href={`${WEBRING_URL}#${MY_SITE}?nav=next`}
+          className="text-gray-400 hover:text-gray-600 transition-colors text-sm"
+          style={{ textDecoration: "none" }}
+          title="Next site"
+        >
+          next →
+        </a>
+      </div>
     </div>
   );
 }
