@@ -1,5 +1,17 @@
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
+import { Instrument_Serif, Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const instrumentSerif = Instrument_Serif({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-display",
+});
 
 export const metadata = {
   title: "Portfolio - Goshanraj Govindaraj",
@@ -16,7 +28,9 @@ export default function RootLayout({
   return (
     <>
       <html lang="en">
-        <body className="antialiased">
+        <body
+          className={`${inter.variable} ${instrumentSerif.variable} antialiased`}
+        >
           {children}
           <Analytics />
         </body>
