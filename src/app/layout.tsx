@@ -1,14 +1,13 @@
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
-import { Instrument_Serif, Inter } from "next/font/google";
+import { Playfair_Display, Inter } from "next/font/google";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
 });
 
-const instrumentSerif = Instrument_Serif({
-  weight: "400",
+const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-display",
 });
@@ -29,7 +28,7 @@ export default function RootLayout({
     <>
       <html lang="en">
         <body
-          className={`${inter.variable} ${instrumentSerif.variable} antialiased`}
+          className={`${inter.variable} ${playfairDisplay.variable} antialiased`}
         >
           {children}
           <Analytics />

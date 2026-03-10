@@ -39,33 +39,7 @@ function useScramble(text: string, speed = 35) {
   return { display, done };
 }
 
-/* ── Cursor glow hook ── */
-function useCursorGlow() {
-  const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const move = (e: MouseEvent) => {
-      el.style.setProperty("--gx", `${e.clientX}px`);
-      el.style.setProperty("--gy", `${e.clientY}px`);
-      el.style.opacity = "1";
-    };
-    const leave = () => {
-      el.style.opacity = "0";
-    };
-
-    window.addEventListener("mousemove", move);
-    document.addEventListener("mouseleave", leave);
-    return () => {
-      window.removeEventListener("mousemove", move);
-      document.removeEventListener("mouseleave", leave);
-    };
-  }, []);
-
-  return ref;
-}
 
 /* ── Intersection observer for scroll reveal ── */
 function useReveal() {
@@ -118,22 +92,22 @@ const experiences = [
     title: "Software Engineering Intern",
     org: "IBM",
     orgLink: "https://ibm.com/",
-    description: "building the tools that teach the world",
-    image: "/images/experiences/ibm.png",
+    image: "/images/experiences/ibm.jpg",
+    year: "2025",
   },
   {
     title: "ML Research Assistant",
     org: "McMaster University",
     orgLink: "https://www.mcmaster.ca/",
-    description: "building models to predict and prevent athlete injuries",
     image: "/images/education/mcmaster.png",
+    year: "2024",
   },
   {
     title: "Community Manager",
     org: "Google Developer Groups",
     orgLink: "https://gdg.community.dev/",
-    description: "leading and organizing tech workshops",
     image: "/images/experiences/gdsc.png",
+    year: "2024",
   },
 ];
 
@@ -141,14 +115,16 @@ const openSource = [
   {
     name: "LlamaIndex",
     url: "https://github.com/run-llama/llama_index",
-    description: "integrated web tools for agentic web",
+    description: "Integrated web tools for the agentic web.",
     note: "5M+ monthly downloads",
+    year: "2025",
   },
   {
     name: "Ruby",
     url: "https://github.com/ruby/ruby",
-    description: "optimized the new ZJIT compiler",
+    description: "Optimized the new ZJIT compiler.",
     articleURL: "https://railsatscale.com/2025-12-24-launch-zjit/",
+    year: "2025",
   },
 ];
 
@@ -156,22 +132,26 @@ const projects = [
   {
     title: "CampusThread",
     url: "https://campusthread.vercel.app/",
-    description: "AI agents crowdsourcing university knowledge for 100+ students",
+    description: "AI agents crowdsourcing university knowledge.",
+    year: "2025",
   },
   {
     title: "Look Alive",
     url: "https://github.com/goshanraj-g/lookalive",
-    description: "real-time eye tracking for screen fatigue prevention",
+    description: "Real-time eye tracking for screen fatigue.",
+    year: "2025",
   },
   {
     title: "CodeTurret",
     url: "https://github.com/goshanraj-g/CodeTurret",
-    description: "automated security architect — dual-pass AI that scans & auto-fixes vulnerabilities",
+    description: "Dual-pass AI that scans & fixes vulnerabilities.",
+    year: "2024",
   },
   {
     title: "Terminal Chat",
     url: "https://github.com/goshanraj-g/terminal-chat",
-    description: "multi-threaded chat room built in C++ on Winsock 2 sockets",
+    description: "Multi-threaded chat on Winsock 2 sockets.",
+    year: "2024",
   },
 ];
 
@@ -215,85 +195,139 @@ function MagneticIcon({
   );
 }
 
+/* ── Streaming quote loader ── */
+function useStreamingQuote(quote: string, speed = 40) {
+  const words = quote.split(" ");
+  const [index, setIndex] = useState(0);
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (index >= words.length) {
+      const timeout = setTimeout(() => setDone(true), 600);
+      return () => clearTimeout(timeout);
+    }
+    const delay = speed + Math.random() * 30;
+    const timeout = setTimeout(() => setIndex((i) => i + 1), delay);
+    return () => clearTimeout(timeout);
+  }, [index, words.length, speed]);
+
+  return { text: words.slice(0, index).join(" "), done };
+}
+
 /* ── Page ── */
 export default function Page() {
-  const { display: nameText, done: nameDone } = useScramble("goshanraj govindaraj");
-  const glowRef = useCursorGlow();
-  const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [fadeOut, setFadeOut] = useState(false);
+  const { text: quoteText, done: quoteDone } = useStreamingQuote(
+    "Action is the foundational key to all success."
+  );
 
+  useEffect(() => {
+    if (quoteDone) {
+      setFadeOut(true);
+      const timeout = setTimeout(() => setLoading(false), 800);
+      return () => clearTimeout(timeout);
+    }
+  }, [quoteDone]);
+
+  if (loading) {
+    return (
+      <div className={`loading-screen ${fadeOut ? "fade-out" : ""}`}>
+        <p className="loading-quote">
+          {quoteText}
+          {!quoteDone && <span className="stream-cursor">|</span>}
+        </p>
+      </div>
+    );
+  }
+
+  return <Portfolio />;
+}
+
+/* ── Portfolio ── */
+function Portfolio() {
+  const { display: nameText, done: nameDone } = useScramble("Goshanraj Govindaraj", 10);
+  const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
   return (
-    <div className="min-h-screen relative">
-      {/* cursor glow */}
-      <div ref={glowRef} className="cursor-glow" />
+    <>
+      {/* Ambient glow */}
+      <div className="ambient-glow" />
+      {/* Film grain */}
+      <div className="grain-overlay" />
 
-      <main className="max-w-xl mx-auto px-6 pt-20 pb-16 relative z-10">
-        {/* ── Name ── */}
+      <main className="max-w-lg mx-auto px-6 py-20 relative z-10">
+        {/* ── Header ── */}
         <RevealSection className="mb-3">
           <h1 className={`name-heading ${!nameDone ? "cursor-blink" : ""}`}>
-            {mounted ? nameText : "goshanraj govindaraj"}
+            {mounted ? nameText : "Goshanraj Govindaraj"}
           </h1>
         </RevealSection>
 
-        <RevealSection className="mb-12" delay={100}>
-          <p className="text-sm text-white/25 leading-relaxed max-w-sm">
-            interested in building software and AI agents.
+        <RevealSection className="mb-4" delay={100}>
+          <p className="bio-text">
+            Interested in building <span className="highlight-word">impactful</span> software and agents
           </p>
         </RevealSection>
 
-        {/* ── Education ── */}
-        <RevealSection className="mb-10">
-          <h2 className="section-heading">education</h2>
-          <div className="entry-main">
-            <span className="entry-text">
-              CS{" "}
-              <Link href="https://www.mcmaster.ca/" target="_blank" className="org-link">
-                @McMaster University
-              </Link>
-              <Image
-                src="/images/education/mcmaster.png"
-                alt="McMaster"
-                width={18}
-                height={18}
-                className="inline-img"
-              />
-            </span>
-          </div>
-        </RevealSection>
-
         {/* ── Work ── */}
-        <RevealSection className="mb-10">
-          <h2 className="section-heading">work</h2>
-          <div className="space-y-2">
+        <RevealSection className="mb-12" delay={200}>
+          <h2 className="section-heading">Work</h2>
+          <div className="hover-group">
             {experiences.map((exp) => (
-              <div key={exp.org} className="entry-main">
-                <span className="entry-text">
-                  {exp.title}{" "}
-                  <Link href={exp.orgLink} target="_blank" className="org-link">
-                    @{exp.org}
-                  </Link>
+              <Link
+                key={exp.org}
+                href={exp.orgLink}
+                target="_blank"
+                className="item-row"
+              >
+                <div className="item-left">
                   <Image
                     src={exp.image}
                     alt={exp.org}
                     width={18}
                     height={18}
                     className="inline-img"
+                    style={{ margin: 0 }}
                   />
-                </span>
-              </div>
+                  <span className="item-org">{exp.org}</span>
+                  <span className="item-title">{exp.title}</span>
+                </div>
+                <span className="item-year">{exp.year}</span>
+              </Link>
+            ))}
+          </div>
+        </RevealSection>
+
+        {/* ── Projects ── */}
+        <RevealSection className="mb-12" delay={250}>
+          <h2 className="section-heading">Projects</h2>
+          <div className="hover-group">
+            {projects.map((p) => (
+              <Link
+                key={p.title}
+                href={p.url}
+                target="_blank"
+                className="project-row"
+              >
+                <span className="project-title">{p.title}</span>
+                <span className="project-desc">{p.description}</span>
+                <span className="project-year">{p.year}</span>
+              </Link>
             ))}
           </div>
         </RevealSection>
 
         {/* ── Open Source ── */}
-        <RevealSection className="mb-10">
-          <h2 className="section-heading">open source</h2>
-          <div className="space-y-3">
+        <RevealSection className="mb-14" delay={300}>
+          <h2 className="section-heading">Open Source</h2>
+          <div className="hover-group">
             {openSource.map((c) => (
-              <div key={c.name} className="entry-row">
-                <div className="entry-main">
-                  <span className="entry-text">{c.name}</span>
+              <div key={c.name} className="item-row">
+                <div className="item-left">
+                  <span className="item-org">{c.name}</span>
+                  <span className="item-desc">{c.description}</span>
                   <Link href={c.url} target="_blank" className="inline-icon">
                     <Github size={13} />
                   </Link>
@@ -303,54 +337,28 @@ export default function Page() {
                     </Link>
                   )}
                 </div>
-                <p className="entry-desc">
-                  {c.description}
-                  {c.note && <span className="text-white/12"> &middot; {c.note}</span>}
-                </p>
+                <span className="item-year">{c.year}</span>
               </div>
             ))}
           </div>
         </RevealSection>
 
-        {/* ── Projects ── */}
-        <RevealSection className="mb-14">
-          <h2 className="section-heading">projects</h2>
-          <div className="space-y-1">
-            {projects.map((p) => (
-              <Link
-                key={p.title}
-                href={p.url}
-                target="_blank"
-                className="project-row group"
-              >
-                <div className="project-row-inner">
-                  <span className="project-title">{p.title}</span>
-                  <span className="project-dash" />
-                  <span className="project-desc">{p.description}</span>
-                  <span className="project-arrow">&#8599;</span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </RevealSection>
-
         {/* ── Footer ── */}
-        <RevealSection>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-5">
-              <MagneticIcon href="https://github.com/goshanraj-g" label="GitHub">
-                <Github size={17} />
-              </MagneticIcon>
-              <MagneticIcon href="https://linkedin.com/in/goshanrajgovindaraj" label="LinkedIn">
-                <Linkedin size={17} />
-              </MagneticIcon>
-              <MagneticIcon href="mailto:govindag@mcmaster.ca" label="Email">
-                <Mail size={17} />
-              </MagneticIcon>
-            </div>
+        <RevealSection delay={350}>
+          <div className="section-divider mb-6" />
+          <div className="flex items-center gap-5">
+            <MagneticIcon href="https://github.com/goshanraj-g" label="GitHub">
+              <Github size={16} />
+            </MagneticIcon>
+            <MagneticIcon href="https://linkedin.com/in/goshanrajgovindaraj" label="LinkedIn">
+              <Linkedin size={16} />
+            </MagneticIcon>
+            <MagneticIcon href="mailto:govindag@mcmaster.ca" label="Email">
+              <Mail size={16} />
+            </MagneticIcon>
           </div>
         </RevealSection>
       </main>
-    </div>
+    </>
   );
 }
