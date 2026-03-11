@@ -1,6 +1,9 @@
+"use client";
+
+import { useEffect, useState, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Github, Mail, Linkedin, MapPin, FolderGit2, User, Briefcase, GraduationCap } from "lucide-react";
+import { Github, Mail, Linkedin } from "lucide-react";
 
 const WEBRING_URL = "https://mac-csse-webring.vercel.app/";
 const MY_SITE = "goshanraj.ca";
@@ -15,124 +18,175 @@ const personalInfo = {
   location: "Toronto, ON",
 };
 
-const openSourceContributions = [
+
+
+/* ── Intersection observer for scroll reveal ── */
+function useReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  return { ref, visible };
+}
+
+function RevealSection({
+  children,
+  className = "",
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const { ref, visible } = useReveal();
+  return (
+    <div
+      ref={ref}
+      className={`reveal-section ${visible ? "revealed" : ""} ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ── Data ── */
+const experiences = [
   {
-    name: "LlamaIndex",
-    description: "integrated web tools for agentic web",
-    url: "https://github.com/run-llama/llama_index",
-    stats: "5M+ monthly downloads",
+    title: "Software Engineering Intern",
+    org: "IBM",
+    orgLink: "https://ibm.com/",
+    image: "/images/experiences/ibm.svg",
+    year: "01/26 - Present",
   },
   {
-    name: "Ruby",
-    description: "optimized the new ZJIT compiler, check out the article",
-    articleURL: "https://railsatscale.com/2025-12-24-launch-zjit/",
-    url: "https://github.com/ruby/ruby",
-    stats: "Ruby Programming Language",
+    title: "ML Research Assistant",
+    org: "McMaster University",
+    orgLink: "https://www.mcmaster.ca/",
+    image: "/images/education/mcmaster.svg",
+    year: "09/25 - 12/25",
+  },
+  {
+    title: "Community Manager",
+    org: "Google Developer Groups",
+    orgLink: "https://gdg.community.dev/",
+    image: "/images/experiences/gdsc.svg",
+    year: "09/24-09/25",
   },
 ];
 
-const experiences = [
+const openSource = [
   {
-    id: 1,
-    title: "Software Engineering Intern",
-    organization: "IBM",
-    period: "January - Present",
-    description: "building the tools that teach the world 🧠",
-    image: "/images/experiences/ibm.png",
-    alt: "IBM",
-    link: "https://ibm.com/",
+    name: "LlamaIndex",
+    url: "https://github.com/run-llama/llama_index",
+    description: "Integrated web tools for the agentic web",
+    note: "5M+ monthly downloads",
   },
   {
-    id: 2,
-    title: "Machine Learning Research Assistant",
-    organization: "McMaster University",
-    period: "Aug. 2025 - Present",
-    description: "building models to predict and prevent athlete injuries 📊",
-    image: "/images/education/mcmaster.png",
-    alt: "McMaster University",
-    link: "https://www.mcmaster.ca/",
-  },
-  {
-    id: 3,
-    title: "Community Manager",
-    organization: "Google Developer Groups",
-    period: "Sept. 2024 - Apr. 2025",
-    description: "leading and organizing tech workshops 🛠",
-    image: "/images/experiences/gdsc.png",
-    alt: "Google Developer Groups",
-    link: "https://gdg.community.dev/",
+    name: "Ruby",
+    url: "https://github.com/ruby/ruby",
+    description: "Optimized the new ZJIT compiler",
+    descParts: { before: "Optimized the new ", highlight: "ZJIT", after: " compiler" },
+    articleURL: "https://railsatscale.com/2025-12-24-launch-zjit/",
   },
 ];
 
 const projects = [
   {
-    id: 1,
     title: "CampusThread",
-    description:
-      "AI agents crowdsourcing university knowledge for 100+ students",
-    tags: ["TypeScript", "React", "Python", "FastAPI", "AWS", "Gemini AI"],
-    link: "https://campusthread.vercel.app/",
-    image: "/images/projects/campusthread.png",
+    url: "https://campusthread.vercel.app/",
+    description: "Agent-driven university Q&A for 250+ users",
   },
   {
-    id: 2,
-    title: "Look Alive",
-    description: "real-time eye tracking for screen fatigue prevention",
-    tags: ["OpenCV", "Mediapipe", "Python"],
-    link: "https://github.com/goshanraj-g/lookalive",
-    image: "/images/projects/lookalive.png",
+    title: "LookAlive",
+    url: "https://github.com/goshanraj-g/lookalive",
+    description: "Real-time eye tracking for screen fatigue",
   },
   {
-    id: 3,
-    title: "Medinator",
-    description: "AI health assistant for lifestyle risk assessment",
-    tags: ["Next.js", "Flask", "scikit-learn"],
-    link: "https://github.com/goshanraj-g/medinator",
-    image: "/images/projects/medinator-demo.png",
+    title: "Terminal Chat",
+    url: "https://github.com/goshanraj-g/terminal-chat",
+    description: "Multithreaded TCP chat server from scratch",
   },
   {
-    id: 4,
-    title: "Multi-threaded Terminal Chat App",
-    description:
-      "chat room written in C++17 on top of Winsock 2 using socket programming and multi-threading",
-    tags: ["C++", "Multi-threading", "Socket Programming"],
-    link: "https://github.com/goshanraj-g/terminal-chat",
-    image: "/images/projects/terminal-chat.png",
-  },
-  {
-    id: 5,
-    title: "Gradely",
-    description:
-      "smart, interactive dashboard that helps students track their grades, set academic goals, and plan for success",
-    tags: ["Next.js", "TailwindCSS", "React", "FastAPI", "PostgreSQL"],
-    link: "https://github.com/goshanraj-g/gradely",
-    image: "/images/projects/calculation-preview.png",
-  },
-  {
-    id: 6,
-    title: "FastFahr",
-    description:
-      "modern, purpose-built platform for buying and selling German cars with clean design, smooth experience",
-    tags: ["React.js", "CSS", "PHP", "MySQL"],
-    link: "https://github.com/goshanraj-g/fast-fahr",
-    image: "/images/projects/fast-fahr.png",
+    title: "CodeTurret",
+    url: "https://github.com/goshanraj-g/CodeTurret",
+    description: "Agents that scan & fix your code vulnerabilities",
+    badge: "🏆 Hackathon Winner",
   },
 ];
 
-export default function Page() {
+/* ── Magnetic icon ── */
+function MagneticIcon({
+  children,
+  href,
+  label,
+}: {
+  children: React.ReactNode;
+  href: string;
+  label: string;
+}) {
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      setOffset({ x: (e.clientX - cx) * 0.35, y: (e.clientY - cy) * 0.35 });
+    },
+    []
+  );
+
   return (
-    <div className="min-h-screen text-gray-900 font-sans">
-      <div className="max-w-2xl mx-auto px-6 py-12">
-        {/* Header */}
-        <header className="mb-10 flex flex-col-reverse md:flex-row items-start justify-between gap-6">
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 tracking-tight">
-              hey, i&apos;m gosh!
-            </h1>
-            <p className="text-lg text-gray-600 mb-2 font-medium">{personalInfo.title}</p>
-            <p className="text-gray-500 mb-4 text-sm leading-relaxed max-w-md">
-              {personalInfo.bio}
-            </p>
+    <Link
+      href={href}
+      target={href.startsWith("mailto") ? undefined : "_blank"}
+      aria-label={label}
+      className="social-icon"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => setOffset({ x: 0, y: 0 })}
+      style={{
+        transform: `translate(${offset.x}px, ${offset.y}px)`,
+        transition: offset.x === 0 ? "transform 0.5s cubic-bezier(.22,1,.36,1)" : "none",
+      }}
+    >
+      {children}
+    </Link>
+  );
+}
+
+/* ── Page ── */
+export default function Page() {
+  return <Portfolio />;
+}
+
+/* ── Portfolio ── */
+function Portfolio() {
+  return (
+    <>
+      {/* Ambient glow */}
+      <div className="ambient-glow" />
+      {/* Film grain */}
+      <div className="grain-overlay" />
+      {/* Grid lines */}
+      <div className="grid-lines" />
+      {/* Vignette */}
+      <div className="vignette" />
 
             <div className="flex items-center gap-4 text-gray-500 mb-5 text-sm">
               <div className="flex items-center gap-1.5">
@@ -294,21 +348,18 @@ export default function Page() {
               </div>
             ))}
           </div>
-        </section>
+        </RevealSection>
 
-        {/* Personal Projects */}
-        <section className="mb-10">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-2">
-            <FolderGit2 size={14} />
-            <span>Projects</span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {projects.map((project) => (
+        {/* ── Projects ── */}
+        <RevealSection className="mb-7" delay={250}>
+          <h2 className="section-heading">Projects</h2>
+          <div className="hover-group">
+            {projects.map((p) => (
               <Link
-                key={project.id}
-                href={project.link}
+                key={p.title}
+                href={p.url}
                 target="_blank"
-                className="group flex flex-col p-3 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all h-full"
+                className="project-row"
               >
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
@@ -334,28 +385,53 @@ export default function Page() {
                     </span>
                   )}
                 </div>
+                {p.badge && (
+                  <span className={`project-badge${p.title === "CodeTurret" ? " shine-on-load" : ""}`}>{p.badge}</span>
+                )}
               </Link>
             ))}
           </div>
-        </section>
+        </RevealSection>
 
-        {/* Education */}
-        <section className="mb-10">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-2">
-            <GraduationCap size={14} />
-            <span>Education</span>
-          </h2>
-          <div className="group flex gap-3">
-            <div className="flex-shrink-0 mt-0.5">
-              <div className="w-8 h-8 rounded bg-white border border-gray-200 p-1 flex items-center justify-center">
-                <Image
-                  src="/images/education/mcmaster.png"
-                  alt="McMaster University"
-                  width={24}
-                  height={24}
-                  className="object-contain"
-                />
+        {/* ── Open Source ── */}
+        <RevealSection className="mb-8" delay={300}>
+          <h2 className="section-heading">Open Source</h2>
+          <div className="hover-group">
+            {openSource.map((c) => (
+              <div key={c.name} className="item-row oss-row">
+                <div className="item-left">
+                  <span className="item-org">{c.name}</span>
+                  <span className="item-desc oss-desc">
+                    {c.descParts ? (
+                      <>
+                        {c.descParts.before}
+                        <Link href={c.articleURL} target="_blank" rel="noopener noreferrer" className="glow-link">{c.descParts.highlight}</Link>
+                        {c.descParts.after}
+                      </>
+                    ) : (
+                      c.description
+                    )}
+                  </span>
+                </div>
               </div>
+            ))}
+          </div>
+        </RevealSection>
+
+        {/* ── Footer ── */}
+        <RevealSection delay={350}>
+          <div className="section-divider mb-6" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-5">
+              <MagneticIcon href="https://github.com/goshanraj-g" label="GitHub">
+                <Github size={16} />
+              </MagneticIcon>
+              <MagneticIcon href="https://linkedin.com/in/goshanrajgovindaraj" label="LinkedIn">
+                <Linkedin size={16} />
+              </MagneticIcon>
+              <MagneticIcon href="mailto:govindag@mcmaster.ca" label="Email">
+                <Mail size={16} />
+              </MagneticIcon>
             </div>
             <div className="flex-1">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-0.5">
