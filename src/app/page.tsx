@@ -92,22 +92,22 @@ const experiences = [
     title: "Software Engineering Intern",
     org: "IBM",
     orgLink: "https://ibm.com/",
-    image: "/images/experiences/ibm.jpg",
-    year: "2025",
+    image: "/images/experiences/ibm.svg",
+    year: "01/26 - Present",
   },
   {
     title: "ML Research Assistant",
     org: "McMaster University",
     orgLink: "https://www.mcmaster.ca/",
-    image: "/images/education/mcmaster.png",
-    year: "2024",
+    image: "/images/education/mcmaster.svg",
+    year: "09/25 - 12/25",
   },
   {
     title: "Community Manager",
     org: "Google Developer Groups",
     orgLink: "https://gdg.community.dev/",
-    image: "/images/experiences/gdsc.png",
-    year: "2024",
+    image: "/images/experiences/gdsc.svg",
+    year: "09/24-09/25",
   },
 ];
 
@@ -115,16 +115,15 @@ const openSource = [
   {
     name: "LlamaIndex",
     url: "https://github.com/run-llama/llama_index",
-    description: "Integrated web tools for the agentic web.",
+    description: "Integrated web tools for the agentic web",
     note: "5M+ monthly downloads",
-    year: "2025",
   },
   {
     name: "Ruby",
     url: "https://github.com/ruby/ruby",
-    description: "Optimized the new ZJIT compiler.",
+    description: "Optimized the new ZJIT compiler",
+    descParts: { before: "Optimized the new ", highlight: "ZJIT", after: " compiler" },
     articleURL: "https://railsatscale.com/2025-12-24-launch-zjit/",
-    year: "2025",
   },
 ];
 
@@ -132,26 +131,23 @@ const projects = [
   {
     title: "CampusThread",
     url: "https://campusthread.vercel.app/",
-    description: "AI agents crowdsourcing university knowledge.",
-    year: "2025",
+    description: "Agent-driven university Q&A for 250+ users",
   },
   {
-    title: "Look Alive",
+    title: "LookAlive",
     url: "https://github.com/goshanraj-g/lookalive",
-    description: "Real-time eye tracking for screen fatigue.",
-    year: "2025",
-  },
-  {
-    title: "CodeTurret",
-    url: "https://github.com/goshanraj-g/CodeTurret",
-    description: "Dual-pass AI that scans & fixes vulnerabilities.",
-    year: "2024",
+    description: "Real-time eye tracking for screen fatigue",
   },
   {
     title: "Terminal Chat",
     url: "https://github.com/goshanraj-g/terminal-chat",
-    description: "Multi-threaded chat on Winsock 2 sockets.",
-    year: "2024",
+    description: "Multithreaded TCP chat server from scratch",
+  },
+  {
+    title: "CodeTurret",
+    url: "https://github.com/goshanraj-g/CodeTurret",
+    description: "Agents that scan & fix your code vulnerabilities",
+    badge: "🏆 Hackathon Winner",
   },
 ];
 
@@ -195,84 +191,53 @@ function MagneticIcon({
   );
 }
 
-/* ── Streaming quote loader ── */
-function useStreamingQuote(quote: string, speed = 40) {
-  const words = quote.split(" ");
-  const [index, setIndex] = useState(0);
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    if (index >= words.length) {
-      const timeout = setTimeout(() => setDone(true), 600);
-      return () => clearTimeout(timeout);
-    }
-    const delay = speed + Math.random() * 30;
-    const timeout = setTimeout(() => setIndex((i) => i + 1), delay);
-    return () => clearTimeout(timeout);
-  }, [index, words.length, speed]);
-
-  return { text: words.slice(0, index).join(" "), done };
-}
-
 /* ── Page ── */
 export default function Page() {
-  const [loading, setLoading] = useState(true);
-  const [fadeOut, setFadeOut] = useState(false);
-  const { text: quoteText, done: quoteDone } = useStreamingQuote(
-    "Action is the foundational key to all success."
-  );
-
-  useEffect(() => {
-    if (quoteDone) {
-      setFadeOut(true);
-      const timeout = setTimeout(() => setLoading(false), 800);
-      return () => clearTimeout(timeout);
-    }
-  }, [quoteDone]);
-
-  if (loading) {
-    return (
-      <div className={`loading-screen ${fadeOut ? "fade-out" : ""}`}>
-        <p className="loading-quote">
-          {quoteText}
-          {!quoteDone && <span className="stream-cursor">|</span>}
-        </p>
-      </div>
-    );
-  }
-
   return <Portfolio />;
 }
 
 /* ── Portfolio ── */
 function Portfolio() {
-  const { display: nameText, done: nameDone } = useScramble("Goshanraj Govindaraj", 10);
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
   return (
     <>
       {/* Ambient glow */}
       <div className="ambient-glow" />
       {/* Film grain */}
       <div className="grain-overlay" />
+      {/* Grid lines */}
+      <div className="grid-lines" />
+      {/* Vignette */}
+      <div className="vignette" />
 
       <main className="max-w-lg mx-auto px-6 py-20 relative z-10">
         {/* ── Header ── */}
         <RevealSection className="mb-3">
-          <h1 className={`name-heading ${!nameDone ? "cursor-blink" : ""}`}>
-            {mounted ? nameText : "Goshanraj Govindaraj"}
-          </h1>
+          <h1 className="name-heading">Goshanraj Govindaraj</h1>
+        </RevealSection>
+
+        <RevealSection className="mb-2">
+          <p className="bio-text">
+            <span className="glow-word">Computer Science</span>
+            <img
+              src="/images/education/mcmaster.svg"
+              alt="McMaster University"
+              width={24}
+              height={24}
+              className="inline-img"
+              style={{ marginLeft: 6, objectFit: "cover", borderRadius: 3, verticalAlign: "middle" }}
+            />
+            <span className="glow-word" style={{ marginLeft: 6, fontWeight: 700 }}>McMaster University</span>
+          </p>
         </RevealSection>
 
         <RevealSection className="mb-4" delay={100}>
           <p className="bio-text">
-            Interested in building <span className="highlight-word">impactful</span> software and agents
+            Interested in building <span className="highlight-word">impactful</span> <span className="glow-word">software</span> and <span className="glow-word">agents</span>
           </p>
         </RevealSection>
 
         {/* ── Work ── */}
-        <RevealSection className="mb-12" delay={200}>
+        <RevealSection className="mb-7" delay={200}>
           <h2 className="section-heading">Work</h2>
           <div className="hover-group">
             {experiences.map((exp) => (
@@ -286,22 +251,23 @@ function Portfolio() {
                   <Image
                     src={exp.image}
                     alt={exp.org}
-                    width={18}
-                    height={18}
+                    width={24}
+                    height={24}
                     className="inline-img"
-                    style={{ margin: 0 }}
+                    style={{ margin: 0, objectFit: "cover", borderRadius: 3 }}
                   />
                   <span className="item-org">{exp.org}</span>
                   <span className="item-title">{exp.title}</span>
+                  <span className="item-year mobile-year">{exp.year}</span>
                 </div>
-                <span className="item-year">{exp.year}</span>
+                <span className="item-year desktop-year">{exp.year}</span>
               </Link>
             ))}
           </div>
         </RevealSection>
 
         {/* ── Projects ── */}
-        <RevealSection className="mb-12" delay={250}>
+        <RevealSection className="mb-7" delay={250}>
           <h2 className="section-heading">Projects</h2>
           <div className="hover-group">
             {projects.map((p) => (
@@ -311,34 +277,40 @@ function Portfolio() {
                 target="_blank"
                 className="project-row"
               >
-                <span className="project-title">{p.title}</span>
-                <span className="project-desc">{p.description}</span>
-                <span className="project-year">{p.year}</span>
+                <div className="project-left">
+                  <span className="project-title">{p.title}</span>
+                  <span className="project-desc">{p.description}</span>
+                </div>
+                {p.badge && (
+                  <span className={`project-badge${p.title === "CodeTurret" ? " shine-on-load" : ""}`}>{p.badge}</span>
+                )}
               </Link>
             ))}
           </div>
         </RevealSection>
 
         {/* ── Open Source ── */}
-        <RevealSection className="mb-14" delay={300}>
+        <RevealSection className="mb-8" delay={300}>
           <h2 className="section-heading">Open Source</h2>
           <div className="hover-group">
             {openSource.map((c) => (
-              <div key={c.name} className="item-row">
+              <Link
+                key={c.name}
+                href={c.url}
+                target="_blank"
+                className="item-row oss-row"
+              >
                 <div className="item-left">
                   <span className="item-org">{c.name}</span>
-                  <span className="item-desc">{c.description}</span>
-                  <Link href={c.url} target="_blank" className="inline-icon">
-                    <Github size={13} />
-                  </Link>
-                  {c.articleURL && (
-                    <Link href={c.articleURL} target="_blank" className="inline-icon">
-                      <ExternalLink size={12} />
-                    </Link>
-                  )}
+                  <span className="item-desc oss-desc">
+                    {c.descParts ? (
+                      <>{c.descParts.before}<a href={c.articleURL} target="_blank" rel="noopener noreferrer" className="glow-link" onClick={(e) => e.stopPropagation()}>{c.descParts.highlight}</a>{c.descParts.after}</>
+                    ) : (
+                      c.description
+                    )}
+                  </span>
                 </div>
-                <span className="item-year">{c.year}</span>
-              </div>
+              </Link>
             ))}
           </div>
         </RevealSection>
@@ -346,16 +318,25 @@ function Portfolio() {
         {/* ── Footer ── */}
         <RevealSection delay={350}>
           <div className="section-divider mb-6" />
-          <div className="flex items-center gap-5">
-            <MagneticIcon href="https://github.com/goshanraj-g" label="GitHub">
-              <Github size={16} />
-            </MagneticIcon>
-            <MagneticIcon href="https://linkedin.com/in/goshanrajgovindaraj" label="LinkedIn">
-              <Linkedin size={16} />
-            </MagneticIcon>
-            <MagneticIcon href="mailto:govindag@mcmaster.ca" label="Email">
-              <Mail size={16} />
-            </MagneticIcon>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-5">
+              <MagneticIcon href="https://github.com/goshanraj-g" label="GitHub">
+                <Github size={16} />
+              </MagneticIcon>
+              <MagneticIcon href="https://linkedin.com/in/goshanrajgovindaraj" label="LinkedIn">
+                <Linkedin size={16} />
+              </MagneticIcon>
+              <MagneticIcon href="mailto:govindag@mcmaster.ca" label="Email">
+                <Mail size={16} />
+              </MagneticIcon>
+            </div>
+            <div className="webring">
+              <a href="https://mac-csse-webring.vercel.app/#goshanraj.ca?nav=prev" title="Previous site" className="webring-arrow">←</a>
+              <a href="https://mac-csse-webring.vercel.app/" target="_blank" rel="noopener noreferrer" title="McMaster CS & SE Webring" className="webring-logo">
+                <Image src="https://www.macwebring.xyz/assets/icons/icon.black.svg" alt="McMaster CS & SE Webring" width={20} height={20} unoptimized />
+              </a>
+              <a href="https://mac-csse-webring.vercel.app/#goshanraj.ca?nav=next" title="Next site" className="webring-arrow">→</a>
+            </div>
           </div>
         </RevealSection>
       </main>
