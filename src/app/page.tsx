@@ -3,41 +3,9 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Github, Mail, Linkedin, ExternalLink } from "lucide-react";
+import { Github, Mail, Linkedin } from "lucide-react";
 
 /* ── Text scramble hook ── */
-const scrambleChars = "!@#$%^&*01";
-
-function useScramble(text: string, speed = 35) {
-  const [display, setDisplay] = useState("");
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    let frame = 0;
-    const length = text.length;
-    const total = length * 3;
-
-    const interval = setInterval(() => {
-      const revealed = Math.floor((frame / total) * length);
-      let result = "";
-      for (let i = 0; i < length; i++) {
-        if (text[i] === " ") result += " ";
-        else if (i < revealed) result += text[i];
-        else result += scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
-      }
-      setDisplay(result);
-      frame++;
-      if (frame > total) {
-        setDisplay(text);
-        setDone(true);
-        clearInterval(interval);
-      }
-    }, speed);
-    return () => clearInterval(interval);
-  }, [text, speed]);
-
-  return { display, done };
-}
 
 
 
@@ -294,23 +262,22 @@ function Portfolio() {
           <h2 className="section-heading">Open Source</h2>
           <div className="hover-group">
             {openSource.map((c) => (
-              <Link
-                key={c.name}
-                href={c.url}
-                target="_blank"
-                className="item-row oss-row"
-              >
+              <div key={c.name} className="item-row oss-row">
                 <div className="item-left">
                   <span className="item-org">{c.name}</span>
                   <span className="item-desc oss-desc">
                     {c.descParts ? (
-                      <>{c.descParts.before}<a href={c.articleURL} target="_blank" rel="noopener noreferrer" className="glow-link" onClick={(e) => e.stopPropagation()}>{c.descParts.highlight}</a>{c.descParts.after}</>
+                      <>
+                        {c.descParts.before}
+                        <Link href={c.articleURL} target="_blank" rel="noopener noreferrer" className="glow-link">{c.descParts.highlight}</Link>
+                        {c.descParts.after}
+                      </>
                     ) : (
                       c.description
                     )}
                   </span>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </RevealSection>
