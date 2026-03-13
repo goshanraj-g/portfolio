@@ -303,7 +303,7 @@
 .section-heading {
   font-size: 15px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.4);
   margin-bottom: 16px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -637,7 +637,7 @@
 
 /* ── Social icons ── */
 .social-icon {
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.4);
   transition: color 0.2s ease, transform 0.2s ease;
   display: inline-flex;
 }
