@@ -11,7 +11,7 @@
   body {
     font-family: var(--font-inter), system-ui, sans-serif;
     background: #0a0a0a;
-    color: #e4e4e7;
+    color: #f0f0f3;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
   }
@@ -145,7 +145,7 @@
 
 /* ── Glow word ── */
 .glow-word {
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.6);
   transition: color 0.3s ease;
 }
 
@@ -154,7 +154,7 @@
 }
 
 @keyframes text-glow {
-  0% { text-shadow: 0 0 0 transparent; color: rgba(255, 255, 255, 0.45); }
+  0% { text-shadow: 0 0 0 transparent; color: rgba(255, 255, 255, 0.6); }
   30% { text-shadow: 0 0 15px rgba(120, 119, 198, 0.6), 0 0 30px rgba(120, 119, 198, 0.3), 0 0 50px rgba(120, 119, 198, 0.1); color: rgba(255, 255, 255, 0.95); }
   60% { text-shadow: 0 0 12px rgba(120, 119, 198, 0.4), 0 0 25px rgba(120, 119, 198, 0.2), 0 0 40px rgba(120, 119, 198, 0.08); color: rgba(255, 255, 255, 0.85); }
   100% { text-shadow: 0 0 10px rgba(120, 119, 198, 0.3), 0 0 20px rgba(120, 119, 198, 0.15), 0 0 35px rgba(120, 119, 198, 0.05); color: rgba(255, 255, 255, 0.8); }
@@ -269,7 +269,7 @@
 /* ── Bio ── */
 .bio-text {
   font-size: 18.75px;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.6);
   line-height: 1.65;
   max-width: 420px;
 }
@@ -363,7 +363,7 @@
 
 .item-title {
   font-size: 16.25px;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.55);
   white-space: nowrap;
   transition: color 0.2s ease;
 }
@@ -424,7 +424,7 @@
 
 .item-desc {
   font-size: 15px;
-  color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.35);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -453,7 +453,7 @@
 
 .item-year {
   font-size: 16.25px;
-  color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.3);
   white-space: nowrap;
   flex-shrink: 0;
   font-variant-numeric: tabular-nums;
@@ -596,7 +596,7 @@
 
 .project-desc {
   font-size: 15px;
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.35);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -610,7 +610,7 @@
 
 .project-year {
   font-size: 16.25px;
-  color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.3);
   white-space: nowrap;
   flex-shrink: 0;
   font-variant-numeric: tabular-nums;
