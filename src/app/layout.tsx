@@ -13,27 +13,31 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata = {
-  title: "Portfolio - Goshanraj Govindaraj",
-  description: "Goshanraj Govindaraj's Developer Portfolio",
+  title: "Gosh's Portfolio",
+  description: "Goshanraj Govindaraj's Portfolio",
   icons: {
     icon: "images/favicon.png",
   },
 };
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <>
-      <html lang="en">
-        <body
-          className={`${inter.variable} ${playfairDisplay.variable} antialiased`}
-        >
-          {children}
-          <Analytics />
-        </body>
-      </html>
-    </>
+    <html lang="en">
+      <body
+        className={`${inter.variable} ${playfairDisplay.variable} antialiased`}
+      >
+        {children}
+        <Analytics />
+      </body>
+    </html>
   );
 }

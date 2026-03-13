@@ -8,18 +8,6 @@ import { Github, Mail, Linkedin } from "lucide-react";
 const WEBRING_URL = "https://mac-csse-webring.vercel.app/";
 const MY_SITE = "goshanraj.ca";
 
-const personalInfo = {
-  name: "hey, I&apos;m Gosh!",
-  title: "computer science student at McMaster University",
-  bio: "interested in software development and building AI agents",
-  email: "govindag@mcmaster.ca",
-  github: "github.com/goshanraj-g",
-  linkedin: "linkedin.com/in/goshanrajgovindaraj",
-  location: "Toronto, ON",
-};
-
-
-
 /* ── Intersection observer for scroll reveal ── */
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -126,7 +114,7 @@ const projects = [
     title: "CodeTurret",
     url: "https://github.com/goshanraj-g/CodeTurret",
     description: "Agents that scan & fix your code vulnerabilities",
-    badge: "🏆 Hackathon Winner",
+    badge: "\ud83c\udfc6 Hackathon Winner",
   },
 ];
 
@@ -188,164 +176,60 @@ function Portfolio() {
       {/* Vignette */}
       <div className="vignette" />
 
-            <div className="flex items-center gap-4 text-gray-500 mb-5 text-sm">
-              <div className="flex items-center gap-1.5">
-                <MapPin size={14} className="text-gray-400" />
-                <span>{personalInfo.location}</span>
-              </div>
-            </div>
+      <main className="max-w-lg mx-auto px-6 py-20 relative z-10">
+        {/* ── Header ── */}
+        <RevealSection className="mb-3">
+          <h1 className="name-heading">Goshanraj Govindaraj</h1>
+        </RevealSection>
 
-            <div className="flex gap-3">
-              <Link
-                href={`mailto:${personalInfo.email}`}
-                className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-md transition-colors text-sm font-medium"
-              >
-                <Mail size={14} />
-                <span>Email</span>
-              </Link>
-              <Link
-                href={`https://${personalInfo.github}`}
-                target="_blank"
-                className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-md transition-colors text-sm font-medium"
-              >
-                <Github size={14} />
-                <span>GitHub</span>
-              </Link>
-              <Link
-                href={`https://${personalInfo.linkedin}`}
-                target="_blank"
-                className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-md transition-colors text-sm font-medium"
-              >
-                <Linkedin size={14} />
-                <span>LinkedIn</span>
-              </Link>
-            </div>
-          </div>
-
-          <div className="flex-shrink-0">
-            <div className="relative w-40 h-48 overflow-hidden rounded-xl shadow-sm border border-gray-100">
-              <Image
-                src="/images/profile-picture/profilepicture.JPG"
-                alt="Profile picture"
-                fill
-                className="object-cover"
+        <RevealSection className="mb-2">
+          <p className="bio-text">
+            <span className="glow-word" style={{ fontWeight: 600 }}>Computer Science</span>
+            <span className="mcmaster-badge">
+              <img
+                src="/images/education/mcmaster.svg"
+                alt="McMaster University"
+                width={18}
+                height={18}
+                className="mcmaster-badge-icon"
               />
-            </div>
-          </div>
-        </header>
+              McMaster University
+            </span>
+          </p>
+        </RevealSection>
 
-        {/* About Me */}
-        <section className="mb-10">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-2">
-            <User size={14} />
-            <span>About</span>
-          </h2>
-          <ul className="space-y-2 text-sm text-gray-600 leading-relaxed">
-            <li className="flex items-start gap-2">
-              <span className="text-gray-400 mt-0.5">→</span>
-              <span>
-                software engineering intern @ IBM to help build
-                tools that teach 10M+ people
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-gray-400 mt-0.5">→</span>
-              <span>
-                currently doing research in sports analytics & data @ McMaster
-                University
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-gray-400 mt-0.5">→</span>
-              <span>
-                i&apos;m into fitness, music, sports and exploring new places
-              </span>
-            </li>
-          </ul>
-        </section>
+        <RevealSection className="mb-4" delay={100}>
+          <p className="bio-text">
+            Interested in building <span className="highlight-word">impactful</span> <span className="glow-word">software</span> and <span className="glow-word">agents</span>
+          </p>
+        </RevealSection>
 
-        {/* Experience */}
-        <section className="mb-10">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-2">
-            <Briefcase size={14} />
-            <span>Work Experience</span>
-          </h2>
-          <div className="space-y-4">
-            {experiences.map((experience) => (
-              <div key={experience.id} className="group flex gap-3">
-                <div className="flex-shrink-0 mt-0.5">
-                  <div className="w-8 h-8 rounded bg-white border border-gray-200 p-1 flex items-center justify-center">
-                    <Image
-                      src={experience.image}
-                      alt={experience.alt}
-                      width={24}
-                      height={24}
-                      className="object-contain"
-                    />
-                  </div>
+        {/* ── Work ── */}
+        <RevealSection className="mb-7" delay={200}>
+          <h2 className="section-heading">Work</h2>
+          <div className="hover-group">
+            {experiences.map((exp) => (
+              <Link
+                key={exp.org}
+                href={exp.orgLink}
+                target="_blank"
+                className="item-row"
+              >
+                <div className="item-left">
+                  <Image
+                    src={exp.image}
+                    alt={exp.org}
+                    width={24}
+                    height={24}
+                    className="inline-img"
+                    style={{ margin: 0, objectFit: "cover", borderRadius: 3 }}
+                  />
+                  <span className="item-org">{exp.org}</span>
+                  <span className="item-title">{exp.title}</span>
+                  <span className="item-year mobile-year">{exp.year}</span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-0.5">
-                    <h3 className="font-medium text-gray-900 text-sm">
-                      <Link
-                        href={experience.link}
-                        target="_blank"
-                        className="hover:underline hover:text-blue-600 transition-colors"
-                      >
-                        {experience.title}
-                      </Link>
-                    </h3>
-                    <span className="text-xs text-gray-400 whitespace-nowrap tabular-nums">
-                      {experience.period}
-                    </span>
-                  </div>
-                  <div className="text-xs font-medium text-gray-500 mb-1.5">
-                    {experience.organization}
-                  </div>
-                  <p className="text-xs text-gray-600 leading-relaxed">
-                    {experience.description}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-        {/* Open Source Contributions */}
-        <section className="mb-10">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-2">
-            <Github size={14} />
-            <span>Open Source</span>
-          </h2>
-          <div className="space-y-4">
-            {openSourceContributions.map((contribution, index) => (
-              <div key={index} className="group flex gap-3">
-                <div className="flex-shrink-0 mt-0.5">
-                  <Github className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors mb-0.5">
-                    <a href={contribution.url} target="_blank" rel="noopener noreferrer">
-                      {contribution.name}
-                    </a>
-                  </h3>
-                  <p className="text-xs text-gray-600 leading-relaxed">
-                    {contribution.description}
-                    {contribution.articleURL && (
-                      <>
-                        {" "}
-                        <a
-                          href={contribution.articleURL}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-700 underline"
-                        >
-                          here
-                        </a>
-                      </>
-                    )}
-                  </p>
-                </div>
-              </div>
+                <span className="item-year desktop-year">{exp.year}</span>
+              </Link>
             ))}
           </div>
         </RevealSection>
@@ -361,32 +245,12 @@ function Portfolio() {
                 target="_blank"
                 className="project-row"
               >
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
-                    {project.title}
-                  </h3>
-                  <FolderGit2 className="w-3.5 h-3.5 text-gray-400 group-hover:text-blue-500 transition-colors flex-shrink-0" />
-                </div>
-                <p className="text-xs text-gray-600 mb-3 leading-relaxed flex-grow">
-                  {project.description}
-                </p>
-                <div className="flex flex-wrap gap-1 mt-auto">
-                  {project.tags.slice(0, 4).map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 text-[10px] font-medium border border-gray-200"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                  {project.tags.length > 4 && (
-                    <span className="px-1.5 py-0.5 rounded bg-gray-50 text-gray-400 text-[10px] font-medium border border-gray-100">
-                      +{project.tags.length - 4}
-                    </span>
-                  )}
+                <div className="project-left">
+                  <span className="project-title">{p.title}</span>
+                  <span className="project-desc">{p.description}</span>
                 </div>
                 {p.badge && (
-                  <span className={`project-badge${p.title === "CodeTurret" ? " shine-on-load" : ""}`}>{p.badge}</span>
+                  <span className="project-badge">{p.badge}</span>
                 )}
               </Link>
             ))}
@@ -394,7 +258,7 @@ function Portfolio() {
         </RevealSection>
 
         {/* ── Open Source ── */}
-        <RevealSection className="mb-8" delay={300}>
+        <RevealSection className="mb-5" delay={300}>
           <h2 className="section-heading">Open Source</h2>
           <div className="hover-group">
             {openSource.map((c) => (
@@ -433,51 +297,16 @@ function Portfolio() {
                 <Mail size={16} />
               </MagneticIcon>
             </div>
-            <div className="flex-1">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-0.5">
-                <h3 className="font-medium text-gray-900 text-sm">
-                  <Link
-                    href="https://www.mcmaster.ca/"
-                    target="_blank"
-                    className="hover:underline hover:text-blue-600 transition-colors"
-                  >
-                    Computer Science
-                  </Link>
-                </h3>
-                <span className="text-xs text-gray-400 whitespace-nowrap tabular-nums">
-                  Sept. 2024 - Apr. 2028
-                </span>
-              </div>
-              <div className="text-xs font-medium text-gray-500 mb-1">
-                McMaster University
-              </div>
-              <p className="text-xs text-gray-600">
-                Dean&apos;s Honour List • GPA: 3.92 / 4.0
-              </p>
+            <div className="webring">
+              <a href={`${WEBRING_URL}#${MY_SITE}?nav=prev`} title="Previous site" className="webring-arrow">&larr;</a>
+              <a href={WEBRING_URL} target="_blank" rel="noopener noreferrer" title="McMaster CS & SE Webring" className="webring-logo">
+                <Image src="https://www.macwebring.xyz/assets/icons/icon.black.svg" alt="McMaster CS & SE Webring" width={20} height={20} unoptimized />
+              </a>
+              <a href={`${WEBRING_URL}#${MY_SITE}?nav=next`} title="Next site" className="webring-arrow">&rarr;</a>
             </div>
           </div>
-        </section>
-      </div>
-
-      {/* McMaster CS & SE Webring */}
-      <div className="flex justify-between items-center mt-6 mb-4 max-w-2xl mx-auto px-4">
-        <a
-          href={`${WEBRING_URL}#${MY_SITE}?nav=prev`}
-          className="text-gray-400 hover:text-gray-600 transition-colors text-sm"
-          style={{ textDecoration: "none" }}
-          title="Previous site"
-        >
-          ← prev
-        </a>
-        <a
-          href={`${WEBRING_URL}#${MY_SITE}?nav=next`}
-          className="text-gray-400 hover:text-gray-600 transition-colors text-sm"
-          style={{ textDecoration: "none" }}
-          title="Next site"
-        >
-          next →
-        </a>
-      </div>
-    </div>
+        </RevealSection>
+      </main>
+    </>
   );
 }

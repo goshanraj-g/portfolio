@@ -11,7 +11,7 @@
   body {
     font-family: var(--font-inter), system-ui, sans-serif;
     background: #0a0a0a;
-    color: #e4e4e7;
+    color: #f0f0f3;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
   }
@@ -46,8 +46,8 @@
   color: rgba(255, 255, 255, 0.7);
   letter-spacing: -0.02em;
   line-height: 1.5;
-  white-space: nowrap;
   text-align: center;
+  max-width: 90vw;
 }
 
 .stream-cursor {
@@ -145,7 +145,7 @@
 
 /* ── Glow word ── */
 .glow-word {
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.6);
   transition: color 0.3s ease;
 }
 
@@ -154,10 +154,10 @@
 }
 
 @keyframes text-glow {
-  0% { text-shadow: 0 0 0 transparent; color: rgba(255, 255, 255, 0.45); }
-  30% { text-shadow: 0 0 10px rgba(120, 119, 198, 0.4), 0 0 20px rgba(120, 119, 198, 0.15); color: rgba(255, 255, 255, 0.85); }
-  60% { text-shadow: 0 0 7px rgba(120, 119, 198, 0.2), 0 0 14px rgba(120, 119, 198, 0.08); color: rgba(255, 255, 255, 0.7); }
-  100% { text-shadow: 0 0 5px rgba(120, 119, 198, 0.15), 0 0 10px rgba(120, 119, 198, 0.05); color: rgba(255, 255, 255, 0.65); }
+  0% { text-shadow: 0 0 0 transparent; color: rgba(255, 255, 255, 0.6); }
+  30% { text-shadow: 0 0 15px rgba(120, 119, 198, 0.6), 0 0 30px rgba(120, 119, 198, 0.3), 0 0 50px rgba(120, 119, 198, 0.1); color: rgba(255, 255, 255, 0.95); }
+  60% { text-shadow: 0 0 12px rgba(120, 119, 198, 0.4), 0 0 25px rgba(120, 119, 198, 0.2), 0 0 40px rgba(120, 119, 198, 0.08); color: rgba(255, 255, 255, 0.85); }
+  100% { text-shadow: 0 0 10px rgba(120, 119, 198, 0.3), 0 0 20px rgba(120, 119, 198, 0.15), 0 0 35px rgba(120, 119, 198, 0.05); color: rgba(255, 255, 255, 0.8); }
 }
 
 .highlight-word::after {
@@ -189,9 +189,9 @@
     transparent 100%
   );
   background-size: 200% 100%;
+  transform: scaleX(1);
   opacity: 0;
-  animation: underline-draw 0.8s cubic-bezier(.16,1,.3,1) 0.8s forwards,
-             shine-sweep 0.6s ease-out 1.4s forwards;
+  animation: shine-sweep 0.6s ease-out 1.4s forwards;
 }
 
 @keyframes underline-draw {
@@ -199,14 +199,77 @@
 }
 
 @keyframes shine-sweep {
-  0% { background-position: 200% 0; opacity: 1; }
+  0% { background-position: 200% 0; opacity: 0.9; }
   100% { background-position: -200% 0; opacity: 0; }
+}
+
+/* Single-use shine for hover (no underline draw, just the sweep) */
+@keyframes hover-shine-sweep {
+  0% { background-position: 200% 0; opacity: 0.9; }
+  100% { background-position: -200% 0; opacity: 0; }
+}
+
+/* ── McMaster badge ── */
+.mcmaster-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(220, 220, 230, 0.85);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 5px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  vertical-align: middle;
+  transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
+}
+
+.mcmaster-badge:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(230, 230, 240, 0.95);
+}
+
+.mcmaster-badge-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  object-fit: cover;
+  border-radius: 2px;
+  opacity: 0.9;
+  flex-shrink: 0;
+}
+
+.mcmaster-badge::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    transparent 100%
+  );
+  transition: none;
+}
+
+.mcmaster-badge:hover::before {
+  animation: badge-shine 0.6s ease-out forwards;
 }
 
 /* ── Bio ── */
 .bio-text {
   font-size: 18.75px;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.6);
   line-height: 1.65;
   max-width: 420px;
 }
@@ -240,7 +303,7 @@
 .section-heading {
   font-size: 15px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.4);
   margin-bottom: 16px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -300,7 +363,7 @@
 
 .item-title {
   font-size: 16.25px;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.55);
   white-space: nowrap;
   transition: color 0.2s ease;
 }
@@ -343,9 +406,8 @@
   border-radius: 1px;
   background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.9) 50%, transparent 100%);
   background-size: 200% 100%;
+  transform: scaleX(1);
   opacity: 0;
-  transform: scaleX(0);
-  transform-origin: left;
 }
 
 .item-row:hover .item-org::after {
@@ -353,8 +415,7 @@
 }
 
 .item-row:hover .item-org::before {
-  animation: underline-draw 0.4s cubic-bezier(.22,1,.36,1) forwards,
-             shine-sweep 0.5s ease-out 0.35s forwards;
+  animation: hover-shine-sweep 0.5s ease-out 0.35s forwards;
 }
 
 .item-row:hover .item-org {
@@ -363,7 +424,7 @@
 
 .item-desc {
   font-size: 15px;
-  color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.35);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -392,7 +453,7 @@
 
 .item-year {
   font-size: 16.25px;
-  color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.3);
   white-space: nowrap;
   flex-shrink: 0;
   font-variant-numeric: tabular-nums;
@@ -473,9 +534,8 @@
   border-radius: 1px;
   background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.9) 50%, transparent 100%);
   background-size: 200% 100%;
+  transform: scaleX(1);
   opacity: 0;
-  transform: scaleX(0);
-  transform-origin: left;
 }
 
 .project-row:hover .project-title::after {
@@ -483,8 +543,7 @@
 }
 
 .project-row:hover .project-title::before {
-  animation: underline-draw 0.4s cubic-bezier(.22,1,.36,1) forwards,
-             shine-sweep 0.5s ease-out 0.35s forwards;
+  animation: hover-shine-sweep 0.5s ease-out 0.35s forwards;
 }
 
 .project-row:hover .project-title {
@@ -537,7 +596,7 @@
 
 .project-desc {
   font-size: 15px;
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.35);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -551,7 +610,7 @@
 
 .project-year {
   font-size: 16.25px;
-  color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.3);
   white-space: nowrap;
   flex-shrink: 0;
   font-variant-numeric: tabular-nums;
@@ -578,7 +637,7 @@
 
 /* ── Social icons ── */
 .social-icon {
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.4);
   transition: color 0.2s ease, transform 0.2s ease;
   display: inline-flex;
 }
@@ -634,10 +693,6 @@ body { scrollbar-width: none; }
   opacity: 1;
 }
 
-/* Shine animation for hackathon winner badge on page load */
-.project-badge.shine-on-load::before {
-  animation: badge-shine 0.8s ease-out 0.3s forwards;
-}
 
 /* Responsive year placement for work section */
 @media (max-width: 600px) {
@@ -664,25 +719,159 @@ body { scrollbar-width: none; }
   }
 }
 
-/* Scale all main UI elements up by 1.11x */
+/* Scale all main UI elements up by 1.08x */
 :root {
-  font-size: 111%;
+  font-size: 108%;
 }
 
-/* Scale up paddings, gaps, and icon sizes for 1.11x */
-.name-heading { font-size: 1.94rem; }
-.bio-text { font-size: 16.65px; }
-.status-badge { font-size: 12.3px; }
-.section-heading { font-size: 12.3px; }
-.item-row { gap: 19.5px; padding: 13.2px 15.5px; margin: 0 -15.5px; }
-.item-title, .item-org { font-size: 14.5px; }
-.item-desc, .project-desc { font-size: 12.8px; }
-.item-year, .project-year { font-size: 14.5px; }
-.inline-img { width: 30.5px !important; height: 30.5px !important; }
-.project-row { gap: 15.5px; padding: 13.2px 15.5px; margin: 0 -15.5px; }
-.project-title { font-size: 14.5px; }
-.project-badge { font-size: 10.6px; }
-.webring-arrow { font-size: 15.5px; }
-.social-icon svg { width: 17.3px !important; height: 17.3px !important; }
+/* Scale up paddings, gaps, and icon sizes for 1.08x */
+.name-heading { font-size: 1.88rem; }
+.bio-text { font-size: 16.2px; }
+.status-badge { font-size: 11.9px; }
+.section-heading { font-size: 11.9px; }
+.item-row { gap: 18.7px; padding: 12.7px 14.9px; margin: 0 -14.9px; }
+.item-title, .item-org { font-size: 14px; }
+.item-desc, .project-desc { font-size: 12.5px; }
+.item-year, .project-year { font-size: 14px; }
+.inline-img { width: 29.5px !important; height: 29.5px !important; }
+.project-row { gap: 14.9px; padding: 12.7px 14.9px; margin: 0 -14.9px; }
+.project-title { font-size: 14px; }
+.project-badge { font-size: 10.3px; }
+.webring-arrow { font-size: 14.9px; }
+.social-icon svg { width: 16.7px !important; height: 16.7px !important; }
+
+/* Hide scrollbars but allow scrolling */
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+::-webkit-scrollbar { width: 0; }
+
+/* Make Computer Science + McMaster smaller in header */
+.bio-text {
+  font-size: 13px;
+}
+
+/* Center content vertically */
+main.max-w-lg {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
 
 
+/* ── Mobile optimizations ── */
+@media (max-width: 600px) {
+  :root {
+    font-size: 100%;
+  }
+
+  main.max-w-lg {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+    padding-top: 1.5rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+
+  .name-heading {
+    font-size: 1.6rem;
+  }
+
+  .bio-text {
+    font-size: 14px;
+    max-width: 100%;
+  }
+
+  /* Allow text to wrap on mobile */
+  .item-title,
+  .item-desc,
+  .project-desc,
+  .oss-desc {
+    white-space: normal;
+  }
+
+  /* Stack work rows vertically */
+  .item-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 12px 14px;
+    margin: 0 -14px;
+  }
+
+  .item-left {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .item-title, .item-org {
+    font-size: 14px;
+  }
+
+  .item-desc {
+    font-size: 13px;
+  }
+
+  /* Stack project rows */
+  .project-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 12px 14px;
+    margin: 0 -14px;
+  }
+
+  .project-left {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .project-title {
+    font-size: 14px;
+  }
+
+  .project-desc {
+    font-size: 13px;
+  }
+
+  .project-badge {
+    font-size: 11px;
+    align-self: flex-start;
+  }
+
+  /* Shrink ambient glow for mobile */
+  .ambient-glow {
+    width: 100vw;
+    height: 400px;
+  }
+
+  .inline-img {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  .bio-text .inline-img {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .section-heading {
+    font-size: 11px;
+  }
+}
+
+/* Small phones */
+@media (max-width: 380px) {
+  .name-heading {
+    font-size: 1.4rem;
+  }
+
+  main.max-w-lg {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
