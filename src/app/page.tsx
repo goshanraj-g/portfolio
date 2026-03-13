@@ -5,10 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Github, Mail, Linkedin } from "lucide-react";
 
-/* ── Text scramble hook ── */
-
-
-
 /* ── Intersection observer for scroll reveal ── */
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -185,16 +181,17 @@ function Portfolio() {
 
         <RevealSection className="mb-2">
           <p className="bio-text">
-            <span className="glow-word">Computer Science</span>
-            <img
-              src="/images/education/mcmaster.svg"
-              alt="McMaster University"
-              width={24}
-              height={24}
-              className="inline-img"
-              style={{ marginLeft: 6, objectFit: "cover", borderRadius: 3, verticalAlign: "middle" }}
-            />
-            <span className="glow-word" style={{ marginLeft: 6, fontWeight: 700 }}>McMaster University</span>
+            <span className="glow-word" style={{ fontWeight: 600 }}>Computer Science</span>
+            <span className="mcmaster-badge">
+              <img
+                src="/images/education/mcmaster.svg"
+                alt="McMaster University"
+                width={18}
+                height={18}
+                className="mcmaster-badge-icon"
+              />
+              McMaster University
+            </span>
           </p>
         </RevealSection>
 
@@ -250,7 +247,7 @@ function Portfolio() {
                   <span className="project-desc">{p.description}</span>
                 </div>
                 {p.badge && (
-                  <span className={`project-badge${p.title === "CodeTurret" ? " shine-on-load" : ""}`}>{p.badge}</span>
+                  <span className="project-badge">{p.badge}</span>
                 )}
               </Link>
             ))}
@@ -258,7 +255,7 @@ function Portfolio() {
         </RevealSection>
 
         {/* ── Open Source ── */}
-        <RevealSection className="mb-8" delay={300}>
+        <RevealSection className="mb-5" delay={300}>
           <h2 className="section-heading">Open Source</h2>
           <div className="hover-group">
             {openSource.map((c) => (
