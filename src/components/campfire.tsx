@@ -13,6 +13,9 @@ const FLAME_FPS = 11;
 /** seconds for the fire to sink into the logs, and to catch again */
 const DIE_S = 1.6;
 const LIGHT_S = 0.9;
+/** a fire going out billows: how fast that builds, and how long it hangs */
+const BILLOW_S = 0.5;
+const CLEAR_S = 3.4;
 
 const PUFFS = 32;
 /** how far a puff climbs before it's spent, in px */
@@ -167,6 +170,8 @@ export default function Campfire({ sky }: { sky: Sky }) {
     let lastNow = 0;
     /** 1 is burning, 0 is out */
     let burn = skyRef.current === "night" ? 1 : 0;
+    /** extra smoke thrown off by a fire that is going out */
+    let billow = 0;
 
     const tick = (now: number) => {
       const t = (now - start) / 1000;
@@ -176,6 +181,12 @@ export default function Campfire({ sky }: { sky: Sky }) {
       const target = skyRef.current === "night" ? 1 : 0;
       if (burn < target) burn = Math.min(target, burn + dt / LIGHT_S);
       else if (burn > target) burn = Math.max(target, burn - dt / DIE_S);
+
+      // Smoke builds while the flames sink, hangs after they're gone, and is
+      // cleared quickly if the fire catches again.
+      if (target === 0 && burn > 0) billow = Math.min(1, billow + dt / BILLOW_S);
+      else if (target === 0) billow = Math.max(0, billow - dt / CLEAR_S);
+      else billow = Math.max(0, billow - dt / 0.7);
 
       if (now - lastFlame > 1000 / FLAME_FPS) {
         lastFlame = now;
@@ -201,7 +212,7 @@ export default function Campfire({ sky }: { sky: Sky }) {
         if (age >= 1) {
           // a fire that's out stops feeding the column; what's up there
           // finishes its climb and the smoke thins away on its own
-          if (burn <= 0.02) {
+          if (burn <= 0.02 && billow <= 0.04) {
             el.style.opacity = "0";
             continue;
           }
@@ -212,21 +223,22 @@ export default function Campfire({ sky }: { sky: Sky }) {
 
         const x = p.x0 + p.drift * age * age + p.wobble * Math.sin(p.phase + age * 5.5);
         const y = -RISE * age;
-          const alpha = Math.sin(Math.PI * Math.pow(age, 0.7)) * 0.62;
+        const alpha = Math.min(1, Math.sin(Math.PI * Math.pow(age, 0.7)) * 0.62 * (1 + 1.5 * billow));
 
-        // young smoke catches firelight, then cools
-        const warm = Math.min(1, age * 2.2);
+        // young smoke catches firelight, then cools — and a dead fire has no
+        // light left to lend it, so it goes grey straight away
+        const warm = Math.min(1, age * 2.2 + (1 - burn));
         const r = Math.round(238 + (194 - 238) * warm);
         const b = Math.round(174 + (202 - 174) * warm);
 
         el.textContent = SMOKE_CHARS[Math.min(SMOKE_CHARS.length - 1, Math.floor(age * 5))];
-        el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 + age * 1.9})`;
+        el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 + age * (1.9 + 1.3 * billow)})`;
         el.style.color = `rgb(${r}, 206, ${b})`;
         el.style.opacity = String(alpha);
       }
 
       // nothing burning and nothing left in the air: stop until it's relit
-      if (burn === 0 && burn === target && !smoking) {
+      if (burn === 0 && burn === target && billow === 0 && !smoking) {
         raf = 0;
         return;
       }

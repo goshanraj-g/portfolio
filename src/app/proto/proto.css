@@ -26,6 +26,7 @@
   --badge-line: rgba(143, 191, 159, 0.16);
   --book-hover: rgba(143, 191, 159, 0.04);
   --firefly: #f0d878;
+  --star: rgba(212, 228, 246, 0.92);
   --scrim-a: rgba(7, 10, 8, 0.74);
   --scrim-b: rgba(7, 10, 8, 0.36);
   --scrim-top: rgba(7, 10, 8, 0.35);
@@ -79,10 +80,10 @@
   --badge-bg: rgba(34, 82, 58, 0.12);
   --badge-line: rgba(34, 82, 58, 0.3);
   --book-hover: rgba(34, 82, 58, 0.06);
-  --scrim-a: rgba(231, 237, 230, 0.52);
-  --scrim-b: rgba(231, 237, 230, 0.2);
-  --scrim-top: rgba(231, 237, 230, 0.22);
-  --scrim-bot: rgba(231, 237, 230, 0.55);
+  --scrim-a: rgba(213, 228, 245, 0.28);
+  --scrim-b: rgba(213, 228, 245, 0.1);
+  --scrim-top: rgba(213, 228, 245, 0.12);
+  --scrim-bot: rgba(213, 228, 245, 0.3);
   --halo-a: rgba(255, 206, 92, 0.34);
   --halo-b: rgba(255, 178, 66, 0.15);
   --disc: rgba(206, 138, 26, 0.9);
@@ -102,7 +103,7 @@ body:has(.proto) {
 }
 
 body:has(.proto[data-theme="day"]) {
-  background: #e7ede6;
+  background: #d5e4f5;
 }
 
 /* ── Forest backdrop ───────────────────────────────────────── */
@@ -155,6 +156,30 @@ body:has(.proto[data-theme="day"]) {
   white-space: pre;
   letter-spacing: 0;
   overflow: hidden;
+}
+
+/* Sky, above the treeline. Absolute rather than fixed: the stars belong to
+   the hero and scroll away with it instead of hanging behind the whole page. */
+.star {
+  position: absolute;
+  z-index: 0;
+  color: var(--star);
+  font-family: var(--mono);
+  line-height: 1;
+  text-shadow: 0 0 6px rgba(198, 220, 246, 0.55);
+  pointer-events: none;
+  user-select: none;
+  animation: twinkle var(--dur) ease-in-out infinite alternate;
+  animation-delay: var(--delay);
+}
+
+@keyframes twinkle {
+  from { opacity: calc(var(--a) * 0.42); }
+  to { opacity: var(--a); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star { animation: none; opacity: var(--a); }
 }
 
 /* keeps the reading column winning against the trees */
