@@ -16,8 +16,12 @@ type LayerSpec = {
   density: number;
   minH: number;
   maxH: number;
-  /** chance an interior cell gets stippled */
-  stipple: number;
+  /** peak dot weight for this slice, 0-1 */
+  weight: number;
+  /** flat screen laid under the trees, so the band reads as one surface */
+  air: number;
+  /** lowest row a tree may stand on, as a fraction of the slice */
+  treeTo: number;
   /** opacity of this slice's firelit copy; 0 skips it */
   warmAlpha: number;
   /** slice extent as fractions of the band; slices overlap so there are no seams */
@@ -30,10 +34,12 @@ type LayerSpec = {
   seed: number;
 };
 
+/* The far slice spans the whole band and carries the screen; its trees are
+   held to the top of it, so what sits low in the frame is the near forest. */
 const LAYERS: LayerSpec[] = [
-  { key: "far",  fontSize: 10, alpha: 0.16, density: 24, minH: 5,  maxH: 11, stipple: 0,    warmAlpha: 0,    from: 0.4,   to: 1,    maskTop: 34,  clear: 0,    seed: 1337 },
-  { key: "mid",  fontSize: 14, alpha: 0.24, density: 16, minH: 9,  maxH: 17, stipple: 0.12, warmAlpha: 0.32, from: 0.14,  to: 0.7,  maskTop: 80,  clear: 0.55, seed: 90210 },
-  { key: "near", fontSize: 19, alpha: 0.34, density: 9,  minH: 14, maxH: 24, stipple: 0.2,  warmAlpha: 0.52, from: -0.08, to: 0.5,  maskTop: 100, clear: 1,    seed: 4242 },
+  { key: "far",  fontSize: 8,  alpha: 0.28, density: 13, minH: 10, maxH: 20, weight: 0.80, air: 0.09, treeTo: 0.6, warmAlpha: 0,    from: 0,     to: 1,    maskTop: 34,  clear: 0,    seed: 1337 },
+  { key: "mid",  fontSize: 10, alpha: 0.36, density: 6, minH: 18, maxH: 32, weight: 0.95, air: 0,    treeTo: 1,   warmAlpha: 0.34, from: 0.14,  to: 0.7,  maskTop: 80,  clear: 0.55, seed: 90210 },
+  { key: "near", fontSize: 13, alpha: 0.46, density: 3.2,  minH: 24, maxH: 42, weight: 1.05, air: 0,    treeTo: 1,   warmAlpha: 0.52, from: -0.08, to: 0.5,  maskTop: 100, clear: 1,    seed: 4242 },
 ];
 
 /** the near slice draws above the campfire, so its trees pass in front of it */
@@ -82,68 +88,108 @@ function measureCharWidth(fontSize: number): number {
   return ctx.measureText("M".repeat(50)).width / 50 || fontSize * 0.6;
 }
 
-function drawTree(
-  grid: string[][],
+/* Ordered dither: a 4x4 Bayer screen. A fixed threshold lattice is what makes
+   the canopies read as a printed halftone rather than as noise — the same
+   value dithers to the same pattern everywhere, so the grain stays regular. */
+const BAYER = [
+  [0, 8, 2, 10],
+  [12, 4, 14, 6],
+  [3, 11, 1, 9],
+  [15, 7, 13, 5],
+].map((row) => row.map((v) => (v + 0.5) / 16));
+
+/** dot weights, lightest first; index 0 is empty */
+const DOTS = [" ", "\u00b7", ":"];
+
+/* Per-cell hash. A light hand only: the dither already carries the grain,
+   and this just keeps the canopy from reading as a solid poured shape. */
+function clump(x: number, y: number, seed: number): number {
+  const n = Math.sin(x * 127.1 + y * 311.7 + seed) * 43758.5453;
+  return n - Math.floor(n);
+}
+
+/** a gap kept clear of trunks, in this layer's grid columns */
+type Clearing = { cx: number; half: number };
+
+/* Lays a fir into the mass field. There is no silhouette to draw: the shape
+   is entirely weight, and the dither turns weight into dots further down. */
+function growTree(
+  mass: Float32Array,
   cols: number,
   rows: number,
   cx: number,
   baseY: number,
   h: number,
-  stipple: number,
-  rand: () => number
+  rand: () => number,
+  floor: number
 ) {
-  const put = (y: number, x: number, ch: string) => {
+  // max() for litter, which should settle around whatever is already there
+  const put = (y: number, x: number, m: number) => {
     if (y < 0 || y >= rows || x < 0 || x >= cols) return;
-    grid[y][x] = ch;
+    const i = y * cols + x;
+    if (m > mass[i]) mass[i] = m;
+  };
+  // ...but the crown overwrites. Trees are laid back to front, so a nearer one
+  // has to cut its edge into the one behind or they merge into a single slab.
+  const set = (y: number, x: number, m: number) => {
+    if (y < 0 || y >= rows || x < 0 || x >= cols) return;
+    mass[y * cols + x] = m;
   };
 
-  const trunkH = Math.max(1, Math.round(h * 0.15));
+  const trunkH = Math.max(1, Math.round(h * 0.16));
   const crownH = Math.max(3, h - trunkH);
-  const tiers = h >= 18 ? 3 : h >= 11 ? 2 : 1;
-  const maxHalf = Math.max(1, Math.round(h * 0.5));
+  const crownBase = baseY - trunkH;
+  // more tiers on a taller tree, so the boughs stay a consistent size
+  const tiers = Math.max(2, Math.round(h / 5));
+  const maxHalf = h * 0.52 * (0.86 + rand() * 0.28);
+  const lean = (rand() - 0.5) * 0.3;
+  const seed = rand() * 1000;
 
-  // Tiers, tallest at the bottom. The underscore base closing each one is
-  // what makes the silhouette read as a fir rather than loose diagonals.
-  const tierRows: number[] = [];
-  const base = Math.floor(crownH / tiers);
-  for (let t = 0; t < tiers; t++) tierRows.push(base);
-  for (let t = 0; t < crownH - base * tiers; t++) tierRows[tiers - 1 - t] += 1;
+  for (let t = 0; t < trunkH; t++) {
+    put(baseY - t, cx, 0.95);
+    if (h >= 15) put(baseY - t, cx + 1, 0.78);
+  }
 
-  let y = baseY - trunkH - crownH + 1;
-  for (let t = 0; t < tiers; t++) {
-    const rowsInTier = tierRows[t];
-    const endHalf = Math.round((maxHalf * (t + 1)) / tiers);
-    const startHalf = t === 0 ? 0 : Math.round(((maxHalf * t) / tiers) * 0.45);
+  for (let y = crownBase; y > crownBase - crownH; y--) {
+    const v = (crownBase - y) / crownH; // 0 at the lowest boughs, 1 at the tip
+    // Sawtooth, not a sine: each tier is its own small cone, widest where its
+    // branches spring and narrowing upward until the next tier starts over.
+    const inTier = (v * tiers) % 1;
+    const half = maxHalf * Math.pow(1 - v, 0.85) * (1 - 0.44 * inTier);
+    const axis = cx + lean * v * maxHalf;
 
-    for (let j = 0; j < rowsInTier; j++, y++) {
-      const half =
-        rowsInTier === 1
-          ? endHalf
-          : Math.round(startHalf + (endHalf - startHalf) * (j / (rowsInTier - 1)));
-      const isTierBase = j === rowsInTier - 1;
+    // clear back to the screen first, so the silhouette reads against whatever
+    // stands behind it rather than blending into it
+    for (let x = Math.round(axis - half - 1.6); x <= Math.round(axis + half + 1.6); x++) {
+      set(y, x, floor);
+    }
 
-      if (half <= 0) {
-        put(y, cx, "^");
-        continue;
-      }
-      put(y, cx - half, "/");
-      put(y, cx + half, "\\");
-      for (let x = cx - half + 1; x < cx + half; x++) {
-        if (isTierBase) put(y, x, "_");
-        else if (stipple > 0 && rand() < stipple) put(y, x, rand() < 0.5 ? "." : ":");
-      }
+    if (half < 0.6) {
+      set(y, Math.round(axis), 0.85);
+      continue;
+    }
+
+    // the branch line packs tighter than the needles carried above it
+    const bough = Math.max(0, 1 - inTier * 2.6);
+
+    for (let x = Math.round(axis - half); x <= Math.round(axis + half); x++) {
+      const u = (x - axis) / half;
+      if (Math.abs(u) > 1) continue;
+      const m = (0.88 - 0.34 * u * u) * (1 + 0.14 * bough);
+      set(y, x, Math.min(1, m * (0.9 + 0.1 * clump(x, y, seed))));
     }
   }
 
-  const thick = h >= 14;
-  for (let t = 0; t < trunkH; t++) {
-    put(baseY - t, cx, "|");
-    if (thick) put(baseY - t, cx + 1, "|");
+  // litter at the foot, so the trunk meets the ground rather than stopping on it
+  const spread = Math.max(2, Math.round(h * 0.55));
+  for (let k = 0; k < spread; k++) {
+    put(
+      baseY + (rand() < 0.65 ? 0 : 1),
+      Math.round(cx + (rand() * 2 - 1) * spread),
+      0.2 + rand() * 0.28
+    );
   }
 }
-
-/** a gap kept clear of trunks, in this layer's grid columns */
-type Clearing = { cx: number; half: number };
 
 function growLayer(
   cols: number,
@@ -152,17 +198,20 @@ function growLayer(
   clearing: Clearing | null
 ): string {
   const rand = mulberry32(spec.seed + cols * 31 + rows * 17);
-  const grid: string[][] = Array.from({ length: rows }, () =>
-    Array.from({ length: cols }, () => " ")
-  );
+  const mass = new Float32Array(cols * rows);
+
+  // the flat screen the trees are printed onto
+  if (spec.air > 0) mass.fill(spec.air);
 
   const count = Math.max(4, Math.round((cols / 100) * spec.density));
+  const lowest = Math.max(1, Math.round((rows - 1) * spec.treeTo));
+
   const trees: { cx: number; baseY: number; h: number }[] = [];
   // resampled rather than filtered, so carving the clearing doesn't thin the rest
   for (let tries = 0; trees.length < count && tries < count * 12; tries++) {
     const h = spec.minH + Math.floor(rand() * (spec.maxH - spec.minH + 1));
     // scattered baselines, not one ground line — the receding floor fills the band
-    const baseY = Math.min(rows - 1, h + Math.floor(rand() * Math.max(1, rows - h)));
+    const baseY = Math.min(lowest, h + Math.floor(rand() * Math.max(1, lowest - h)));
     const cx = Math.floor(rand() * cols);
 
     // The clearing narrows with distance, so it reads as an opening in the
@@ -177,32 +226,23 @@ function growLayer(
     trees.push({ cx, baseY, h });
   }
 
-  // trees lower in the frame are nearer, so they draw last and occlude
+  // trees lower in the frame are nearer, so they lay down last and occlude
   trees.sort((a, b) => a.baseY - b.baseY || b.h - a.h);
+  for (const t of trees) growTree(mass, cols, rows, t.cx, t.baseY, t.h, rand, spec.air);
 
-  for (const t of trees) {
-    drawTree(grid, cols, rows, t.cx, t.baseY, t.h, spec.stipple, rand);
-
-    // a little undergrowth at the foot of each tree
-    const spread = Math.max(2, Math.round(t.h * 0.55));
-    for (let k = 0; k < 5; k++) {
-      const x = t.cx + Math.round((rand() * 2 - 1) * spread);
-      const y = t.baseY + (rand() < 0.5 ? 0 : 1);
-      if (y >= 0 && y < rows && x >= 0 && x < cols && grid[y][x] === " ") {
-        grid[y][x] = [".", ",", "'", '"'][Math.floor(rand() * 4)];
-      }
-    }
-  }
-
-  // thin the soft fill only — a broken / \ _ | silhouette reads as noise
-  const soft = new Set([".", ":", ",", "'", '"']);
+  const top = DOTS.length - 1;
+  const lines: string[] = [];
   for (let y = 0; y < rows; y++) {
+    const screen = BAYER[y & 3];
+    let line = "";
     for (let x = 0; x < cols; x++) {
-      if (soft.has(grid[y][x]) && rand() < 0.3) grid[y][x] = " ";
+      const v = Math.min(top, mass[y * cols + x] * spec.weight * top);
+      const lo = Math.floor(v);
+      line += DOTS[v - lo > screen[x & 3] ? Math.min(top, lo + 1) : lo];
     }
+    lines.push(line.replace(/\s+$/, ""));
   }
-
-  return grid.map((r) => r.join("").replace(/\s+$/, "")).join("\n");
+  return lines.join("\n");
 }
 
 
