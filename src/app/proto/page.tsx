@@ -59,17 +59,17 @@ const threads: Thread[] = [
   {
     label: "agents",
     body:
-      "built web agents, code agents, voice agents, and agents for ERPs",
+      "web, code, and voice — plus the ones living inside ERP, manufacturing, and content systems",
   },
   {
-    label: "video",
+    label: "media",
     body:
-      "built AI video dubbers, knowledgeable about encoding and transcoding",
+      "dubbing and auto-chaptering, and mostly the GPU and Kubernetes infrastructure underneath them",
   },
   {
     label: "full stack",
     body:
-      "built several full-stack applications with good product knowledge",
+      "products taken start to finish, where deciding what to build mattered as much as building it",
   },
 ];
 
