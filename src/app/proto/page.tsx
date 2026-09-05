@@ -153,11 +153,7 @@ const panels = [
 ];
 
 function SectionHead({ title }: { title: string }) {
-  return (
-    <div className="section-head">
-      <h2 className="section-title">{title}</h2>
-    </div>
-  );
+  return <h2 className="section-title">{title}</h2>;
 }
 
 /* Every panel closes on the same bar, at the same offset, so scrolling reads as

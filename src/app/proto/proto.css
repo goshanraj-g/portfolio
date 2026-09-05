@@ -630,21 +630,21 @@ html:has(.proto) {
   .section { min-height: 100svh; }
 }
 
-.section-head {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 26px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--line);
-}
-
+/* Set the way the name is — Playfair, italic — so a panel opens in the same
+   voice the hero speaks in. The tracked-out caps label and the hairline under
+   it are gone: at this size the title separates itself, and a rule would only
+   put a lid back on a page whose panels are already divided by the fold. Held
+   at --dim so it stays the quieter half of the panel; the rows are the part
+   you are meant to read. */
 .section-title {
-  font-size: 12.5px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--faint);
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(27px, 5vw, 36px);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--dim);
+  margin-bottom: clamp(22px, 4vw, 34px);
 }
 
 /* ── Summary ───────────────────────────────────────────────── */
