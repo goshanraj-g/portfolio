@@ -22,8 +22,9 @@
   --tint-2: rgba(143, 191, 159, 0.1);
   --row-hover: rgba(143, 191, 159, 0.05);
   --row-hover-name: #fff;
-  --badge-bg: rgba(143, 191, 159, 0.08);
-  --badge-line: rgba(143, 191, 159, 0.16);
+  --badge-fg: #f0d180;
+  --badge-bg: rgba(232, 194, 102, 0.11);
+  --badge-line: rgba(232, 194, 102, 0.32);
   --book-hover: rgba(143, 191, 159, 0.04);
   --logo-plate: rgba(236, 240, 236, 0.92);
   --firefly: #f0d878;
@@ -78,8 +79,9 @@
   --tint-2: rgba(34, 82, 58, 0.14);
   --row-hover: rgba(34, 82, 58, 0.08);
   --row-hover-name: #000;
-  --badge-bg: rgba(34, 82, 58, 0.12);
-  --badge-line: rgba(34, 82, 58, 0.3);
+  --badge-fg: #6b4e0c;
+  --badge-bg: rgba(176, 134, 30, 0.16);
+  --badge-line: rgba(150, 114, 24, 0.42);
   --book-hover: rgba(34, 82, 58, 0.06);
   --scrim-a: rgba(213, 228, 245, 0.28);
   --scrim-b: rgba(213, 228, 245, 0.1);
@@ -401,7 +403,7 @@ body:has(.proto[data-theme="day"]) {
 .shell {
   position: relative;
   z-index: 4;
-  max-width: 680px;
+  max-width: 740px;
   margin: 0 auto;
   padding: 0 28px 120px;
 }
@@ -520,6 +522,8 @@ body:has(.proto[data-theme="day"]) {
   font-size: clamp(17px, 2.5vw, 19px);
   line-height: 1.68;
   color: var(--muted);
+  /* the rows use the full width; prose keeps a readable measure */
+  max-width: 60ch;
   margin-bottom: 40px;
 }
 
@@ -581,9 +585,7 @@ body:has(.proto[data-theme="day"]) {
 
 a.row:hover { background: var(--row-hover); opacity: 1 !important; }
 
-/* Wraps rather than truncating: at this size the longer descriptions no
-   longer fit beside the name, and an ellipsis would hide real content. */
-.row-main { display: flex; flex-flow: row wrap; align-items: baseline; gap: 3px 10px; min-width: 0; }
+.row-main { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
 
 /* The marks are dark on transparent, which disappears into the trees. A plate
    under them keeps every logo legible in either sky. */
@@ -627,6 +629,9 @@ a.row:hover .row-name::after { transform: scaleX(1); }
   font-size: 14.5px;
   color: var(--faint);
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .row-meta {
@@ -640,7 +645,8 @@ a.row:hover .row-name::after { transform: scaleX(1); }
 
 .row-badge {
   font-size: 11px;
-  color: var(--accent);
+  font-weight: 500;
+  color: var(--badge-fg);
   background: var(--badge-bg);
   border: 1px solid var(--badge-line);
   padding: 2px 7px;
@@ -744,9 +750,10 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
   .thread { grid-template-columns: 1fr; gap: 5px; padding: 13px 0; }
   .thread-label { padding-top: 0; }
 
-  /* the logo stays beside the name; only the description drops below it */
-  .row-main { align-items: center; }
-  .row-sub { flex: 1 0 100%; }
+  /* one line doesn't fit a phone: the logo stays beside the name and only
+     the description drops below it */
+  .row-main { flex-flow: row wrap; align-items: center; gap: 2px 10px; }
+  .row-sub { flex: 1 0 100%; white-space: normal; overflow: visible; }
 
   /* 17px icons are not a tap target; pad them out and pull the padding back
      off the edges so they stay flush with the column. */
