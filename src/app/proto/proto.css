@@ -524,30 +524,35 @@ body:has(.proto[data-theme="day"]) {
 .lead strong { color: var(--fg); font-weight: 500; }
 .lead + .lead { margin-top: -22px; }
 
-.threads { display: flex; flex-direction: column; gap: 26px; }
+/* Set as a spec sheet, not as three cards: the label sits out in the margin
+   and the prose runs in a single measure beside it. */
+.threads { display: flex; flex-direction: column; }
 
 .thread {
-  padding-left: 18px;
-  border-left: 1px solid var(--line);
-  transition: border-color 0.3s ease;
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 0 28px;
+  padding: 15px 0;
 }
 
-.thread:hover { border-left-color: var(--accent-dim); }
+.thread + .thread { border-top: 1px solid var(--line); }
 
 .thread-label {
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 7px;
+  color: var(--faint);
+  /* sits on the first baseline of the prose rather than above it */
+  padding-top: 4px;
 }
 
+/* the prose outweighs its label now, rather than the other way round */
 .thread-body {
-  font-size: 14.5px;
-  line-height: 1.6;
-  color: var(--dim);
-  margin-bottom: 9px;
+  font-size: 15px;
+  line-height: 1.62;
+  color: var(--muted);
+  margin: 0;
 }
 
 
@@ -734,6 +739,9 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
     padding: 13px 12px;
     margin: 0 -12px;
   }
+
+  .thread { grid-template-columns: 1fr; gap: 5px; padding: 13px 0; }
+  .thread-label { padding-top: 0; }
 
   /* wrap rather than stack, so the logo stays beside the name and only the
      description drops to its own line */
