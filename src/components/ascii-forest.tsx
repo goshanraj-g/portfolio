@@ -24,13 +24,15 @@ type LayerSpec = {
   to: number;
   /** where the top-edge fade starts, as a % of the slice (100 = no fade) */
   maskTop: number;
+  /** share of the clearing this slice respects; 0 grows straight through it */
+  clear: number;
   seed: number;
 };
 
 const LAYERS: LayerSpec[] = [
-  { key: "far",  fontSize: 10, alpha: 0.16, density: 24, minH: 5,  maxH: 11, stipple: 0,    warmAlpha: 0,    from: 0.4,   to: 1,    maskTop: 34,  seed: 1337 },
-  { key: "mid",  fontSize: 14, alpha: 0.24, density: 16, minH: 9,  maxH: 17, stipple: 0.12, warmAlpha: 0.32, from: 0.14,  to: 0.7,  maskTop: 80,  seed: 90210 },
-  { key: "near", fontSize: 19, alpha: 0.34, density: 9,  minH: 14, maxH: 24, stipple: 0.2,  warmAlpha: 0.52, from: -0.08, to: 0.5,  maskTop: 100, seed: 4242 },
+  { key: "far",  fontSize: 10, alpha: 0.16, density: 24, minH: 5,  maxH: 11, stipple: 0,    warmAlpha: 0,    from: 0.4,   to: 1,    maskTop: 34,  clear: 0,    seed: 1337 },
+  { key: "mid",  fontSize: 14, alpha: 0.24, density: 16, minH: 9,  maxH: 17, stipple: 0.12, warmAlpha: 0.32, from: 0.14,  to: 0.7,  maskTop: 80,  clear: 0.55, seed: 90210 },
+  { key: "near", fontSize: 19, alpha: 0.34, density: 9,  minH: 14, maxH: 24, stipple: 0.2,  warmAlpha: 0.52, from: -0.08, to: 0.5,  maskTop: 100, clear: 1,    seed: 4242 },
 ];
 
 /** the near slice draws above the campfire, so its trees pass in front of it */
@@ -42,6 +44,8 @@ const WARM = "236, 154, 82";
 const FIRE_REACH = 470;
 /** the light leaves partway up the flame, not off the log line */
 const FIRE_LIFT = 44;
+/** how much ground the fire gets to itself at the near edge, in px */
+const CLEARING_PX = 104;
 
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, "DejaVu Sans Mono", monospace';
 const LINE_RATIO = 0.66;
@@ -133,19 +137,40 @@ function drawTree(
   }
 }
 
-function growLayer(cols: number, rows: number, spec: LayerSpec): string {
+/** a gap kept clear of trunks, in this layer's grid columns */
+type Clearing = { cx: number; half: number };
+
+function growLayer(
+  cols: number,
+  rows: number,
+  spec: LayerSpec,
+  clearing: Clearing | null
+): string {
   const rand = mulberry32(spec.seed + cols * 31 + rows * 17);
   const grid: string[][] = Array.from({ length: rows }, () =>
     Array.from({ length: cols }, () => " ")
   );
 
   const count = Math.max(4, Math.round((cols / 100) * spec.density));
-  const trees = Array.from({ length: count }, () => {
+  const trees: { cx: number; baseY: number; h: number }[] = [];
+  // resampled rather than filtered, so carving the clearing doesn't thin the rest
+  for (let tries = 0; trees.length < count && tries < count * 12; tries++) {
     const h = spec.minH + Math.floor(rand() * (spec.maxH - spec.minH + 1));
     // scattered baselines, not one ground line — the receding floor fills the band
     const baseY = Math.min(rows - 1, h + Math.floor(rand() * Math.max(1, rows - h)));
-    return { cx: Math.floor(rand() * cols), baseY, h };
-  });
+    const cx = Math.floor(rand() * cols);
+
+    // The clearing narrows with distance, so it reads as an opening in the
+    // trees rather than a corridor cut straight through them.
+    if (clearing) {
+      const nearness = baseY / Math.max(1, rows - 1);
+      // canopies may lean in; it's trunks standing in the fire that read wrong
+      const keep = clearing.half * (0.35 + 0.65 * nearness) + h * 0.28;
+      if (Math.abs(cx - clearing.cx) < keep) continue;
+    }
+
+    trees.push({ cx, baseY, h });
+  }
 
   // trees lower in the frame are nearer, so they draw last and occlude
   trees.sort((a, b) => a.baseY - b.baseY || b.h - a.h);
@@ -362,7 +387,11 @@ export default function AsciiForest() {
           const cols = Math.ceil(vw / charW) + 2;
           const bottom = Math.round(band * spec.from);
           const rows = Math.max(spec.maxH + 2, Math.ceil((band * (spec.to - spec.from)) / lineH));
-          return { spec, art: growLayer(cols, rows, spec), bottom, fontSize, lineH };
+          const clearing =
+            at && spec.clear > 0
+              ? { cx: at.left / charW, half: (CLEARING_PX * scale * spec.clear) / charW }
+              : null;
+          return { spec, art: growLayer(cols, rows, spec, clearing), bottom, fontSize, lineH };
         })
       );
     };
