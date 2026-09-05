@@ -10,11 +10,11 @@
   --name-c: #fafcfa;
   --strong: rgba(238, 241, 238, 0.9);
   --body-c: rgba(238, 241, 238, 0.86);
-  --muted: rgba(238, 241, 238, 0.74);
+  --muted: rgba(238, 241, 238, 0.82);
   --chip-fg: rgba(238, 241, 238, 0.78);
-  --dim: rgba(238, 241, 238, 0.56);
-  --faint: rgba(238, 241, 238, 0.34);
-  --ghost: rgba(238, 241, 238, 0.2);
+  --dim: rgba(238, 241, 238, 0.66);
+  --faint: rgba(238, 241, 238, 0.48);
+  --ghost: rgba(238, 241, 238, 0.4);
   --line: rgba(238, 241, 238, 0.09);
   --accent: #8fbf9f;
   --accent-dim: rgba(143, 191, 159, 0.5);
@@ -25,6 +25,7 @@
   --badge-bg: rgba(143, 191, 159, 0.08);
   --badge-line: rgba(143, 191, 159, 0.16);
   --book-hover: rgba(143, 191, 159, 0.04);
+  --logo-plate: rgba(236, 240, 236, 0.92);
   --firefly: #f0d878;
   --star: rgba(212, 228, 246, 0.92);
   --scrim-a: rgba(7, 10, 8, 0.74);
@@ -91,6 +92,7 @@
   --disc-glow-b: rgba(255, 160, 48, 0.28);
   --ground-c: rgba(126, 104, 76, 0.4);
   --logs-c: #4a3f34;
+  --logo-plate: rgba(255, 255, 255, 0.9);
   --puff: rgba(88, 96, 90, 0.5);
   --webring-filter: none;
 }
@@ -433,7 +435,7 @@ body:has(.proto[data-theme="day"]) {
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
-  font-size: 14px;
+  font-size: 14.5px;
   color: var(--dim);
   margin-bottom: 22px;
 }
@@ -458,7 +460,7 @@ body:has(.proto[data-theme="day"]) {
   background: var(--tint-2);
 }
 
-.chip img { width: 15px; height: 15px; border-radius: 2px; opacity: 0.9; }
+.chip img { width: 15px; height: 15px; border-radius: 3px; }
 
 .thesis {
   font-size: clamp(18px, 3.2vw, 23px);
@@ -506,7 +508,7 @@ body:has(.proto[data-theme="day"]) {
 }
 
 .section-title {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -515,7 +517,7 @@ body:has(.proto[data-theme="day"]) {
 
 /* ── Summary ───────────────────────────────────────────────── */
 .lead {
-  font-size: clamp(16px, 2.4vw, 18px);
+  font-size: clamp(17px, 2.5vw, 19px);
   line-height: 1.68;
   color: var(--muted);
   margin-bottom: 40px;
@@ -539,7 +541,7 @@ body:has(.proto[data-theme="day"]) {
 
 .thread-label {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 11.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--faint);
@@ -549,7 +551,7 @@ body:has(.proto[data-theme="day"]) {
 
 /* the prose outweighs its label now, rather than the other way round */
 .thread-body {
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.62;
   color: var(--muted);
   margin: 0;
@@ -579,23 +581,25 @@ body:has(.proto[data-theme="day"]) {
 
 a.row:hover { background: var(--row-hover); opacity: 1 !important; }
 
-.row-main { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+/* Wraps rather than truncating: at this size the longer descriptions no
+   longer fit beside the name, and an ellipsis would hide real content. */
+.row-main { display: flex; flex-flow: row wrap; align-items: baseline; gap: 3px 10px; min-width: 0; }
 
+/* The marks are dark on transparent, which disappears into the trees. A plate
+   under them keeps every logo legible in either sky. */
 .row-logo {
-  width: 22px;
-  height: 22px;
-  border-radius: 3px;
+  width: 24px;
+  height: 24px;
+  padding: 3px;
+  border-radius: 5px;
   object-fit: contain;
-  opacity: 0.75;
+  background: var(--logo-plate);
   align-self: center;
   flex-shrink: 0;
-  transition: opacity 0.22s ease;
 }
 
-a.row:hover .row-logo { opacity: 1; }
-
 .row-name {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--strong);
   white-space: nowrap;
@@ -620,17 +624,14 @@ a.row:hover .row-name { color: var(--row-hover-name); }
 a.row:hover .row-name::after { transform: scaleX(1); }
 
 .row-sub {
-  font-size: 13.5px;
+  font-size: 14.5px;
   color: var(--faint);
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .row-meta {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--ghost);
   white-space: nowrap;
   flex-shrink: 0;
@@ -663,8 +664,8 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 
 .book:hover { background: var(--book-hover); }
 
-.book-title { font-size: 15px; font-weight: 500; color: var(--strong); }
-.book-author { font-size: 13.5px; color: var(--faint); margin-top: 2px; }
+.book-title { font-size: 16px; font-weight: 500; color: var(--strong); }
+.book-author { font-size: 14.5px; color: var(--faint); margin-top: 2px; }
 .book-author::before { content: "by "; opacity: 0.55; }
 
 /* ── Footer ────────────────────────────────────────────────── */
@@ -743,10 +744,9 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
   .thread { grid-template-columns: 1fr; gap: 5px; padding: 13px 0; }
   .thread-label { padding-top: 0; }
 
-  /* wrap rather than stack, so the logo stays beside the name and only the
-     description drops to its own line */
-  .row-main { flex-flow: row wrap; align-items: center; gap: 2px 10px; }
-  .row-sub { flex: 1 0 100%; white-space: normal; }
+  /* the logo stays beside the name; only the description drops below it */
+  .row-main { align-items: center; }
+  .row-sub { flex: 1 0 100%; }
 
   /* 17px icons are not a tap target; pad them out and pull the padding back
      off the edges so they stay flush with the column. */

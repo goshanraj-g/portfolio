@@ -96,7 +96,7 @@ const projects: Project[] = [
     title: "AI Repository Auditor",
     url: "https://github.com/goshanraj-g/CodeTurret",
     description: "Audits repos with Gemini and opens fix PRs",
-    badge: "1st of 72 · Google Hackathon",
+    badge: "1st of 72 @ Google Hackathon",
   },
   {
     title: "CampusThread",
@@ -112,7 +112,7 @@ type OSS = {
   before?: string;
   link?: string;
   after?: string;
-  meta: string;
+  meta?: string;
 };
 
 const openSource: OSS[] = [
@@ -128,13 +128,11 @@ const openSource: OSS[] = [
     before: "Batched array pushes into one allocation in ",
     link: "ZJIT",
     after: "",
-    meta: "merged",
   },
   {
     name: "Shopify",
     url: "https://github.com/Shopify/type_toolkit",
     description: "Fixed a runtime inheritance conflict in Type Toolkit",
-    meta: "production gem",
   },
 ];
 
@@ -280,7 +278,7 @@ export default function ProtoPage() {
                       )}
                     </span>
                   </div>
-                  <span className="row-meta">{c.meta}</span>
+                  {c.meta && <span className="row-meta">{c.meta}</span>}
                 </Link>
               ))}
             </div>
