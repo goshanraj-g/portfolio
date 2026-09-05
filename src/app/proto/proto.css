@@ -58,29 +58,32 @@
 /* ── Daylight ──────────────────────────────────────────────── */
 .proto[data-theme="day"] {
   --bg: #e7ede6;
-  --fg: #141c17;
-  --name-c: #0d1510;
-  --strong: rgba(20, 28, 23, 0.92);
-  --body-c: rgba(20, 28, 23, 0.86);
-  --muted: rgba(20, 28, 23, 0.74);
-  --chip-fg: rgba(20, 28, 23, 0.78);
-  --dim: rgba(20, 28, 23, 0.62);
-  --faint: rgba(20, 28, 23, 0.46);
-  --ghost: rgba(20, 28, 23, 0.34);
-  --line: rgba(20, 28, 23, 0.14);
-  --accent: #2f6b45;
-  --accent-dim: rgba(47, 107, 69, 0.55);
-  --tint: rgba(47, 107, 69, 0.07);
-  --tint-2: rgba(47, 107, 69, 0.12);
-  --row-hover: rgba(47, 107, 69, 0.07);
+  /* Alphas solved against the paper rather than mirrored from night: the same
+     alpha carries far less contrast as dark-on-light than as light-on-dark.
+     faint clears 4.5:1 and ghost 3:1, since both carry real content. */
+  --fg: #0b120d;
+  --name-c: #080d0a;
+  --strong: rgba(11, 18, 13, 0.94);
+  --body-c: rgba(11, 18, 13, 0.91);
+  --muted: rgba(11, 18, 13, 0.81);
+  --chip-fg: rgba(11, 18, 13, 0.84);
+  --dim: rgba(11, 18, 13, 0.66);
+  --faint: rgba(11, 18, 13, 0.59);
+  --ghost: rgba(11, 18, 13, 0.46);
+  --line: rgba(11, 18, 13, 0.19);
+  --accent: #22523a;
+  --accent-dim: rgba(34, 82, 58, 0.6);
+  --tint: rgba(34, 82, 58, 0.08);
+  --tint-2: rgba(34, 82, 58, 0.14);
+  --row-hover: rgba(34, 82, 58, 0.08);
   --row-hover-name: #000;
-  --badge-bg: rgba(47, 107, 69, 0.1);
-  --badge-line: rgba(47, 107, 69, 0.22);
-  --book-hover: rgba(47, 107, 69, 0.05);
-  --scrim-a: rgba(231, 237, 230, 0.7);
-  --scrim-b: rgba(231, 237, 230, 0.28);
-  --scrim-top: rgba(231, 237, 230, 0.3);
-  --scrim-bot: rgba(231, 237, 230, 0.72);
+  --badge-bg: rgba(34, 82, 58, 0.12);
+  --badge-line: rgba(34, 82, 58, 0.3);
+  --book-hover: rgba(34, 82, 58, 0.06);
+  --scrim-a: rgba(231, 237, 230, 0.52);
+  --scrim-b: rgba(231, 237, 230, 0.2);
+  --scrim-top: rgba(231, 237, 230, 0.22);
+  --scrim-bot: rgba(231, 237, 230, 0.55);
   --halo-a: rgba(255, 206, 92, 0.34);
   --halo-b: rgba(255, 178, 66, 0.15);
   --disc: rgba(206, 138, 26, 0.9);
