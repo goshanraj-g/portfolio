@@ -110,6 +110,14 @@ body:has(.proto[data-theme="day"]) {
   background: #d5e4f5;
 }
 
+/* ── Section paging ─────────────────────────────────────────
+   The document is the scroll container. Every panel fills the screen and
+   snaps to the top, so one scroll gesture lands on the next section — the
+   page moves a section at a time rather than a continuous ribbon. */
+html:has(.proto) {
+  scroll-snap-type: y mandatory;
+}
+
 /* ── Forest backdrop ───────────────────────────────────────── */
 .forest {
   position: fixed;
@@ -405,7 +413,7 @@ body:has(.proto[data-theme="day"]) {
   z-index: 4;
   max-width: 740px;
   margin: 0 auto;
-  padding: 0 28px 120px;
+  padding: 0 28px;
 }
 
 .hero {
@@ -413,6 +421,8 @@ body:has(.proto[data-theme="day"]) {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 /* lvh = viewport at its tallest, so the next section stays below the
@@ -498,7 +508,31 @@ body:has(.proto[data-theme="day"]) {
 }
 
 /* ── Sections ──────────────────────────────────────────────── */
-.section { margin-bottom: 84px; }
+/* Each section is a full-height snap panel with its content centered.
+   `safe center` falls back to top-alignment if a panel ever outgrows the
+   screen, so nothing clips; `snap-stop: always` keeps a fast scroll from
+   flying past a panel. */
+.section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: safe center;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+@supports (min-height: 100svh) {
+  .section { min-height: 100svh; }
+}
+
+/* Reading and the footer share the final panel: Reading sits centered like
+   the rest, the footer is pinned to the bottom of the same screen. */
+.section-last { position: relative; }
+.section-last > .reveal:last-child {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 34px;
+}
 
 .section-head {
   display: flex;
@@ -529,6 +563,10 @@ body:has(.proto[data-theme="day"]) {
 
 .lead strong { color: var(--fg); font-weight: 500; }
 .lead + .lead { margin-top: -22px; }
+
+/* when the lead ends on a colon it introduces the threads: pull the list in
+   close so the sentence reads straight into the spec sheet */
+.lead-into { margin-bottom: 20px; }
 
 /* Set as a spec sheet, not as three cards: the label sits out in the margin
    and the prose runs in a single measure beside it. */
@@ -727,8 +765,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 
 /* ── Mobile ────────────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .shell { padding: 0 20px max(96px, 17vh); }
-  .section { margin-bottom: 60px; }
+  .shell { padding: 0 20px; }
   .scrim { background: linear-gradient(to bottom, var(--scrim-top), var(--scrim-bot)); }
 
   .moon {

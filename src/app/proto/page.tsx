@@ -69,7 +69,7 @@ const threads: Thread[] = [
   {
     label: "full stack",
     body:
-      "products taken start to finish, where deciding what to build mattered as much as building it",
+      "shipped end-to-end products & features used by thousands",
   },
 ];
 
@@ -192,11 +192,9 @@ export default function ProtoPage() {
         {/* ── 01 Summary ── */}
         <section className="section">
           <Reveal>
-            <p className="lead">
-              I&apos;m a CS student at McMaster, currently interning at <strong>IBM</strong>. The work I&apos;ve done
-              sits between models and the things people actually use: making an agent
-              reliable enough to trust, or making the layer underneath it fast enough to stop
-              noticing
+            <p className="lead lead-into">
+              Software Engineer studying Computer Science at McMaster University,
+              currently at <strong>IBM</strong>. Most of my work has revolved around a few threads:
             </p>
             <div className="threads">
               {threads.map((t) => (
@@ -285,8 +283,8 @@ export default function ProtoPage() {
           </Reveal>
         </section>
 
-        {/* ── 05 Reading ── */}
-        <section className="section">
+        {/* ── 05 Reading + Footer share the final panel ── */}
+        <section className="section section-last">
           <Reveal>
             <SectionHead title="Reading" />
             <div className="shelf">
@@ -298,11 +296,9 @@ export default function ProtoPage() {
               ))}
             </div>
           </Reveal>
-        </section>
 
-        {/* ── Footer ── */}
-        <Reveal>
-          <footer className="foot">
+          <Reveal>
+            <footer className="foot">
             <div className="socials">
               <Link href="https://github.com/goshanraj-g" target="_blank" aria-label="GitHub">
                 <Github size={17} />
@@ -323,6 +319,7 @@ export default function ProtoPage() {
             </div>
           </footer>
         </Reveal>
+        </section>
       </div>
     </div>
   );
