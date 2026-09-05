@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { Sky } from "./moon";
 
 /* Campfire: a flame grid redrawn a few times a second, plus rising smoke. */
 
@@ -8,6 +9,10 @@ const FLAME_ROWS = 9;
 const FLAME_HALF = 6;
 /** flame redraws per second */
 const FLAME_FPS = 11;
+
+/** seconds for the fire to sink into the logs, and to catch again */
+const DIE_S = 1.6;
+const LIGHT_S = 0.9;
 
 const PUFFS = 32;
 /** how far a puff climbs before it's spent, in px */
@@ -115,14 +120,36 @@ function newPuff(now: number, rand: () => number, stagger = 0): Puff {
   };
 }
 
-export default function Campfire() {
+export default function Campfire({ sky }: { sky: Sky }) {
   const flameEls = useRef<(HTMLSpanElement | null)[]>([]);
   const puffEls = useRef<(HTMLSpanElement | null)[]>([]);
   const glowEl = useRef<HTMLDivElement>(null);
 
+  // Read through refs rather than re-running the effect, so the flames and the
+  // smoke column keep their state across a switch instead of restarting.
+  const skyRef = useRef(sky);
+  const wake = useRef(() => {});
+
+  useEffect(() => {
+    skyRef.current = sky;
+    if (sky === "night") wake.current();
+  }, [sky]);
+
   const initialFlame = useRef(
     Array.from({ length: FLAME_ROWS }, (_, r) => flameRow(r, seeded(9001 + r)))
   ).current;
+
+  /* Reduced motion skips the animation loop below, which would otherwise leave
+     the fire burning through the daylight. Put it in the right state outright. */
+  useEffect(() => {
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const out = sky === "day";
+    for (let r = 0; r < FLAME_ROWS; r++) {
+      const el = flameEls.current[r];
+      if (el) el.textContent = out ? "\n" : flameRow(r, seeded(9001 + r)) + "\n";
+    }
+    if (glowEl.current) glowEl.current.style.opacity = out ? "0" : "0.86";
+  }, [sky]);
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -137,20 +164,34 @@ export default function Campfire() {
 
     let raf = 0;
     let lastFlame = 0;
+    let lastNow = 0;
+    /** 1 is burning, 0 is out */
+    let burn = skyRef.current === "night" ? 1 : 0;
 
     const tick = (now: number) => {
       const t = (now - start) / 1000;
+      const dt = lastNow ? Math.min(0.1, (now - lastNow) / 1000) : 0;
+      lastNow = now;
+
+      const target = skyRef.current === "night" ? 1 : 0;
+      if (burn < target) burn = Math.min(target, burn + dt / LIGHT_S);
+      else if (burn > target) burn = Math.max(target, burn - dt / DIE_S);
 
       if (now - lastFlame > 1000 / FLAME_FPS) {
         lastFlame = now;
+        // The fire sinks into the logs rather than fading: the wispy tips go
+        // first and the hot base is the last thing left, so it reads as embers.
+        const alive = Math.ceil(FLAME_ROWS * burn);
         for (let r = 0; r < FLAME_ROWS; r++) {
           const el = flameEls.current[r];
-          if (el) el.textContent = flameRow(r, rand) + "\n";
+          if (el) el.textContent = r >= FLAME_ROWS - alive ? flameRow(r, rand) + "\n" : "\n";
         }
         if (glowEl.current) {
-          glowEl.current.style.opacity = String(0.72 + rand() * 0.28);
+          glowEl.current.style.opacity = String((0.72 + rand() * 0.28) * burn);
         }
       }
+
+      let smoking = false;
 
       for (let i = 0; i < puffs.length; i++) {
         const el = puffEls.current[i];
@@ -158,9 +199,16 @@ export default function Campfire() {
         let p = puffs[i];
         let age = (t - p.born) / p.life;
         if (age >= 1) {
+          // a fire that's out stops feeding the column; what's up there
+          // finishes its climb and the smoke thins away on its own
+          if (burn <= 0.02) {
+            el.style.opacity = "0";
+            continue;
+          }
           p = puffs[i] = newPuff(t, rand);
           age = 0;
         }
+        smoking = true;
 
         const x = p.x0 + p.drift * age * age + p.wobble * Math.sin(p.phase + age * 5.5);
         const y = -RISE * age;
@@ -177,6 +225,19 @@ export default function Campfire() {
         el.style.opacity = String(alpha);
       }
 
+      // nothing burning and nothing left in the air: stop until it's relit
+      if (burn === 0 && burn === target && !smoking) {
+        raf = 0;
+        return;
+      }
+
+      raf = requestAnimationFrame(tick);
+    };
+
+    wake.current = () => {
+      if (raf) return;
+      lastNow = 0;
+      lastFlame = 0;
       raf = requestAnimationFrame(tick);
     };
 

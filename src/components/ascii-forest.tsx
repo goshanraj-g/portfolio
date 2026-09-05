@@ -48,8 +48,9 @@ const FRONT = "near";
 /* Night draws pale trees on a dark ground; day inverts that, so the ink gets
    darker and the firelight stops carrying. */
 const PALETTE: Record<Sky, { cool: string; warm: string; coolK: number; warmK: number }> = {
-  night: { cool: "150, 196, 166", warm: "236, 154, 82", coolK: 1, warmK: 1 },
-  day: { cool: "24, 52, 35", warm: "150, 96, 40", coolK: 1.7, warmK: 0.5 },
+  night: { cool: "138, 208, 162", warm: "236, 154, 82", coolK: 1.22, warmK: 1 },
+  // nothing warms the trees by day: the fire is out
+  day: { cool: "22, 78, 45", warm: "150, 96, 40", coolK: 1.55, warmK: 0 },
 };
 /** how far the firelight carries across the trees, in px */
 const FIRE_REACH = 470;

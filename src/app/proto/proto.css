@@ -37,7 +37,6 @@
   --disc-glow-b: rgba(186, 210, 232, 0.25);
   --ground-c: rgba(214, 152, 94, 0.42);
   --puff: rgba(198, 208, 202, 0.9);
-  --fire-dim: 1;
   --webring-filter: invert(1);
 
   /* The fire's base, in viewport coords. The campfire stands on it and the
@@ -90,9 +89,8 @@
   --disc-glow-a: rgba(255, 190, 74, 0.5);
   --disc-glow-b: rgba(255, 160, 48, 0.28);
   --ground-c: rgba(126, 104, 76, 0.4);
+  --logs-c: #4a3f34;
   --puff: rgba(88, 96, 90, 0.5);
-  /* the fire still burns at noon, it just stops lighting the scene */
-  --fire-dim: 0.42;
   --webring-filter: none;
 }
 
@@ -293,7 +291,6 @@ body:has(.proto[data-theme="day"]) {
   height: 250px;
   transform: translateX(-50%);
   border-radius: 50%;
-  opacity: var(--fire-dim);
   background: radial-gradient(
     circle,
     rgba(255, 168, 80, 0.2) 0%,
@@ -311,7 +308,6 @@ body:has(.proto[data-theme="day"]) {
   height: 124px;
   transform: translateX(-50%);
   border-radius: 50%;
-  opacity: var(--fire-dim);
   background: radial-gradient(
     ellipse,
     rgba(255, 146, 56, 0.17) 0%,
@@ -332,7 +328,7 @@ body:has(.proto[data-theme="day"]) {
 }
 
 .flame .logs {
-  color: #6f5942;
+  color: var(--logs-c, #6f5942);
   text-shadow: none;
 }
 

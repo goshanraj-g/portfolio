@@ -162,7 +162,7 @@ export default function ProtoPage() {
       <Moon sky={sky} onToggle={() => setSky((s) => (s === "day" ? "night" : "day"))} />
       <AsciiForest sky={sky} />
       <div className="scrim" />
-      <Campfire />
+      <Campfire sky={sky} />
 
       <div className="shell">
         {/* ── Hero ── */}
