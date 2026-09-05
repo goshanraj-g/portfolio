@@ -2,15 +2,43 @@
    `:root { font-size: 108% }` in globals.css can't rescale it. */
 
 .proto {
+  /* Night is the default; clicking the moon sets data-theme="day" below.
+     Everything that takes a colour reads one of these, so the day palette
+     stays a single block rather than a parallel stylesheet. */
   --bg: #070a08;
   --fg: #eef1ee;
+  --name-c: #fafcfa;
+  --strong: rgba(238, 241, 238, 0.9);
+  --body-c: rgba(238, 241, 238, 0.86);
+  --muted: rgba(238, 241, 238, 0.74);
+  --chip-fg: rgba(238, 241, 238, 0.78);
   --dim: rgba(238, 241, 238, 0.56);
   --faint: rgba(238, 241, 238, 0.34);
   --ghost: rgba(238, 241, 238, 0.2);
   --line: rgba(238, 241, 238, 0.09);
   --accent: #8fbf9f;
   --accent-dim: rgba(143, 191, 159, 0.5);
+  --tint: rgba(143, 191, 159, 0.06);
+  --tint-2: rgba(143, 191, 159, 0.1);
+  --row-hover: rgba(143, 191, 159, 0.05);
+  --row-hover-name: #fff;
+  --badge-bg: rgba(143, 191, 159, 0.08);
+  --badge-line: rgba(143, 191, 159, 0.16);
+  --book-hover: rgba(143, 191, 159, 0.04);
   --firefly: #f0d878;
+  --scrim-a: rgba(7, 10, 8, 0.74);
+  --scrim-b: rgba(7, 10, 8, 0.36);
+  --scrim-top: rgba(7, 10, 8, 0.35);
+  --scrim-bot: rgba(7, 10, 8, 0.7);
+  --halo-a: rgba(206, 226, 240, 0.13);
+  --halo-b: rgba(186, 210, 232, 0.06);
+  --disc: rgba(228, 240, 250, 0.5);
+  --disc-glow-a: rgba(206, 226, 240, 0.45);
+  --disc-glow-b: rgba(186, 210, 232, 0.25);
+  --ground-c: rgba(214, 152, 94, 0.42);
+  --puff: rgba(198, 208, 202, 0.9);
+  --fire-dim: 1;
+  --webring-filter: invert(1);
 
   /* The fire's base, in viewport coords. The campfire stands on it and the
      forest lights itself from it, so both read the same point. */
@@ -27,8 +55,53 @@
   font-family: var(--font-inter), system-ui, sans-serif;
 }
 
+/* ── Daylight ──────────────────────────────────────────────── */
+.proto[data-theme="day"] {
+  --bg: #e7ede6;
+  --fg: #141c17;
+  --name-c: #0d1510;
+  --strong: rgba(20, 28, 23, 0.92);
+  --body-c: rgba(20, 28, 23, 0.86);
+  --muted: rgba(20, 28, 23, 0.74);
+  --chip-fg: rgba(20, 28, 23, 0.78);
+  --dim: rgba(20, 28, 23, 0.62);
+  --faint: rgba(20, 28, 23, 0.46);
+  --ghost: rgba(20, 28, 23, 0.34);
+  --line: rgba(20, 28, 23, 0.14);
+  --accent: #2f6b45;
+  --accent-dim: rgba(47, 107, 69, 0.55);
+  --tint: rgba(47, 107, 69, 0.07);
+  --tint-2: rgba(47, 107, 69, 0.12);
+  --row-hover: rgba(47, 107, 69, 0.07);
+  --row-hover-name: #000;
+  --badge-bg: rgba(47, 107, 69, 0.1);
+  --badge-line: rgba(47, 107, 69, 0.22);
+  --book-hover: rgba(47, 107, 69, 0.05);
+  --scrim-a: rgba(231, 237, 230, 0.7);
+  --scrim-b: rgba(231, 237, 230, 0.28);
+  --scrim-top: rgba(231, 237, 230, 0.3);
+  --scrim-bot: rgba(231, 237, 230, 0.72);
+  --halo-a: rgba(255, 206, 92, 0.34);
+  --halo-b: rgba(255, 178, 66, 0.15);
+  --disc: rgba(206, 138, 26, 0.9);
+  --disc-glow-a: rgba(255, 190, 74, 0.5);
+  --disc-glow-b: rgba(255, 160, 48, 0.28);
+  --ground-c: rgba(126, 104, 76, 0.4);
+  --puff: rgba(88, 96, 90, 0.5);
+  /* the fire still burns at noon, it just stops lighting the scene */
+  --fire-dim: 0.42;
+  --webring-filter: none;
+}
+
+/* Switched in one frame, not cross-faded: the trees and the disc are redrawn
+   from inline styles with no transition of their own, so easing the ground
+   under them only desyncs the scene. */
 body:has(.proto) {
   background: #070a08;
+}
+
+body:has(.proto[data-theme="day"]) {
+  background: #e7ede6;
 }
 
 /* ── Forest backdrop ───────────────────────────────────────── */
@@ -103,8 +176,8 @@ body:has(.proto) {
   pointer-events: none;
   background: radial-gradient(
     ellipse 620px 100% at 50% 50%,
-    rgba(7, 10, 8, 0.74) 0%,
-    rgba(7, 10, 8, 0.36) 58%,
+    var(--scrim-a) 0%,
+    var(--scrim-b) 58%,
     transparent 100%
   );
 }
@@ -116,16 +189,35 @@ body:has(.proto) {
   position: fixed;
   top: 8vh;
   right: 7vw;
-  z-index: 0;
-  pointer-events: none;
+  /* above the reading column: it's the one thing up here you can click */
+  z-index: 5;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
   transform: scale(var(--moon-scale));
   transform-origin: top right;
+  transition: filter 0.3s ease;
+}
+
+.moon:hover { filter: brightness(1.3); }
+
+.moon:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 10px;
+  border-radius: 12px;
 }
 
 /* offset toward the lit limb, so the glow sits on the crescent */
 .moon-halo {
   position: absolute;
+  pointer-events: none;
   top: 50%;
   left: 66%;
   width: 420px;
@@ -134,11 +226,18 @@ body:has(.proto) {
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(206, 226, 240, 0.13) 0%,
-    rgba(186, 210, 232, 0.06) 34%,
+    var(--halo-a) 0%,
+    var(--halo-b) 34%,
     transparent 70%
   );
   animation: moon-breathe 14s ease-in-out infinite;
+}
+
+/* the sun is a full disc, so its glow centres and carries further */
+.proto[data-theme="day"] .moon-halo {
+  left: 50%;
+  width: 520px;
+  height: 520px;
 }
 
 @keyframes moon-breathe {
@@ -153,8 +252,8 @@ body:has(.proto) {
   font-size: 12px;
   line-height: 8px;
   white-space: pre;
-  color: rgba(228, 240, 250, 0.5);
-  text-shadow: 0 0 7px rgba(206, 226, 240, 0.45), 0 0 22px rgba(186, 210, 232, 0.25);
+  color: var(--disc);
+  text-shadow: 0 0 7px var(--disc-glow-a), 0 0 22px var(--disc-glow-b);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -191,6 +290,7 @@ body:has(.proto) {
   height: 250px;
   transform: translateX(-50%);
   border-radius: 50%;
+  opacity: var(--fire-dim);
   background: radial-gradient(
     circle,
     rgba(255, 168, 80, 0.2) 0%,
@@ -208,6 +308,7 @@ body:has(.proto) {
   height: 124px;
   transform: translateX(-50%);
   border-radius: 50%;
+  opacity: var(--fire-dim);
   background: radial-gradient(
     ellipse,
     rgba(255, 146, 56, 0.17) 0%,
@@ -248,7 +349,7 @@ body:has(.proto) {
   font-size: 19px;
   line-height: 12.5px;
   white-space: pre;
-  color: rgba(214, 152, 94, 0.42);
+  color: var(--ground-c);
 }
 
 .smoke {
@@ -264,7 +365,7 @@ body:has(.proto) {
   white-space: pre;
   left: 0;
   bottom: 0;
-  color: rgba(198, 208, 202, 0.9);
+  color: var(--puff);
   font-family: var(--mono);
   line-height: 1;
   will-change: transform, opacity;
@@ -299,7 +400,7 @@ body:has(.proto) {
   font-size: clamp(32px, 8vw, 66px);
   line-height: 1.02;
   letter-spacing: -0.035em;
-  color: #fafcfa;
+  color: var(--name-c);
   margin-bottom: 20px;
 }
 
@@ -320,8 +421,8 @@ body:has(.proto) {
   padding: 3px 9px;
   font-size: 12px;
   font-weight: 500;
-  color: rgba(238, 241, 238, 0.78);
-  background: rgba(143, 191, 159, 0.06);
+  color: var(--chip-fg);
+  background: var(--tint);
   border: 1px solid var(--line);
   border-radius: 6px;
   white-space: nowrap;
@@ -330,7 +431,7 @@ body:has(.proto) {
 
 .chip:hover {
   border-color: var(--accent-dim);
-  background: rgba(143, 191, 159, 0.1);
+  background: var(--tint-2);
 }
 
 .chip img { width: 15px; height: 15px; border-radius: 2px; opacity: 0.9; }
@@ -339,7 +440,7 @@ body:has(.proto) {
   font-size: clamp(18px, 3.2vw, 23px);
   line-height: 1.5;
   letter-spacing: -0.015em;
-  color: rgba(238, 241, 238, 0.86);
+  color: var(--body-c);
   max-width: 33ch;
 }
 
@@ -392,7 +493,7 @@ body:has(.proto) {
 .lead {
   font-size: clamp(16px, 2.4vw, 18px);
   line-height: 1.68;
-  color: rgba(238, 241, 238, 0.74);
+  color: var(--muted);
   margin-bottom: 40px;
 }
 
@@ -447,7 +548,7 @@ body:has(.proto) {
   transition: background 0.22s ease, opacity 0.22s ease;
 }
 
-a.row:hover { background: rgba(143, 191, 159, 0.05); opacity: 1 !important; }
+a.row:hover { background: var(--row-hover); opacity: 1 !important; }
 
 .row-main { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
 
@@ -467,7 +568,7 @@ a.row:hover .row-logo { opacity: 1; }
 .row-name {
   font-size: 15px;
   font-weight: 500;
-  color: rgba(238, 241, 238, 0.9);
+  color: var(--strong);
   white-space: nowrap;
   position: relative;
   transition: color 0.2s ease;
@@ -486,7 +587,7 @@ a.row:hover .row-logo { opacity: 1; }
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-a.row:hover .row-name { color: #fff; }
+a.row:hover .row-name { color: var(--row-hover-name); }
 a.row:hover .row-name::after { transform: scaleX(1); }
 
 .row-sub {
@@ -510,8 +611,8 @@ a.row:hover .row-name::after { transform: scaleX(1); }
 .row-badge {
   font-size: 11px;
   color: var(--accent);
-  background: rgba(143, 191, 159, 0.08);
-  border: 1px solid rgba(143, 191, 159, 0.16);
+  background: var(--badge-bg);
+  border: 1px solid var(--badge-line);
   padding: 2px 7px;
   border-radius: 4px;
   white-space: nowrap;
@@ -519,7 +620,7 @@ a.row:hover .row-name::after { transform: scaleX(1); }
 }
 
 .oss-link { color: var(--accent); text-decoration: none; transition: text-shadow 0.3s ease; }
-a.row:hover .oss-link { text-shadow: 0 0 12px rgba(143, 191, 159, 0.5); }
+a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 
 /* ── Reading ───────────────────────────────────────────────── */
 .shelf { display: flex; flex-direction: column; gap: 4px; }
@@ -531,9 +632,9 @@ a.row:hover .oss-link { text-shadow: 0 0 12px rgba(143, 191, 159, 0.5); }
   transition: background 0.22s ease;
 }
 
-.book:hover { background: rgba(143, 191, 159, 0.04); }
+.book:hover { background: var(--book-hover); }
 
-.book-title { font-size: 15px; font-weight: 500; color: rgba(238, 241, 238, 0.9); }
+.book-title { font-size: 15px; font-weight: 500; color: var(--strong); }
 .book-author { font-size: 13.5px; color: var(--faint); margin-top: 2px; }
 .book-author::before { content: "by "; opacity: 0.55; }
 
@@ -559,7 +660,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px rgba(143, 191, 159, 0.5); }
 .webring { display: inline-flex; align-items: center; gap: 9px; opacity: 0.35; transition: opacity 0.3s ease; }
 .webring:hover { opacity: 0.85; }
 .webring a { color: var(--faint); text-decoration: none; font-size: 15px; }
-.webring img { filter: invert(1); opacity: 0.7; }
+.webring img { filter: var(--webring-filter); opacity: 0.7; }
 
 /* ── Reveal ────────────────────────────────────────────────── */
 .reveal {
@@ -581,11 +682,18 @@ a.row:hover .oss-link { text-shadow: 0 0 12px rgba(143, 191, 159, 0.5); }
   .moon { --moon-scale: 0.8; right: 5vw; }
 }
 
+/* Below this the reading column reaches the disc. Anchoring it to the hero
+   keeps it off the text — it would otherwise sit over the words and, being a
+   button now, swallow clicks meant for them. */
+@media (max-width: 1100px) {
+  .moon { position: absolute; }
+}
+
 /* ── Mobile ────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .shell { padding: 0 20px max(96px, 17vh); }
   .section { margin-bottom: 60px; }
-  .scrim { background: linear-gradient(to bottom, rgba(7,10,8,0.35), rgba(7,10,8,0.7)); }
+  .scrim { background: linear-gradient(to bottom, var(--scrim-top), var(--scrim-bot)); }
 
   .moon {
     --moon-scale: 0.58;
@@ -607,10 +715,6 @@ a.row:hover .oss-link { text-shadow: 0 0 12px rgba(143, 191, 159, 0.5); }
      description drops to its own line */
   .row-main { flex-flow: row wrap; align-items: center; gap: 2px 10px; }
   .row-sub { flex: 1 0 100%; white-space: normal; }
-
-  /* The moon scrolls away with the hero instead of hanging behind the text
-     for the whole page — at this width the column runs under it. */
-  .moon { position: absolute; }
 
   /* 17px icons are not a tap target; pad them out and pull the padding back
      off the edges so they stay flush with the column. */

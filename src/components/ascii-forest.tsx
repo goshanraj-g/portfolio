@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { Sky } from "./moon";
 
 /* Static ASCII forest: three depth slices filling the bottom BAND_VH. */
 
@@ -38,8 +39,12 @@ const LAYERS: LayerSpec[] = [
 /** the near slice draws above the campfire, so its trees pass in front of it */
 const FRONT = "near";
 
-const COOL = "150, 196, 166";
-const WARM = "236, 154, 82";
+/* Night draws pale trees on a dark ground; day inverts that, so the ink gets
+   darker and the firelight stops carrying. */
+const PALETTE: Record<Sky, { cool: string; warm: string; coolK: number; warmK: number }> = {
+  night: { cool: "150, 196, 166", warm: "236, 154, 82", coolK: 1, warmK: 1 },
+  day: { cool: "34, 66, 46", warm: "150, 96, 40", coolK: 1.3, warmK: 0.4 },
+};
 /** how far the firelight carries across the trees, in px */
 const FIRE_REACH = 470;
 /** the light leaves partway up the flame, not off the log line */
@@ -323,8 +328,10 @@ function Fireflies({ band }: { band: number }) {
 type Built = { spec: LayerSpec; art: string; bottom: number; fontSize: number; lineH: number };
 type Fire = { x: number; y: number };
 
-function Slice({ b, warm }: { b: Built; warm?: boolean }) {
+function Slice({ b, sky, warm }: { b: Built; sky: Sky; warm?: boolean }) {
   const { spec, art, bottom, fontSize, lineH } = b;
+  const p = PALETTE[sky];
+  const alpha = warm ? spec.warmAlpha * p.warmK : spec.alpha * p.coolK;
   return (
     <pre
       className="forest-art"
@@ -332,7 +339,7 @@ function Slice({ b, warm }: { b: Built; warm?: boolean }) {
         bottom,
         fontSize,
         lineHeight: `${lineH}px`,
-        color: `rgba(${warm ? WARM : COOL}, ${warm ? spec.warmAlpha : spec.alpha})`,
+        color: `rgba(${warm ? p.warm : p.cool}, ${alpha})`,
         ...(spec.maskTop < 100
           ? {
               WebkitMaskImage: `linear-gradient(to top, #000 0%, #000 ${spec.maskTop}%, transparent 100%)`,
@@ -347,7 +354,7 @@ function Slice({ b, warm }: { b: Built; warm?: boolean }) {
 }
 
 /** Wrapping rather than compositing masks: the slice keeps its own top fade. */
-function Firelight({ fire, slices }: { fire: Fire | null; slices: Built[] }) {
+function Firelight({ fire, slices, sky }: { fire: Fire | null; slices: Built[]; sky: Sky }) {
   const lit = slices.filter((b) => b.spec.warmAlpha > 0);
   if (!fire || !lit.length) return null;
 
@@ -355,13 +362,13 @@ function Firelight({ fire, slices }: { fire: Fire | null; slices: Built[] }) {
   return (
     <div className="firelight" style={{ WebkitMaskImage: mask, maskImage: mask }}>
       {lit.map((b) => (
-        <Slice key={b.spec.key} b={b} warm />
+        <Slice key={b.spec.key} b={b} sky={sky} warm />
       ))}
     </div>
   );
 }
 
-export default function AsciiForest() {
+export default function AsciiForest({ sky }: { sky: Sky }) {
   const [layers, setLayers] = useState<Built[]>([]);
   const [band, setBand] = useState(0);
   const [fire, setFire] = useState<Fire | null>(null);
@@ -427,17 +434,18 @@ export default function AsciiForest() {
       <div className="forest" aria-hidden="true">
         <i className="fire-anchor" ref={anchor} />
         {back.map((b) => (
-          <Slice key={b.spec.key} b={b} />
+          <Slice key={b.spec.key} b={b} sky={sky} />
         ))}
-        <Firelight fire={fire} slices={back} />
-        <Fireflies band={band} />
+        <Firelight fire={fire} slices={back} sky={sky} />
+        {/* nothing blinks at noon */}
+        {sky === "night" && <Fireflies band={band} />}
       </div>
 
       <div className="forest forest-front" aria-hidden="true">
         {front.map((b) => (
-          <Slice key={b.spec.key} b={b} />
+          <Slice key={b.spec.key} b={b} sky={sky} />
         ))}
-        <Firelight fire={fire} slices={front} />
+        <Firelight fire={fire} slices={front} sky={sky} />
       </div>
     </>
   );

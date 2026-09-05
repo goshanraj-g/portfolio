@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Github, Mail, Linkedin } from "lucide-react";
 import AsciiForest from "@/components/ascii-forest";
 import Campfire from "@/components/campfire";
-import Moon from "@/components/moon";
+import Moon, { type Sky } from "@/components/moon";
 import "./proto.css";
 
 const WEBRING_URL = "https://mac-csse-webring.vercel.app/";
@@ -154,10 +154,13 @@ function SectionHead({ title }: { title: string }) {
 }
 
 export default function ProtoPage() {
+  // Night by default on every visit; the moon is the only way out of it.
+  const [sky, setSky] = useState<Sky>("night");
+
   return (
-    <div className="proto">
-      <Moon />
-      <AsciiForest />
+    <div className="proto" data-theme={sky === "day" ? "day" : undefined}>
+      <Moon sky={sky} onToggle={() => setSky((s) => (s === "day" ? "night" : "day"))} />
+      <AsciiForest sky={sky} />
       <div className="scrim" />
       <Campfire />
 

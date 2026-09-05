@@ -1,5 +1,6 @@
-/* ASCII moon. Drawn light-on-dark, so denser glyphs read as brighter.
-   Deterministic, so it renders server-side and never moves. */
+/* The sky's one clickable thing: a crescent at night, the sun by day.
+   Both are drawn light-on-dark, so denser glyphs read as brighter, and both
+   are deterministic, so they render server-side and never move. */
 
 /** disc radius, in character rows */
 const RADIUS = 7;
@@ -91,13 +92,55 @@ function drawMoon(): string {
   return lines.join("\n");
 }
 
-const MOON = drawMoon();
+/* The sun is the same disc with nothing taken out of it: no terminator and no
+   craters, flat and hot through the middle, falling off only at the limb. */
+function drawSun(): string {
+  const rand = mulberry32(20260905);
+  const colsHalf = Math.ceil(RADIUS / CELL_ASPECT);
 
-export default function Moon() {
+  const lines: string[] = [];
+  for (let dy = -RADIUS; dy <= RADIUS; dy++) {
+    let line = "";
+    for (let dx = -colsHalf; dx <= colsHalf; dx++) {
+      const nx = dx * CELL_ASPECT;
+      const dist = Math.sqrt(nx * nx + dy * dy) / RADIUS;
+
+      if (dist > 1.04) {
+        line += " ";
+        continue;
+      }
+
+      let b = 1 - 0.5 * Math.min(1, dist) ** 4;
+      b += (rand() - 0.5) * 0.06;
+
+      const i = Math.max(0, Math.min(RAMP.length - 1, Math.round(b * (RAMP.length - 1))));
+      line += RAMP[i];
+    }
+    lines.push(line.replace(/\s+$/, ""));
+  }
+  return lines.join("\n");
+}
+
+export type Sky = "night" | "day";
+
+const MOON = drawMoon();
+const SUN = drawSun();
+
+export default function Moon({ sky, onToggle }: { sky: Sky; onToggle: () => void }) {
+  const day = sky === "day";
   return (
-    <div className="moon" aria-hidden="true">
-      <div className="moon-halo" />
-      <pre className="moon-disc">{MOON}</pre>
-    </div>
+    <button
+      type="button"
+      className="moon"
+      onClick={onToggle}
+      aria-pressed={day}
+      aria-label={day ? "Switch to night" : "Switch to day"}
+      title={day ? "Night" : "Day"}
+    >
+      <span className="moon-halo" aria-hidden="true" />
+      <pre className="moon-disc" aria-hidden="true">
+        {day ? SUN : MOON}
+      </pre>
+    </button>
   );
 }
