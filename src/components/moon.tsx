@@ -6,6 +6,15 @@ const RADIUS = 7;
 /** monospace cell aspect (advance width / line height) */
 const CELL_ASPECT = 0.6 / 0.66;
 
+/** lit fraction of the disc: 0.5 is a half moon, lower is a thinner crescent */
+const PHASE = 0.22;
+/** the terminator ellipse, from the lit fraction. +1 is new, -1 is full */
+const TERMINATOR = 1 - 2 * PHASE;
+/** how far the terminator feathers, in disc radii */
+const TERMINATOR_SOFTNESS = 0.2;
+/** earthshine: how densely the unlit limb is dotted in */
+const EARTHSHINE = 0.7;
+
 const RAMP = [".", ":", "-", "=", "+", "*", "#", "%", "@"];
 
 function mulberry32(a: number) {
@@ -55,7 +64,28 @@ function drawMoon(): string {
         const cd = Math.sqrt((nx - c.x) ** 2 + (dy - c.y) ** 2);
         if (cd < c.r) b -= c.depth * (1 - cd / c.r);
       }
+
+      // The terminator is an ellipse: at each row it crosses the disc at
+      // TERMINATOR of that row's half-chord. Lit to the right of it.
+      const halfChord = Math.sqrt(Math.max(0, 1 - (dy / RADIUS) ** 2));
+      const t = (nx / RADIUS - TERMINATOR * halfChord) / TERMINATOR_SOFTNESS;
+      const lit = Math.max(0, Math.min(1, t * 0.5 + 0.5));
+
+      // Earthshine: the unlit side is dropped, bar a sparse dotting of the
+      // limb, so the dark half of the disc still has an edge to it.
+      if (lit <= 0.02) {
+        const rim = (dist - 0.84) / 0.18;
+        line += rim > 0 && rand() < rim * EARTHSHINE ? "." : " ";
+        continue;
+      }
+
+      b *= lit;
       b += (rand() - 0.5) * 0.05;
+
+      if (b <= 0.05) {
+        line += " ";
+        continue;
+      }
 
       const i = Math.max(0, Math.min(RAMP.length - 1, Math.round(b * (RAMP.length - 1))));
       line += RAMP[i];

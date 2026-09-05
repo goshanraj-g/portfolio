@@ -122,10 +122,11 @@ body:has(.proto) {
   transform-origin: top right;
 }
 
+/* offset toward the lit limb, so the glow sits on the crescent */
 .moon-halo {
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: 66%;
   width: 420px;
   height: 420px;
   transform: translate(-50%, -50%);
