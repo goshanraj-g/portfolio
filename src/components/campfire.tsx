@@ -42,6 +42,11 @@ const FLAME_COLORS = [
 ];
 
 const LOGS = ["    \\\\|//    ", " __/_____\\__ "];
+/** a ring of stones settles the fire into the ground instead of onto it */
+const STONES = ".oOo(___)oOo.";
+
+/** ground scatter, wider than the fire so the clearing thins into the trees */
+const GROUND_COLS = 34;
 
 const SMOKE_CHARS = [".", ":", "o", "~", "'"];
 
@@ -55,6 +60,21 @@ function seeded(a: number) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
+
+/* Same glyphs the forest uses for undergrowth, so the floor is one surface. */
+const GROUND = (() => {
+  const rand = seeded(77);
+  const glyphs = [".", ",", "'", '"'];
+  return [0, 1]
+    .map((row) =>
+      Array.from({ length: GROUND_COLS }, (_, i) => {
+        const near = 1 - Math.abs(i - GROUND_COLS / 2) / (GROUND_COLS / 2);
+        const chance = (row === 0 ? 0.16 : 0.08) + near * 0.38;
+        return rand() < chance ? glyphs[Math.floor(rand() * 4)] : " ";
+      }).join("")
+    )
+    .join("\n");
+})();
 
 function flameRow(row: number, rand: () => number): string {
   const t = (row + 1) / FLAME_ROWS;
@@ -181,7 +201,10 @@ export default function Campfire() {
 
   return (
     <div className="campfire" aria-hidden="true">
-      <div className="campfire-glow" ref={glowEl} />
+      <div className="campfire-light" ref={glowEl}>
+        <div className="campfire-pool" />
+        <div className="campfire-glow" />
+      </div>
 
       <div className="smoke">
         {Array.from({ length: PUFFS }, (_, i) => (
@@ -208,8 +231,11 @@ export default function Campfire() {
             {row + "\n"}
           </span>
         ))}
-        <span className="logs">{LOGS.join("\n")}</span>
+        <span className="logs">{LOGS.join("\n") + "\n"}</span>
+        <span className="stones">{STONES}</span>
       </pre>
+
+      <pre className="ground">{GROUND}</pre>
     </div>
   );
 }

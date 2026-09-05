@@ -43,35 +43,23 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 
 /* ── Data ── */
 
-// Written from the résumé. Still my phrasing — swap in your own voice.
-const threads = [
+type Thread = { label: string; body: string };
+
+const threads: Thread[] = [
   {
     label: "agents",
     body:
-      "The thing I keep coming back to. The interesting part is never the prompt — it's the tool surface, the retries, and deciding what the agent is allowed to be wrong about. At IBM that became an authoring system 2,700+ course creators draft against; on my own time, an agent that decides when a factory schedule is worth tearing up.",
-    refs: [
-      { name: "Manufacturing Scheduler", url: "" },
-      { name: "AI Web Monitor", url: "" },
-      { name: "LlamaIndex", url: "https://github.com/run-llama/llama_index" },
-    ],
+      "built web agents, code agents, voice agents, and agents for ERPs",
+  },
+  {
+    label: "video",
+    body:
+      "built AI video dubbers, knowledgeable about encoding and transcoding",
   },
   {
     label: "full stack",
     body:
-      "I'd rather own the whole thing than one slice of it — the schema, the queue, and the part people actually click. Rails and Spring Boot at one end, Next.js and React at the other, Kubernetes underneath when it has to stay up.",
-    refs: [
-      { name: "Repository Auditor", url: "https://github.com/goshanraj-g/CodeTurret" },
-      { name: "CampusThread", url: "https://campusthread.vercel.app/" },
-    ],
-  },
-  {
-    label: "always learning",
-    body:
-      "\"Whatever the problem needs\" is the honest answer to what I work in. Go for a job queue, Rust for a compiler patch, Java for a hackathon build — most of it picked up because something in front of me needed it and I wanted to find out.",
-    refs: [
-      { name: "Ruby / ZJIT", url: "https://railsatscale.com/2025-12-24-launch-zjit/" },
-      { name: "Shopify Type Toolkit", url: "https://github.com/Shopify/type_toolkit" },
-    ],
+      "built several full-stack applications with good product knowledge",
   },
 ];
 
@@ -183,7 +171,7 @@ export default function ProtoPage() {
 
           <Reveal delay={160}>
             <p className="thesis">
-              I build <em>agents</em> — and the full stack they run on.
+              I build <em>agents</em>, plus the full stack they run on
             </p>
           </Reveal>
         </header>
@@ -191,32 +179,17 @@ export default function ProtoPage() {
         {/* ── 01 Summary ── */}
         <section className="section">
           <Reveal>
-            <SectionHead title="Summary" />
             <p className="lead">
-              I&apos;m a CS student at McMaster, currently interning at <strong>IBM</strong>. The work I
-              come back to sits between models and the things people actually use: making an agent
+              I&apos;m a CS student at McMaster, currently interning at <strong>IBM</strong>. The work I&apos;ve done
+              sits between models and the things people actually use: making an agent
               reliable enough to trust, or making the layer underneath it fast enough to stop
-              noticing.
+              noticing
             </p>
             <div className="threads">
               {threads.map((t) => (
                 <div key={t.label} className="thread">
                   <div className="thread-label">{t.label}</div>
                   <p className="thread-body">{t.body}</p>
-                  <div className="thread-refs">
-                    {t.refs.map((r, i) => (
-                      <span key={r.name}>
-                        {i > 0 && <span className="sep">·</span>}
-                        {r.url ? (
-                          <Link href={r.url} target="_blank">
-                            {r.name}
-                          </Link>
-                        ) : (
-                          <span>{r.name}</span>
-                        )}
-                      </span>
-                    ))}
-                  </div>
                 </div>
               ))}
             </div>

@@ -17,6 +17,8 @@ type LayerSpec = {
   maxH: number;
   /** chance an interior cell gets stippled */
   stipple: number;
+  /** opacity of this slice's firelit copy; 0 skips it */
+  warmAlpha: number;
   /** slice extent as fractions of the band; slices overlap so there are no seams */
   from: number;
   to: number;
@@ -26,10 +28,20 @@ type LayerSpec = {
 };
 
 const LAYERS: LayerSpec[] = [
-  { key: "far",  fontSize: 10, alpha: 0.16, density: 24, minH: 5,  maxH: 11, stipple: 0,    from: 0.4,   to: 1,    maskTop: 34,  seed: 1337 },
-  { key: "mid",  fontSize: 14, alpha: 0.24, density: 16, minH: 9,  maxH: 17, stipple: 0.12, from: 0.14,  to: 0.7,  maskTop: 80,  seed: 90210 },
-  { key: "near", fontSize: 19, alpha: 0.34, density: 9,  minH: 14, maxH: 24, stipple: 0.2,  from: -0.08, to: 0.5,  maskTop: 100, seed: 4242 },
+  { key: "far",  fontSize: 10, alpha: 0.16, density: 24, minH: 5,  maxH: 11, stipple: 0,    warmAlpha: 0,    from: 0.4,   to: 1,    maskTop: 34,  seed: 1337 },
+  { key: "mid",  fontSize: 14, alpha: 0.24, density: 16, minH: 9,  maxH: 17, stipple: 0.12, warmAlpha: 0.32, from: 0.14,  to: 0.7,  maskTop: 80,  seed: 90210 },
+  { key: "near", fontSize: 19, alpha: 0.34, density: 9,  minH: 14, maxH: 24, stipple: 0.2,  warmAlpha: 0.52, from: -0.08, to: 0.5,  maskTop: 100, seed: 4242 },
 ];
+
+/** the near slice draws above the campfire, so its trees pass in front of it */
+const FRONT = "near";
+
+const COOL = "150, 196, 166";
+const WARM = "236, 154, 82";
+/** how far the firelight carries across the trees, in px */
+const FIRE_REACH = 470;
+/** the light leaves partway up the flame, not off the log line */
+const FIRE_LIFT = 44;
 
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, "DejaVu Sans Mono", monospace';
 const LINE_RATIO = 0.66;
@@ -284,10 +296,51 @@ function Fireflies({ band }: { band: number }) {
 }
 
 type Built = { spec: LayerSpec; art: string; bottom: number; fontSize: number; lineH: number };
+type Fire = { x: number; y: number };
+
+function Slice({ b, warm }: { b: Built; warm?: boolean }) {
+  const { spec, art, bottom, fontSize, lineH } = b;
+  return (
+    <pre
+      className="forest-art"
+      style={{
+        bottom,
+        fontSize,
+        lineHeight: `${lineH}px`,
+        color: `rgba(${warm ? WARM : COOL}, ${warm ? spec.warmAlpha : spec.alpha})`,
+        ...(spec.maskTop < 100
+          ? {
+              WebkitMaskImage: `linear-gradient(to top, #000 0%, #000 ${spec.maskTop}%, transparent 100%)`,
+              maskImage: `linear-gradient(to top, #000 0%, #000 ${spec.maskTop}%, transparent 100%)`,
+            }
+          : null),
+      }}
+    >
+      {art}
+    </pre>
+  );
+}
+
+/** Wrapping rather than compositing masks: the slice keeps its own top fade. */
+function Firelight({ fire, slices }: { fire: Fire | null; slices: Built[] }) {
+  const lit = slices.filter((b) => b.spec.warmAlpha > 0);
+  if (!fire || !lit.length) return null;
+
+  const mask = `radial-gradient(circle ${FIRE_REACH}px at ${fire.x}px ${fire.y}px, #000 0%, rgba(0,0,0,0.5) 46%, transparent 78%)`;
+  return (
+    <div className="firelight" style={{ WebkitMaskImage: mask, maskImage: mask }}>
+      {lit.map((b) => (
+        <Slice key={b.spec.key} b={b} warm />
+      ))}
+    </div>
+  );
+}
 
 export default function AsciiForest() {
   const [layers, setLayers] = useState<Built[]>([]);
   const [band, setBand] = useState(0);
+  const [fire, setFire] = useState<Fire | null>(null);
+  const anchor = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const build = () => {
@@ -295,6 +348,11 @@ export default function AsciiForest() {
       const band = window.innerHeight * BAND_VH;
       const scale = forestScale(vw);
       setBand(band);
+
+      // the fire's own CSS decides where it stands; read it back rather than
+      // keeping a second copy of those breakpoints here
+      const at = anchor.current?.getBoundingClientRect();
+      setFire(at ? { x: at.left, y: at.top - FIRE_LIFT } : null);
 
       setLayers(
         LAYERS.map((spec) => {
@@ -332,29 +390,26 @@ export default function AsciiForest() {
     };
   }, []);
 
+  const back = layers.filter((b) => b.spec.key !== FRONT);
+  const front = layers.filter((b) => b.spec.key === FRONT);
+
   return (
-    <div className="forest" aria-hidden="true">
-      {layers.map(({ spec, art, bottom, fontSize, lineH }) => (
-        <pre
-          key={spec.key}
-          className="forest-art"
-          style={{
-            bottom,
-            fontSize,
-            lineHeight: `${lineH}px`,
-            color: `rgba(150, 196, 166, ${spec.alpha})`,
-            ...(spec.maskTop < 100
-              ? {
-                  WebkitMaskImage: `linear-gradient(to top, #000 0%, #000 ${spec.maskTop}%, transparent 100%)`,
-                  maskImage: `linear-gradient(to top, #000 0%, #000 ${spec.maskTop}%, transparent 100%)`,
-                }
-              : null),
-          }}
-        >
-          {art}
-        </pre>
-      ))}
-      <Fireflies band={band} />
-    </div>
+    <>
+      <div className="forest" aria-hidden="true">
+        <i className="fire-anchor" ref={anchor} />
+        {back.map((b) => (
+          <Slice key={b.spec.key} b={b} />
+        ))}
+        <Firelight fire={fire} slices={back} />
+        <Fireflies band={band} />
+      </div>
+
+      <div className="forest forest-front" aria-hidden="true">
+        {front.map((b) => (
+          <Slice key={b.spec.key} b={b} />
+        ))}
+        <Firelight fire={fire} slices={front} />
+      </div>
+    </>
   );
 }

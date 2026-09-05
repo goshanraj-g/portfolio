@@ -11,6 +11,12 @@
   --accent: #8fbf9f;
   --accent-dim: rgba(143, 191, 159, 0.5);
   --firefly: #f0d878;
+
+  /* The fire's base, in viewport coords. The campfire stands on it and the
+     forest lights itself from it, so both read the same point. */
+  --fire-x: calc(4.5vw + 58px);
+  --fire-y: 22px;
+
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "DejaVu Sans Mono", monospace;
 
   position: relative;
@@ -32,6 +38,36 @@ body:has(.proto) {
   pointer-events: none;
   user-select: none;
   overflow: hidden;
+}
+
+/* The near slice rides above the campfire so its trees pass in front of it. */
+.forest-front { z-index: 2; }
+
+/* Zero-size marker the forest measures to place its firelight. */
+.fire-anchor {
+  position: absolute;
+  left: var(--fire-x);
+  bottom: var(--fire-y);
+  width: 0;
+  height: 0;
+}
+
+/* A warm duplicate of the same trees, clipped to how far the fire carries. */
+.firelight {
+  position: absolute;
+  inset: 0;
+  animation: firelight 6.5s ease-in-out infinite;
+}
+
+@keyframes firelight {
+  0%, 100% { opacity: 0.86; }
+  27% { opacity: 1; }
+  53% { opacity: 0.79; }
+  74% { opacity: 0.97; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .firelight { animation: none; }
 }
 
 /* Top-edge fade is set inline per slice — only the topmost dissolves. */
@@ -62,7 +98,7 @@ body:has(.proto) {
 .scrim {
   position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: 3;
   pointer-events: none;
   background: radial-gradient(
     ellipse 620px 100% at 50% 50%,
@@ -71,8 +107,6 @@ body:has(.proto) {
     transparent 100%
   );
 }
-
-
 
 /* ── Moon ──────────────────────────────────────────────────── */
 /* Opposite the fire. The disc never moves; only the halo breathes. */
@@ -126,42 +160,67 @@ body:has(.proto) {
 }
 
 /* ── Campfire ──────────────────────────────────────────────── */
-/* Above the scrim to keep its warmth, below the reading column. */
+/* Stands on --fire-x/--fire-y, between the mid and near tree slices. */
 .campfire {
-  --fire-scale: 0.7;
+  --fire-scale: 0.78;
   position: fixed;
-  left: 4.5vw;
-  bottom: 30px;
+  left: var(--fire-x);
+  bottom: var(--fire-y);
   z-index: 1;
   pointer-events: none;
   user-select: none;
   font-family: var(--mono);
   /* one knob for flame, logs, glow and smoke, pinned to the ground */
-  transform: scale(var(--fire-scale));
-  transform-origin: bottom left;
+  transform: translateX(-50%) scale(var(--fire-scale));
+  transform-origin: bottom center;
+}
+
+/* Both glows flicker together off one opacity write. */
+.campfire-light {
+  position: absolute;
+  inset: 0;
 }
 
 .campfire-glow {
   position: absolute;
   left: 50%;
-  bottom: -70px;
-  width: 510px;
-  height: 510px;
+  bottom: 6px;
+  width: 250px;
+  height: 250px;
   transform: translateX(-50%);
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(255, 150, 60, 0.16) 0%,
-    rgba(255, 120, 45, 0.07) 38%,
+    rgba(255, 168, 80, 0.2) 0%,
+    rgba(255, 130, 48, 0.08) 40%,
+    transparent 70%
+  );
+}
+
+/* Light pooling on the forest floor — a flat ellipse, not a floating orb. */
+.campfire-pool {
+  position: absolute;
+  left: 50%;
+  bottom: -16px;
+  width: 470px;
+  height: 124px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    rgba(255, 146, 56, 0.17) 0%,
+    rgba(255, 120, 40, 0.07) 44%,
     transparent 72%
   );
 }
 
+/* Same cell size the mid tree slice uses, so the fire sits on their grid. */
 .flame {
   position: relative;
   margin: 0;
-  font-size: 21px;
-  line-height: 17px;
+  font-family: var(--mono);
+  font-size: 19px;
+  line-height: 12.5px;
   white-space: pre;
   text-shadow: 0 0 12px rgba(255, 150, 60, 0.55), 0 0 32px rgba(255, 120, 40, 0.3);
 }
@@ -169,6 +228,25 @@ body:has(.proto) {
 .flame .logs {
   color: #6f5942;
   text-shadow: none;
+}
+
+.flame .stones {
+  color: #59544a;
+  text-shadow: none;
+}
+
+/* Wider than the fire, so the clearing thins out into the trees. */
+.ground {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin: -1px 0 0;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 19px;
+  line-height: 12.5px;
+  white-space: pre;
+  color: rgba(214, 152, 94, 0.42);
 }
 
 .smoke {
@@ -193,7 +271,7 @@ body:has(.proto) {
 /* ── Layout ────────────────────────────────────────────────── */
 .shell {
   position: relative;
-  z-index: 2;
+  z-index: 4;
   max-width: 680px;
   margin: 0 auto;
   padding: 0 28px 120px;
@@ -345,23 +423,6 @@ body:has(.proto) {
   margin-bottom: 9px;
 }
 
-.thread-refs {
-  font-family: var(--mono);
-  font-size: 11.5px;
-  color: var(--ghost);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 0;
-}
-
-.thread-refs a {
-  color: var(--ghost);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.thread-refs a:hover { color: var(--accent); }
-.thread-refs .sep { padding: 0 8px; opacity: 0.4; }
 
 /* ── Rows ──────────────────────────────────────────────────── */
 .rows { display: flex; flex-direction: column; }
@@ -509,7 +570,8 @@ a.row:hover .oss-link { text-shadow: 0 0 12px rgba(143, 191, 159, 0.5); }
 
 /* ── Tablet / small laptop ─────────────────────────────────── */
 @media (max-width: 1024px) {
-  .campfire { --fire-scale: 0.56; left: 3vw; }
+  .proto { --fire-x: calc(3vw + 46px); }
+  .campfire { --fire-scale: 0.62; }
   .moon { --moon-scale: 0.8; right: 5vw; }
 }
 
@@ -525,13 +587,8 @@ a.row:hover .oss-link { text-shadow: 0 0 12px rgba(143, 191, 159, 0.5); }
     right: 6vw;
   }
 
-  .campfire {
-    --fire-scale: 0.37;
-    left: 5vw;
-    bottom: 18px;
-    z-index: 0;
-    opacity: 0.85;
-  }
+  .proto { --fire-x: calc(5vw + 30px); --fire-y: 13px; }
+  .campfire { --fire-scale: 0.41; opacity: 0.85; }
   .row {
     flex-direction: column;
     align-items: flex-start;
@@ -546,6 +603,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px rgba(143, 191, 159, 0.5); }
 
 /* ── Small phones ──────────────────────────────────────────── */
 @media (max-width: 400px) {
-  .campfire { --fire-scale: 0.32; bottom: 14px; }
+  .proto { --fire-x: calc(5vw + 26px); --fire-y: 10px; }
+  .campfire { --fire-scale: 0.354; }
   .moon { --moon-scale: 0.48; }
 }
