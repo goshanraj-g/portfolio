@@ -63,7 +63,7 @@ const experiences = [
     year: "01/26 - Present",
   },
   {
-    title: "ML Research Assistant",
+    title: "Machine Learning Research Assistant",
     org: "McMaster University",
     orgLink: "https://www.mcmaster.ca/",
     image: "/images/education/mcmaster.svg",
