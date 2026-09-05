@@ -12,8 +12,6 @@ const PHASE = 0.22;
 const TERMINATOR = 1 - 2 * PHASE;
 /** how far the terminator feathers, in disc radii */
 const TERMINATOR_SOFTNESS = 0.2;
-/** earthshine: how densely the unlit limb is dotted in */
-const EARTHSHINE = 0.7;
 
 const RAMP = [".", ":", "-", "=", "+", "*", "#", "%", "@"];
 
@@ -71,11 +69,9 @@ function drawMoon(): string {
       const t = (nx / RADIUS - TERMINATOR * halfChord) / TERMINATOR_SOFTNESS;
       const lit = Math.max(0, Math.min(1, t * 0.5 + 0.5));
 
-      // Earthshine: the unlit side is dropped, bar a sparse dotting of the
-      // limb, so the dark half of the disc still has an edge to it.
+      // The unlit side is dropped entirely, so only the crescent is drawn.
       if (lit <= 0.02) {
-        const rim = (dist - 0.84) / 0.18;
-        line += rim > 0 && rand() < rim * EARTHSHINE ? "." : " ";
+        line += " ";
         continue;
       }
 
