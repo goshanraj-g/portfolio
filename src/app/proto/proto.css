@@ -40,12 +40,30 @@
   --disc-glow-b: rgba(186, 210, 232, 0.25);
   --ground-c: rgba(214, 152, 94, 0.42);
   --puff: rgba(198, 208, 202, 0.9);
-  --webring-filter: invert(1);
 
   /* The fire's base, in viewport coords. The campfire stands on it and the
      forest lights itself from it, so both read the same point. */
   --fire-x: calc(4.5vw + 58px);
   --fire-y: 22px;
+
+  /* The panel foot is absolutely positioned and so contributes no height of
+     its own; each panel reserves --foot-strip at its bottom instead, and the
+     flex centring above it then works off what's left. Derived from the bar's
+     real parts rather than measured by hand, so resizing the icons recentres
+     every panel on its own. */
+  --social-icon: 26px;
+  --social-gap: 23px;   /* optical gap between icons, tap padding excluded */
+  --foot-offset: 34px;  /* panel bottom to the bar */
+  --foot-pad: 18px;     /* the bar's rule to its icons */
+  --foot-tap: 0px;      /* padding inflating each icon's hit area */
+  --foot-gap: 28px;     /* the bar's rule to the centred content above it */
+  --foot-strip: calc(
+    var(--foot-offset) + var(--foot-pad) + 1px + var(--social-icon) +
+    2 * var(--foot-tap) + var(--foot-gap)
+  );
+
+  /* width the rail owns down the right edge, kept clear of the text column */
+  --rail-zone: 88px;
 
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "DejaVu Sans Mono", monospace;
 
@@ -96,7 +114,6 @@
   --logs-c: #4a3f34;
   --logo-plate: rgba(255, 255, 255, 0.9);
   --puff: rgba(88, 96, 90, 0.5);
-  --webring-filter: none;
 }
 
 /* Switched in one frame, not cross-faded: the trees and the disc are redrawn
@@ -116,6 +133,13 @@ body:has(.proto[data-theme="day"]) {
    page moves a section at a time rather than a continuous ribbon. */
 html:has(.proto) {
   scroll-snap-type: y mandatory;
+  /* only affects the rail's anchor jumps — the wheel and trackpad are
+     untouched — so a tick glides to its panel instead of teleporting */
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:has(.proto) { scroll-behavior: auto; }
 }
 
 /* ── Forest backdrop ───────────────────────────────────────── */
@@ -407,22 +431,118 @@ html:has(.proto) {
   will-change: transform, opacity;
 }
 
+/* ── Section rail ──────────────────────────────────────────── */
+/* One tick per panel down the right edge. The hit area is the anchor, a good
+   deal taller than the 2px tick it draws, so the ticks can sit close together
+   without becoming impossible to click. */
+.rail {
+  position: fixed;
+  right: 26px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.rail a {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 34px;
+  height: 15px;
+}
+
+.rail-tick {
+  width: 15px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--ghost);
+  opacity: 0.5;
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.rail a:hover .rail-tick { width: 22px; opacity: 0.85; }
+
+.rail a[aria-current="true"] .rail-tick {
+  width: 28px;
+  opacity: 1;
+  background: var(--accent);
+}
+
+/* Bracket the ticks and drift, so the rail reads as an instruction and not only
+   as a position readout. Slow, and on --dim rather than --ghost so it carries
+   at a glance — it should register when you look at it without pulling the eye
+   off the writing. */
+.rail-hint {
+  display: flex;
+  justify-content: center;
+  width: 34px;
+  color: var(--dim);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Each drifts the way it points, and the drift lives on the chevron itself
+   rather than on the span. Both chevrons mount together and never stop, so the
+   two loops stay locked to one clock: pausing the drift on a spent hint would
+   restart it from zero on the way back, and the pair would read as two
+   arrows breathing against each other for the rest of the page. */
+.rail-hint svg {
+  animation: rail-drift 2.8s ease-in-out infinite;
+}
+
+/* Same keyframes both ways — the direction comes from the sign, so up and down
+   reach their outward extreme on the same beat. */
+.rail-hint.up { --drift: -1; margin-bottom: 8px; }
+.rail-hint.down { --drift: 1; margin-top: 8px; }
+
+/* Spent = nothing that way to go: the first panel's up arrow, the last one's
+   down arrow. The span fades and retreats toward the ticks while the chevron
+   inside it keeps its place in the loop. */
+.rail-hint.spent {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rail-hint.up.spent { transform: translateY(6px); }
+.rail-hint.down.spent { transform: translateY(-6px); }
+
+@keyframes rail-drift {
+  0%, 100% { transform: translateY(calc(var(--drift) * -2px)); opacity: 0.4; }
+  50% { transform: translateY(calc(var(--drift) * 3px)); opacity: 0.85; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rail-tick { transition: none; }
+  .rail-hint { opacity: 0.7; }
+  .rail-hint svg { animation: none; transform: none; opacity: 1; }
+  .rail-hint.spent { opacity: 0; }
+}
+
 /* ── Layout ────────────────────────────────────────────────── */
 .shell {
   position: relative;
   z-index: 4;
-  max-width: 740px;
+  /* A 740px column plus its padding needs ~916px of viewport before the fixed
+     rail stops overlapping it, so between there and mobile the column gives
+     way instead — narrower, still centred, and never under the ticks. */
+  max-width: min(740px, calc(100vw - 2 * var(--rail-zone)));
   margin: 0 auto;
   padding: 0 28px;
 }
 
 .hero {
+  position: relative;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   scroll-snap-align: start;
   scroll-snap-stop: always;
+  padding-bottom: var(--foot-strip);
 }
 
 /* lvh = viewport at its tallest, so the next section stays below the
@@ -488,24 +608,6 @@ html:has(.proto) {
   color: var(--accent);
 }
 
-.scroll-cue {
-  margin-top: 56px;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ghost);
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.scroll-cue span { animation: bob 2.4s ease-in-out infinite; }
-
-@keyframes bob {
-  0%, 100% { transform: translateY(0); opacity: 0.5; }
-  50% { transform: translateY(3px); opacity: 1; }
-}
 
 /* ── Sections ──────────────────────────────────────────────── */
 /* Each section is a full-height snap panel with its content centered.
@@ -513,25 +615,19 @@ html:has(.proto) {
    screen, so nothing clips; `snap-stop: always` keeps a fast scroll from
    flying past a panel. */
 .section {
+  position: relative;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: safe center;
   scroll-snap-align: start;
   scroll-snap-stop: always;
+  /* the foot is taken out of flow, so the panel holds its strip open here and
+     the centred content stays centred in what's left */
+  padding-bottom: var(--foot-strip);
 }
 @supports (min-height: 100svh) {
   .section { min-height: 100svh; }
-}
-
-/* Reading and the footer share the final panel: Reading sits centered like
-   the rest, the footer is pinned to the bottom of the same screen. */
-.section-last { position: relative; }
-.section-last > .reveal:last-child {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 34px;
 }
 
 .section-head {
@@ -712,29 +808,46 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 .book-author { font-size: 14.5px; color: var(--faint); margin-top: 2px; }
 .book-author::before { content: "by "; opacity: 0.55; }
 
-/* ── Footer ────────────────────────────────────────────────── */
-.foot {
+/* ── Panel foot ────────────────────────────────────────────── */
+/* Pinned to the bottom of every panel at the same offset, so it holds still
+   while the panel above it moves — one rail, not six footers. Out of flow, in
+   the strip .section/.hero reserve with --foot-strip. */
+.panel-foot {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--foot-offset);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-top: 26px;
+  padding-top: var(--foot-pad);
   border-top: 1px solid var(--line);
 }
 
-.socials { display: flex; align-items: center; gap: 20px; }
+/* The gap closes as the tap padding opens, so the icons sit the same distance
+   apart whatever the hit area is doing, and the negative margin hides that
+   padding so the row still starts flush with the text column. */
+.socials {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--social-gap) - 2 * var(--foot-tap));
+  margin-left: calc(-1 * var(--foot-tap));
+}
 
 .socials a {
   color: var(--faint);
   display: inline-flex;
+  padding: var(--foot-tap);
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.socials a:hover { color: var(--accent); transform: translateY(-2px); }
+/* CSS owns the icon size: lucide writes 24px onto the svg and this overrides
+   it, so --social-icon is the only place the size lives. */
+.socials svg {
+  width: var(--social-icon);
+  height: var(--social-icon);
+}
 
-.webring { display: inline-flex; align-items: center; gap: 9px; opacity: 0.35; transition: opacity 0.3s ease; }
-.webring:hover { opacity: 0.85; }
-.webring a { color: var(--faint); text-decoration: none; font-size: 15px; }
-.webring img { filter: var(--webring-filter); opacity: 0.7; }
+.socials a:hover { color: var(--accent); transform: translateY(-3px); }
 
 /* ── Reveal ────────────────────────────────────────────────── */
 .reveal {
@@ -765,7 +878,32 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 
 /* ── Mobile ────────────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .shell { padding: 0 20px; }
+  .proto {
+    /* the bar sits tighter and its icons carry tap padding; --foot-strip
+       recomputes from these, so the panels recentre themselves */
+    --foot-offset: 22px;
+    --foot-pad: 12px;
+    --foot-tap: 8px;
+    --foot-gap: 22px;
+  }
+
+  /* the column takes the full width back here — the rail goes decorative
+     below, so it no longer needs its own gutter */
+  .shell { padding: 0 20px; max-width: none; }
+
+  /* A 2px tick is not something you aim at with a thumb, and its hit area
+     would sit on top of the rows, which bleed 12px past the column to the
+     screen edge — the rail would quietly eat taps meant for them. Swiping is
+     the gesture here anyway (the panels snap), so on a phone the rail stops
+     being navigation and becomes what it looks like: a progress readout.
+     Keyboard activation still works; only pointers are dropped. */
+  .rail { right: 6px; gap: 2px; pointer-events: none; }
+  .rail a { width: 22px; height: 14px; }
+  .rail-tick { width: 10px; }
+  .rail a[aria-current="true"] .rail-tick { width: 18px; }
+  .rail-hint { width: 22px; }
+  .rail-hint.up { margin-bottom: 6px; }
+  .rail-hint.down { margin-top: 6px; }
   .scrim { background: linear-gradient(to bottom, var(--scrim-top), var(--scrim-bot)); }
 
   .moon {
@@ -792,14 +930,8 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
   .row-main { flex-flow: row wrap; align-items: center; gap: 2px 10px; }
   .row-sub { flex: 1 0 100%; white-space: normal; overflow: visible; }
 
-  /* 17px icons are not a tap target; pad them out and pull the padding back
-     off the edges so they stay flush with the column. */
-  .foot { padding-top: 22px; }
-  .socials { gap: 4px; margin-left: -12px; }
   /* --faint is too low-contrast for something you're meant to tap */
-  .socials a { padding: 12px; color: var(--dim); }
-  .webring { gap: 0; margin-right: -10px; }
-  .webring a { display: inline-flex; align-items: center; padding: 10px; }
+  .socials a { color: var(--dim); }
 }
 
 /* ── Small phones ──────────────────────────────────────────── */
