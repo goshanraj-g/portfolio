@@ -21,6 +21,7 @@
 
   position: relative;
   min-height: 100vh;
+  overflow-x: clip;
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-inter), system-ui, sans-serif;
@@ -295,7 +296,7 @@ body:has(.proto) {
   font-family: var(--font-display), Georgia, serif;
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(38px, 8vw, 66px);
+  font-size: clamp(32px, 8vw, 66px);
   line-height: 1.02;
   letter-spacing: -0.035em;
   color: #fafcfa;
@@ -427,7 +428,11 @@ body:has(.proto) {
 
 /* ── Rows ──────────────────────────────────────────────────── */
 .rows { display: flex; flex-direction: column; }
-.rows:hover > :not(:hover) { opacity: 0.38; }
+
+/* Touch latches :hover after a tap, which would strand the other rows dim. */
+@media (hover: hover) {
+  .rows:hover > :not(:hover) { opacity: 0.38; }
+}
 
 .row {
   display: flex;
@@ -578,7 +583,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px rgba(143, 191, 159, 0.5); }
 
 /* ── Mobile ────────────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .shell { padding: 0 20px 80px; }
+  .shell { padding: 0 20px max(96px, 17vh); }
   .section { margin-bottom: 60px; }
   .scrim { background: linear-gradient(to bottom, rgba(7,10,8,0.35), rgba(7,10,8,0.7)); }
 
@@ -598,8 +603,23 @@ a.row:hover .oss-link { text-shadow: 0 0 12px rgba(143, 191, 159, 0.5); }
     margin: 0 -12px;
   }
 
-  .row-main { flex-direction: column; align-items: flex-start; gap: 3px; }
-  .row-sub { white-space: normal; }
+  /* wrap rather than stack, so the logo stays beside the name and only the
+     description drops to its own line */
+  .row-main { flex-flow: row wrap; align-items: center; gap: 2px 10px; }
+  .row-sub { flex: 1 0 100%; white-space: normal; }
+
+  /* The moon scrolls away with the hero instead of hanging behind the text
+     for the whole page — at this width the column runs under it. */
+  .moon { position: absolute; }
+
+  /* 17px icons are not a tap target; pad them out and pull the padding back
+     off the edges so they stay flush with the column. */
+  .foot { padding-top: 22px; }
+  .socials { gap: 4px; margin-left: -12px; }
+  /* --faint is too low-contrast for something you're meant to tap */
+  .socials a { padding: 12px; color: var(--dim); }
+  .webring { gap: 0; margin-right: -10px; }
+  .webring a { display: inline-flex; align-items: center; padding: 10px; }
 }
 
 /* ── Small phones ──────────────────────────────────────────── */

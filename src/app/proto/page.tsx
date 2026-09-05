@@ -20,18 +20,27 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setShown(true);
-          obs.disconnect();
-        }
-      },
+
+    let observers: IntersectionObserver[] = [];
+    const show = () => {
+      setShown(true);
+      observers.forEach((o) => o.disconnect());
+    };
+
+    observers = [
       // fire once the section is into frame, not as its top edge grazes
-      { threshold: 0, rootMargin: "0px 0px -14% 0px" }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
+      new IntersectionObserver(([e]) => e.isIntersecting && show(), {
+        threshold: 0,
+        rootMargin: "0px 0px -14% 0px",
+      }),
+      // The last block on the page can never clear that bottom margin — on a
+      // phone the footer would sit at opacity 0 — so anything that ends up
+      // wholly on screen reveals as well.
+      new IntersectionObserver(([e]) => e.isIntersecting && show(), { threshold: 1 }),
+    ];
+
+    observers.forEach((o) => o.observe(el));
+    return () => observers.forEach((o) => o.disconnect());
   }, []);
 
   return (
