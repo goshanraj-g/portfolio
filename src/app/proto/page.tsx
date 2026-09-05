@@ -64,7 +64,7 @@ const threads: Thread[] = [
   {
     label: "media",
     body:
-      "worked on AI video dubbing, transcoding, and encoding, plus GPU and k8 infra",
+      "built an AI video dubber from scratch, worked with video processing, and improved media pipelines through GPU integration",
   },
   {
     label: "full stack",
