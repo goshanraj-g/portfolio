@@ -83,7 +83,6 @@ const openSource = [
     name: "LlamaIndex",
     url: "https://github.com/run-llama/llama_index",
     description: "Integrated web tools for the agentic web",
-    note: "5M+ monthly downloads",
   },
   {
     name: "Ruby",

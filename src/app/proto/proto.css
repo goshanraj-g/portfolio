@@ -16,6 +16,7 @@
   --faint: rgba(238, 241, 238, 0.48);
   --ghost: rgba(238, 241, 238, 0.4);
   --line: rgba(238, 241, 238, 0.09);
+  --foot-line: rgba(238, 241, 238, 0.2);
   --accent: #8fbf9f;
   --accent-dim: rgba(143, 191, 159, 0.5);
   --tint: rgba(143, 191, 159, 0.06);
@@ -32,15 +33,14 @@
   --tick-op: 0.5;
   --tick-op-hi: 0.85;
   --sib-dim: 0.38;
-  /* Carried over verbatim from the first design, where the badge was a quiet
-     grey pill that lit up on hover rather than a gold one that announced
-     itself all the time. --shine is the sweep that crosses it. */
-  --badge-fg: rgba(200, 200, 210, 0.7);
-  --badge-bg: rgba(255, 255, 255, 0.04);
-  --badge-line: transparent;
-  --badge-fg-hi: rgba(220, 220, 230, 0.9);
-  --badge-line-hi: rgba(255, 255, 255, 0.15);
-  --shine: rgba(255, 255, 255, 0.15);
+  /* A gold winner's pill, as on the first site: warm against the night sky and
+     lit further on hover. --shine is the sweep that crosses it. */
+  --badge-fg: rgba(244, 205, 120, 0.92);
+  --badge-bg: rgba(214, 164, 60, 0.12);
+  --badge-line: rgba(234, 194, 100, 0.34);
+  --badge-fg-hi: rgba(252, 218, 140, 1);
+  --badge-line-hi: rgba(240, 200, 110, 0.6);
+  --shine: rgba(255, 231, 173, 0.35);
   --book-hover: rgba(143, 191, 159, 0.04);
   --logo-plate: rgba(236, 240, 236, 0.92);
   --firefly: #f0d878;
@@ -113,6 +113,7 @@
   --faint: rgba(11, 18, 13, 0.68);
   --ghost: rgba(11, 18, 13, 0.6);
   --line: rgba(11, 18, 13, 0.28);
+  --foot-line: rgba(11, 18, 13, 0.4);
   --accent: #22523a;
   --accent-dim: rgba(34, 82, 58, 0.6);
   --tint: rgba(34, 82, 58, 0.08);
@@ -127,17 +128,14 @@
   --tick-op: 0.85;
   --tick-op-hi: 1;
   --sib-dim: 0.5;
-  /* The first design was night-only, so day has no original to copy: same
-     construction, alphas solved against the paper. The sweep inverts — a white
-     highlight is what reads as gloss on a light pill, where a dark one would
-     just look like a shadow crossing it. */
-  --badge-fg: rgba(11, 18, 13, 0.74);
-  --badge-bg: rgba(11, 18, 13, 0.07);
-  /* the one place day departs from night's construction: a pill with no edge
-     vanishes on paper, where on black the ground alone was enough to hold it */
-  --badge-line: rgba(11, 18, 13, 0.13);
-  --badge-fg-hi: rgba(11, 18, 13, 0.94);
-  --badge-line-hi: rgba(11, 18, 13, 0.22);
+  /* The same gold pill solved against paper: a deep amber that holds its own on
+     a light ground where the night's pale gold would wash out. The sweep stays
+     a white highlight — gloss on a light pill, not a shadow crossing it. */
+  --badge-fg: rgba(122, 84, 6, 0.96);
+  --badge-bg: rgba(196, 146, 28, 0.16);
+  --badge-line: rgba(150, 110, 20, 0.34);
+  --badge-fg-hi: rgba(96, 64, 2, 1);
+  --badge-line-hi: rgba(150, 110, 20, 0.5);
   --shine: rgba(255, 255, 255, 0.75);
   --book-hover: rgba(34, 82, 58, 0.08);
   /* Pulled up close to night's 0.74: the day forest is dark ink on a light
@@ -824,8 +822,6 @@ html:has(.proto) {
   padding: 15px 0;
 }
 
-.thread + .thread { border-top: 1px solid var(--line); }
-
 .thread-label {
   font-family: var(--mono);
   font-size: 11.5px;
@@ -842,6 +838,14 @@ html:has(.proto) {
   line-height: 1.62;
   color: var(--muted);
   margin: 0;
+}
+
+.hobbies-line {
+  margin-top: 12px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--strong);
+  text-shadow: 0 0 8px var(--bg), 0 0 16px var(--bg);
 }
 
 
@@ -905,25 +909,10 @@ a.row:hover { background: var(--row-hover); opacity: 1 !important; }
   font-weight: 500;
   color: var(--strong);
   white-space: nowrap;
-  position: relative;
   transition: color 0.2s ease;
 }
 
-.row-name::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -3px;
-  width: 100%;
-  height: 1px;
-  background: var(--accent-dim);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
 a.row:hover .row-name { color: var(--row-hover-name); }
-a.row:hover .row-name::after { transform: scaleX(1); }
 
 .row-sub {
   font-size: 14.5px;
@@ -933,6 +922,11 @@ a.row:hover .row-name::after { transform: scaleX(1); }
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* Projects: let the description fall to its own line under the title and wrap
+   in full, rather than sharing the title's baseline and truncating. */
+#projects .row-main { flex-direction: column; align-items: flex-start; gap: 4px; }
+#projects .row-sub { white-space: normal; overflow: visible; text-overflow: clip; }
 
 .row-meta {
   font-family: var(--mono);
@@ -968,32 +962,28 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 
 /* ── Work rows ─────────────────────────────────────────────
    The Work panel carries four roles and nothing else, so the list spends the
-   panel instead of sitting in the middle of it: the mark reads as a logo
-   rather than a favicon, the org and the title stack, and a hairline between
-   rows keeps the taller entries reading as one list. */
+   panel instead of sitting in the middle of it: the mark reads as a logo,
+   and the org and title stack within each row. */
 .rows-work .row {
-  gap: 24px;
-  padding: 19px 14px;
+  gap: 22px;
+  padding: 17px 14px;
 }
 
-.rows-work .row + .row { border-top: 1px solid var(--line); }
-
-.rows-work .row-main { align-items: center; gap: 17px; }
+.rows-work .row-main { align-items: center; gap: 15px; }
 
 .rows-work .row-logo {
-  width: 44px;
-  height: 44px;
-  padding: 5px;
-  border-radius: 10px;
+  width: 40px;
+  height: 40px;
+  padding: 4px;
+  border-radius: 9px;
 }
 
-/* flex-start, not the default stretch: a stretched .row-name would run the
-   full column width and drag its hover underline out with it */
+/* Keep the name and title fitted to their contents within the text column. */
 .row-text {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 5px;
+  gap: 4px;
   min-width: 0;
 }
 
@@ -1006,25 +996,25 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
   font-family: var(--font-display), Georgia, serif;
   /* Sized by eye against the cropped marks, not against the plate: a serif
      cap reaches only about two thirds of its font size, so matching the
-     34px the logos now fill takes a good deal more than 34px of type. */
-  font-size: 26px;
+     32px the logos now fill takes a good deal more than 32px of type. */
+  font-size: 24px;
   font-weight: 600;
   line-height: 1;
   color: #2b312d;
 }
 
-.rows-work .row-name { font-size: 18px; }
+.rows-work .row-name { font-size: 17px; }
 
 /* the title is its own line now rather than a trailing aside, so it can carry
    more contrast and wrap if it ever needs to */
 .rows-work .row-sub {
-  font-size: 14.5px;
+  font-size: 14px;
   color: var(--dim);
   white-space: normal;
   overflow: visible;
 }
 
-.rows-work .row-meta { font-size: 13px; }
+.rows-work .row-meta { font-size: 12.5px; }
 
 /* ── Reading ───────────────────────────────────────────────── */
 .shelf { display: flex; flex-direction: column; gap: 4px; }
@@ -1056,7 +1046,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
   align-items: center;
   justify-content: flex-end;
   padding-top: var(--foot-pad);
-  border-top: 1px solid var(--line);
+  border-top: 2px solid var(--foot-line);
 }
 
 /* The gap closes as the tap padding opens, so the icons sit the same distance
@@ -1144,6 +1134,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 
   .moon {
     --moon-scale: 0.58;
+    position: fixed;
     top: 5vh;
     right: 6vw;
   }
@@ -1172,14 +1163,14 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
      mark stays beside the org, and .row-sub — inside .row-text here, where a
      100% flex-basis would read as height — keeps its natural size. The year
      still drops to its own line with the column .row above. */
-  .rows-work .row { gap: 8px; padding: 16px 12px; }
+  .rows-work .row { gap: 7px; padding: 14px 12px; }
   .rows-work .row-main { flex-wrap: nowrap; }
   .rows-work .row-sub { flex: 0 0 auto; }
-  .rows-work .row-logo { width: 38px; height: 38px; padding: 4px; }
-  .rows-work .row-logo-mono { font-size: 22px; }
-  .rows-work .row-name { font-size: 16.5px; }
-  /* 38px mark + its 17px gap: the year lines up under the text, not the mark */
-  .rows-work .row-meta { font-size: 12px; margin-left: 55px; }
+  .rows-work .row-logo { width: 35px; height: 35px; padding: 4px; }
+  .rows-work .row-logo-mono { font-size: 20px; }
+  .rows-work .row-name { font-size: 15.5px; }
+  /* 35px mark + its 15px gap: the year lines up under the text, not the mark */
+  .rows-work .row-meta { font-size: 11.5px; margin-left: 50px; }
 
   /* --faint is too low-contrast for something you're meant to tap */
   .socials a { color: var(--icon-c); }

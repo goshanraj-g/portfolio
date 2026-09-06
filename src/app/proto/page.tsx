@@ -108,13 +108,13 @@ const projects: Project[] = [
   {
     title: "AI Web Monitor",
     url: "https://github.com/goshanraj-g/vigil",
-    description: "a web monitor that checks websites for changes and sends what matters to you on Slack",
+    description: "tracks topics you care about and delivers summarized web updates straight to Slack",
   },
   {
     title: "AI Repository Auditor",
     url: "https://github.com/goshanraj-g/CodeTurret",
     description: "an agent that audits projects and opens fix PRs",
-    badge: "1st of 72 @ Google Hackathon",
+    badge: "🏆 Hackathon Winner",
   },
   {
     title: "CampusThread",
@@ -138,7 +138,6 @@ const openSource: OSS[] = [
     name: "LlamaIndex",
     url: "https://github.com/run-llama/llama_index",
     description: "Tavily and Parallel integrations for agent web access",
-    meta: "~5M downloads/mo",
   },
   {
     name: "Ruby",
@@ -166,7 +165,7 @@ const books: Book[] = [
    carry these ids — the two lists have to stay in step. */
 const panels = [
   { id: "top", label: "Intro" },
-  { id: "summary", label: "Summary" },
+  { id: "about", label: "About Me" },
   { id: "work", label: "Work" },
   { id: "projects", label: "Projects" },
   { id: "open-source", label: "Open Source" },
@@ -178,7 +177,7 @@ function SectionHead({ title }: { title: string }) {
 }
 
 /* Every panel closes on the same bar, at the same offset, so scrolling reads as
-   the panel above sliding past a fixed rail rather than as six footers. */
+   the panel above sliding past a fixed rail rather than as separate footers. */
 function PanelFoot() {
   return (
     <div className="panel-foot">
@@ -197,7 +196,7 @@ function PanelFoot() {
   );
 }
 
-/* Six ticks down the right edge, one per panel, the current one drawn long and
+/* One tick per panel down the right edge, with the current one drawn long and
    lit: the ticks below the active one are the page telling you how much is
    left, and they say where you are while they do it. Clicking one jumps to
    that panel. A chevron above and below drifts on a slow loop — the ticks are
@@ -295,11 +294,12 @@ export default function ProtoPage() {
           <PanelFoot />
         </header>
 
-        {/* ── 01 Summary ── */}
-        <section className="section" id="summary">
+        {/* ── 01 About ── */}
+        <section className="section" id="about">
           <Reveal>
+            <SectionHead title="About Me" />
             <p className="lead lead-into">
-              Software Engineer studying Computer Science at McMaster University,
+              Software Engineer, studying Computer Science at McMaster University,
               currently at <strong>IBM</strong>. Most of my work has revolved around a few threads:
             </p>
             <div className="threads">
@@ -310,6 +310,7 @@ export default function ProtoPage() {
                 </div>
               ))}
             </div>
+            <p className="thread-body hobbies-line">outside of tech, you'll find me reading, at the gym, around cars, or travelling</p>
           </Reveal>
 
           <PanelFoot />
