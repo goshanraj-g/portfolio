@@ -51,9 +51,13 @@
 
   --social-icon: 23px;
   --social-gap: 23px;   /* optical gap between icons, tap padding excluded */
-  --foot-offset: 34px;  /* panel bottom to the bar */
+  --foot-offset: 34px;  /* viewport bottom to the bar */
   --foot-pad: 18px;     /* the bar's rule to its icons */
   --foot-tap: 0px;      /* padding inflating each icon's hit area */
+  /* Viewport height the fixed bar covers, for panels to keep clear of. */
+  --bar-zone: calc(
+    var(--foot-offset) + 2px + var(--foot-pad) + var(--social-icon) + 2 * var(--foot-tap)
+  );
 
   /* Space reserved for the fixed section rail. */
   --rail-zone: 88px;
@@ -675,6 +679,16 @@ html:has(.portfolio) {
   .section { min-height: 100dvh; }
 }
 
+/* Mandatory snapping fights touch momentum and can strand the overflow of a
+   panel taller than the viewport, so touch devices get proximity paging.
+   Declared after the panel rules so scroll-snap-stop wins the cascade. */
+@media (pointer: coarse) {
+  html:has(.portfolio) { scroll-snap-type: y proximity; }
+
+  .hero,
+  .section { scroll-snap-stop: normal; }
+}
+
 .section-title {
   font-family: var(--font-display), Georgia, serif;
   font-style: italic;
@@ -890,13 +904,23 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 .book-author { font-size: 14.5px; color: var(--faint); margin-top: 2px; }
 .book-author::before { content: "by "; opacity: 0.55; }
 
-/* ── Panel foot ────────────────────────────────────────────── */
-/* Absolute positioning keeps panel content centered on the full viewport. */
-.panel-foot {
-  position: absolute;
+/* ── Social bar ────────────────────────────────────────────── */
+/* Pinned to the viewport so the bar holds still while the panels scroll. */
+.social-bar {
+  position: fixed;
   left: 0;
   right: 0;
   bottom: var(--foot-offset);
+  z-index: 5;
+  /* Mirrors the .shell column so the rule lines up with the content. */
+  max-width: min(740px, calc(100vw - 2 * var(--rail-zone)));
+  margin: 0 auto;
+  padding: 0 28px;
+  /* The bar spans the column, so only its icons may take pointer events. */
+  pointer-events: none;
+}
+
+.panel-foot {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -910,6 +934,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
   align-items: center;
   gap: calc(var(--social-gap) - 2 * var(--foot-tap));
   margin-right: calc(-1 * var(--foot-tap));
+  pointer-events: auto;
 }
 
 .socials a {
@@ -960,7 +985,31 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
     --foot-tap: 8px;
   }
 
-  .shell { padding: 0 20px; max-width: none; }
+  .shell,
+  .social-bar { padding: 0 20px; max-width: none; }
+
+  /* Center panel content in the space above the bar instead of behind it,
+     and let a panel that still cannot fit grow rather than clip. */
+  .hero,
+  .section {
+    padding-top: 26px;
+    padding-bottom: calc(var(--bar-zone) + 10px);
+  }
+
+  /* ── About ── the fullest panel, so its type steps down furthest. */
+  .lead {
+    font-size: 15.5px;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .lead-into { margin-bottom: 14px; }
+
+  .thread-label { font-size: 10.5px; }
+
+  .thread-body { font-size: 14.5px; line-height: 1.55; }
+
+  .hobbies-line { font-size: 13.5px; margin-top: 8px; }
 
   /* The mobile rail is a progress display and must not intercept row taps. */
   .rail { right: 4px; gap: 2px; pointer-events: none; }
@@ -991,7 +1040,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 
   .row-badge { font-size: 11px; }
 
-  .thread { grid-template-columns: 1fr; gap: 5px; padding: 13px 0; }
+  .thread { grid-template-columns: 1fr; gap: 4px; padding: 10px 0; }
   .thread-label { padding-top: 0; }
 
   .row-main { flex-flow: row wrap; align-items: center; gap: 2px 10px; }
