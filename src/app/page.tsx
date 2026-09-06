@@ -92,9 +92,9 @@ type Experience = {
 const experiences: Experience[] = [
   { title: "Software Engineering Intern", org: "IBM", orgLink: "https://ibm.com/", image: "/images/experiences/ibm.svg", year: "01/26 — Present" },
   { title: "Machine Learning Research Assistant", org: "McMaster University", orgLink: "https://www.mcmaster.ca/", image: "/images/education/mcmaster.svg", year: "09/25 — 12/25" },
-  { title: "Community Manager", org: "Google Developer Groups", orgLink: "https://gdg.community.dev/", image: "/images/experiences/gdsc.svg", year: "09/24 — 09/25" },
   // #FFCF25 sampled from the tile's corners — it is 66% of the artwork
   { title: "Software Engineering Intern", org: "TOConnect", orgLink: "https://toconnect.ca/", image: "/images/experiences/TOConnect.jpg", plate: "#FFCF25", year: "05/25 — 08/25" },
+  { title: "Community Manager", org: "Google Developer Groups", orgLink: "https://gdg.community.dev/", image: "/images/experiences/gdsc.svg", year: "09/24 — 09/25" },
 ];
 
 type Project = { title: string; description: string; url?: string; badge?: string };
