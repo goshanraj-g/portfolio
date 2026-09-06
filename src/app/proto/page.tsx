@@ -103,23 +103,23 @@ const projects: Project[] = [
   {
     title: "Agentic Manufacturing Scheduler",
     url: "https://github.com/goshanraj-g/forge",
-    description: "LLM agent + OR-Tools solver — 65% fewer late orders",
+    description: "a scheduling tool for factories that predicts and prevents late orders",
   },
   {
     title: "AI Web Monitor",
     url: "https://github.com/goshanraj-g/vigil",
-    description: "Go scheduler/worker queue, Claude-filtered into Slack",
+    description: "a web monitor that checks websites for changes and sends what matters to you on Slack",
   },
   {
     title: "AI Repository Auditor",
     url: "https://github.com/goshanraj-g/CodeTurret",
-    description: "audits projects and opens fix PRs",
+    description: "an agent that audits projects and opens fix PRs",
     badge: "1st of 72 @ Google Hackathon",
   },
   {
     title: "CampusThread",
     url: "https://campusthread.vercel.app/",
-    description: "RAG-based university bot for 250+ users",
+    description: "an RAG chatbot for 250+ university students",
   },
 ];
 
