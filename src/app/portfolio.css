@@ -890,13 +890,23 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 .book-author { font-size: 14.5px; color: var(--faint); margin-top: 2px; }
 .book-author::before { content: "by "; opacity: 0.55; }
 
-/* ── Panel foot ────────────────────────────────────────────── */
-/* Absolute positioning keeps panel content centered on the full viewport. */
-.panel-foot {
-  position: absolute;
+/* ── Social bar ────────────────────────────────────────────── */
+/* Pinned to the viewport so the bar holds still while the panels scroll. */
+.social-bar {
+  position: fixed;
   left: 0;
   right: 0;
   bottom: var(--foot-offset);
+  z-index: 5;
+  /* Mirrors the .shell column so the rule lines up with the content. */
+  max-width: min(740px, calc(100vw - 2 * var(--rail-zone)));
+  margin: 0 auto;
+  padding: 0 28px;
+  /* The bar spans the column, so only its icons may take pointer events. */
+  pointer-events: none;
+}
+
+.panel-foot {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -910,6 +920,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
   align-items: center;
   gap: calc(var(--social-gap) - 2 * var(--foot-tap));
   margin-right: calc(-1 * var(--foot-tap));
+  pointer-events: auto;
 }
 
 .socials a {
@@ -960,7 +971,8 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
     --foot-tap: 8px;
   }
 
-  .shell { padding: 0 20px; max-width: none; }
+  .shell,
+  .social-bar { padding: 0 20px; max-width: none; }
 
   /* The mobile rail is a progress display and must not intercept row taps. */
   .rail { right: 4px; gap: 2px; pointer-events: none; }

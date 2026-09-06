@@ -161,19 +161,21 @@ function SectionHead({ title }: { title: string }) {
   return <h2 className="section-title">{title}</h2>;
 }
 
-function PanelFoot() {
+function SocialBar() {
   return (
-    <div className="panel-foot">
-      <div className="socials">
-        <Link href="https://github.com/goshanraj-g" target="_blank" aria-label="GitHub">
-          <Github />
-        </Link>
-        <Link href="https://linkedin.com/in/goshanrajgovindaraj" target="_blank" aria-label="LinkedIn">
-          <Linkedin />
-        </Link>
-        <Link href="mailto:govindag@mcmaster.ca" aria-label="Email">
-          <Mail />
-        </Link>
+    <div className="social-bar">
+      <div className="panel-foot">
+        <div className="socials">
+          <Link href="https://github.com/goshanraj-g" target="_blank" aria-label="GitHub">
+            <Github />
+          </Link>
+          <Link href="https://linkedin.com/in/goshanrajgovindaraj" target="_blank" aria-label="LinkedIn">
+            <Linkedin />
+          </Link>
+          <Link href="mailto:govindag@mcmaster.ca" aria-label="Email">
+            <Mail />
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -238,6 +240,7 @@ export default function PortfolioPage() {
       <div className="scrim" />
       <Campfire sky={sky} />
       <ScrollRail />
+      <SocialBar />
 
       <div className="shell">
         <header className="hero" id="top">
@@ -260,8 +263,6 @@ export default function PortfolioPage() {
               I build <em>agents</em>, plus the full stack they run on
             </p>
           </Reveal>
-
-          <PanelFoot />
         </header>
 
         <section className="section" id="about">
@@ -281,8 +282,6 @@ export default function PortfolioPage() {
             </div>
             <p className="thread-body hobbies-line">outside of tech, you’ll find me reading, at the gym, around cars, or travelling</p>
           </Reveal>
-
-          <PanelFoot />
         </section>
 
         <section className="section" id="work">
@@ -327,8 +326,6 @@ export default function PortfolioPage() {
               })}
             </div>
           </Reveal>
-
-          <PanelFoot />
         </section>
 
         <section className="section" id="projects">
@@ -357,8 +354,6 @@ export default function PortfolioPage() {
               })}
             </div>
           </Reveal>
-
-          <PanelFoot />
         </section>
 
         <section className="section" id="open-source">
@@ -386,8 +381,6 @@ export default function PortfolioPage() {
               ))}
             </div>
           </Reveal>
-
-          <PanelFoot />
         </section>
 
         <section className="section" id="reading">
@@ -402,8 +395,6 @@ export default function PortfolioPage() {
               ))}
             </div>
           </Reveal>
-
-          <PanelFoot />
         </section>
       </div>
     </div>
