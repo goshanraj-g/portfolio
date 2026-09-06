@@ -92,26 +92,52 @@ function drawMoon(): string {
   return lines.join("\n");
 }
 
+/** supersamples per axis when measuring how much of a cell the disc covers */
+const SUN_SS = 6;
+
 /* The sun is the same disc with nothing taken out of it: no terminator and no
-   craters, flat and hot through the middle, falling off only at the limb. */
+   craters, flat and hot through the middle, falling off only at the limb.
+
+   Where the moon can get away with testing one point per cell — a crescent is
+   read by its two curves, not by its roundness — a filled disc that size is
+   judged on being a circle, and one sample per cell only ever answers in or
+   out. The limb came out as a staircase with a hard edge. So each cell is
+   measured for coverage instead, and dimmed by it: a cell the edge merely
+   clips lands low on the ramp, exactly the way an antialiased pixel lands on
+   a lighter grey, and the ramp feathers the limb into a curve. */
 function drawSun(): string {
-  const rand = mulberry32(20260905);
   const colsHalf = Math.ceil(RADIUS / CELL_ASPECT);
 
   const lines: string[] = [];
   for (let dy = -RADIUS; dy <= RADIUS; dy++) {
     let line = "";
     for (let dx = -colsHalf; dx <= colsHalf; dx++) {
-      const nx = dx * CELL_ASPECT;
-      const dist = Math.sqrt(nx * nx + dy * dy) / RADIUS;
+      let inside = 0;
+      let distSum = 0;
+      for (let sy = 0; sy < SUN_SS; sy++) {
+        for (let sx = 0; sx < SUN_SS; sx++) {
+          // column offsets into row units, so the disc is round on screen
+          const nx = (dx + (sx + 0.5) / SUN_SS - 0.5) * CELL_ASPECT;
+          const ny = dy + (sy + 0.5) / SUN_SS - 0.5;
+          const d = Math.sqrt(nx * nx + ny * ny) / RADIUS;
+          if (d <= 1) {
+            inside++;
+            distSum += d;
+          }
+        }
+      }
 
-      if (dist > 1.04) {
+      if (inside === 0) {
         line += " ";
         continue;
       }
 
-      let b = 1 - 0.5 * Math.min(1, dist) ** 4;
-      b += (rand() - 0.5) * 0.06;
+      const cover = inside / (SUN_SS * SUN_SS);
+      // averaged over the covered part only, so an edge cell is placed by the
+      // bit of disc it actually holds rather than by its centre
+      const dist = distSum / inside;
+
+      const b = (1 - 0.34 * dist ** 4) * cover;
 
       const i = Math.max(0, Math.min(RAMP.length - 1, Math.round(b * (RAMP.length - 1))));
       line += RAMP[i];

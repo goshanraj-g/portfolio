@@ -2,23 +2,39 @@
    Deterministic, so they render server-side and never pop in, and drifted in
    CSS rather than on a frame loop — same bargain the stars make. */
 
-/* Kept to the ( ) - _ . family so they read as one hand's drawing, and to
-   three sizes so the sky has some depth to it. */
-const SHAPES = [
-  ["   .--.", ".-(    ).", "(___.__)__)"],
-  ["  .-.", " (   ).", "(__(___)"],
-  [
-    "      .---.",
-    "  .--(     )--.",
-    " (              )",
-    "  `--.._____..--'",
-  ],
+/* Kept to the ( ) - _ . family so they read as one hand's drawing. Four sizes
+   rather than three, and the new one is a good deal wider than the old
+   largest: depth in a flat sky comes from the spread between the nearest
+   shape and the farthest, and three drawings within a few characters of each
+   other left the sky reading as one distance. */
+const SMALL = ["  .-.", " (   ).", "(__(___)"] as const;
+
+const MEDIUM = ["   .--.", ".-(    ).", "(___.__)__)"] as const;
+
+const LARGE = [
+  "      .---.",
+  "  .--(     )--.",
+  " (              )",
+  "  `--.._____..--'",
 ] as const;
 
+/* Two humps on one base, so the nearest cloud reads as a cloud with weather in
+   it rather than as a small one held up to the eye. */
+const HUGE = [
+  "        .--.      .-.",
+  "    .--(    )----(   )--.",
+  "  .(                      ).",
+  " (                          )",
+  "  `--.._______________..--'",
+] as const;
+
+type Shape = readonly string[];
+
 type Cloud = {
-  shape: readonly string[];
-  /** band top, in vh */
+  shape: Shape;
+  /** lane top, in vh */
   y: number;
+  /** font size in vh, before the viewport scale in the stylesheet */
   size: number;
   a: number;
   /** one crossing, in seconds */
@@ -38,28 +54,70 @@ function mulberry32(a: number) {
   };
 }
 
-const COUNT = 6;
-/** how far down the sky a cloud may sit, well clear of the treeline */
-const BAND_VH = 34;
+type Range = readonly [number, number];
+
+type Band = {
+  shapes: readonly Shape[];
+  /** font size in vh, before the viewport scale in the stylesheet */
+  size: Range;
+  a: Range;
+  /** seconds for one crossing — one figure for the whole lane, see below */
+  dur: number;
+  /** the lane the band sits in: cloud top, in vh */
+  y: Range;
+  count: number;
+};
+
+/* Three lanes, nearest first, and they do not overlap — that is the whole
+   point of the shape of this table.
+
+   Vertically: every lane's floor (its top plus the tallest cloud it can hold)
+   clears the next lane's ceiling. That holds at any window height because the
+   sizes are in vh, not px — a cloud's height in vh is the same on a laptop as
+   on a monitor, so the lanes can be checked once here rather than hoped for.
+
+   Horizontally: every cloud in a lane crosses at the same speed, and they are
+   started evenly around the loop, so the gaps between them are fixed for as
+   long as the page is open. Per-cloud durations were what let clouds catch
+   each other up — with those, any two of them overlap sooner or later no
+   matter where they start out.
+
+   Nearest is highest, which is the way a sky actually reads: the treeline is
+   the horizon, so distance runs toward it and the far puffs bunch just above
+   it. Near still moves fastest. */
+const BANDS: readonly Band[] = [
+  { shapes: [HUGE], size: [2.7, 3.0], a: [0.58, 0.72], dur: 135, y: [1.5, 2.3], count: 1 },
+  { shapes: [LARGE, MEDIUM], size: [1.95, 2.3], a: [0.42, 0.55], dur: 200, y: [18.5, 19.5], count: 2 },
+  { shapes: [MEDIUM, SMALL], size: [1.15, 1.42], a: [0.25, 0.38], dur: 300, y: [29.5, 31], count: 4 },
+];
+
+/* A roll inside a slice rather than across the whole range: free rolls put
+   five of these clouds in the top eighth of the sky and left the rest bare.
+   Each cloud owns a slice and jitters within it, so the spread is guaranteed
+   and the spacing still isn't regular. */
+function spread(i: number, n: number, [lo, hi]: Range, jitter: number): number {
+  return lo + ((i + jitter * 0.9) / n) * (hi - lo);
+}
 
 const CLOUDS: Cloud[] = (() => {
   const rand = mulberry32(60712);
-  return Array.from({ length: COUNT }, (_, i) => {
-    // one per size, then the pick goes back to chance
-    const shape = SHAPES[i < SHAPES.length ? i : Math.floor(rand() * SHAPES.length)];
-    // the big shape reads as the nearest, so it sits lowest and moves fastest
-    const near = shape === SHAPES[2];
-    return {
-      shape,
-      y: 4 + rand() * BAND_VH,
-      size: near ? 15 + rand() * 4 : 10 + rand() * 4,
-      a: near ? 0.5 + rand() * 0.18 : 0.3 + rand() * 0.16,
-      dur: near ? 150 + rand() * 60 : 220 + rand() * 120,
-      // spread over the crossing, so they start scattered rather than in file
-      delay: -((i + rand() * 0.6) / COUNT),
-      x: rand() * 100,
-    };
-  });
+  const pick = ([lo, hi]: Range) => lo + rand() * (hi - lo);
+
+  return BANDS.flatMap((band) =>
+    Array.from({ length: band.count }, (_, i) => ({
+      // cycled, not rolled: a band of two is meant to show both its shapes,
+      // and a roll happily hands back the same drawing twice
+      shape: band.shapes[i % band.shapes.length],
+      y: spread(i, band.count, band.y, rand()),
+      size: pick(band.size),
+      a: pick(band.a),
+      dur: band.dur,
+      // Spaced around the loop rather than over it: the jitter is kept to half
+      // a slice so no two in a lane can start close enough to touch.
+      delay: -((i + rand() * 0.5) / band.count) * band.dur,
+      x: spread(i, band.count, [2, 92], rand()),
+    })),
+  );
 })();
 
 export default function Clouds() {
@@ -72,7 +130,15 @@ export default function Clouds() {
           style={
             {
               top: `${c.y}vh`,
-              fontSize: c.size,
+              // vh through a scale the stylesheet owns — the vh is what keeps
+              // the lanes honest, the scale is what keeps a phone from wearing
+              // the near cloud edge to edge
+              fontSize: `calc(${c.size}vh * var(--cloud-scale, 1))`,
+              // The lanes mean this should never be asked to settle anything.
+              // It is here for the case they don't cover — a mono face whose
+              // advance is wider than the 0.6em the lane widths assume — and
+              // the answer there is the one you'd want: bigger wins.
+              zIndex: Math.round(c.size * 100),
               "--a": c.a,
               "--dur": `${c.dur}s`,
               "--delay": `${c.delay * c.dur}s`,

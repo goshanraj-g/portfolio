@@ -22,6 +22,16 @@
   --tint-2: rgba(143, 191, 159, 0.1);
   --row-hover: rgba(143, 191, 159, 0.05);
   --row-hover-name: #fff;
+  /* Chrome that isn't type: the rail ticks, the social icons, the scroll
+     hints, and how far a row dims when a sibling is hovered. Broken out
+     because dark-on-light needs more of all four than light-on-dark does —
+     the same alpha that reads as "quiet" at night reads as "missing" by
+     day, and these are the parts you're meant to be able to click. */
+  --icon-c: var(--faint);
+  --hint-c: var(--dim);
+  --tick-op: 0.5;
+  --tick-op-hi: 0.85;
+  --sib-dim: 0.38;
   /* Carried over verbatim from the first design, where the badge was a quiet
      grey pill that lit up on hover rather than a gold one that announced
      itself all the time. --shine is the sweep that crosses it. */
@@ -66,6 +76,12 @@
   /* width the rail owns down the right edge, kept clear of the text column */
   --rail-zone: 88px;
 
+  /* The clouds are sized in vh — that is what keeps their lanes from
+     overlapping at any window height — so this is the one knob that narrows
+     them, and it exists because a narrow window is not a short one: a phone
+     would otherwise wear the near cloud from edge to edge. */
+  --cloud-scale: 1;
+
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "DejaVu Sans Mono", monospace;
 
   position: relative;
@@ -83,43 +99,63 @@
   --bg: #e4eaf1;
   /* Alphas solved against the paper rather than mirrored from night: the same
      alpha carries far less contrast as dark-on-light than as light-on-dark.
-     faint clears 4.5:1 and ghost 3:1, since both carry real content. */
+     Measured against the paper *and* against the paper with the day forest
+     over it, since the trees are what the column actually stands on: faint
+     clears 4.5:1 either way, and ghost — the dates and the ticks — clears it
+     on paper and stays above 3:1 under the canopy. */
   --fg: #0b120d;
   --name-c: #080d0a;
   --strong: rgba(11, 18, 13, 0.94);
   --body-c: rgba(11, 18, 13, 0.91);
-  --muted: rgba(11, 18, 13, 0.81);
-  --chip-fg: rgba(11, 18, 13, 0.84);
-  --dim: rgba(11, 18, 13, 0.66);
-  --faint: rgba(11, 18, 13, 0.59);
-  --ghost: rgba(11, 18, 13, 0.46);
-  --line: rgba(11, 18, 13, 0.19);
+  --muted: rgba(11, 18, 13, 0.85);
+  --chip-fg: rgba(11, 18, 13, 0.86);
+  --dim: rgba(11, 18, 13, 0.74);
+  --faint: rgba(11, 18, 13, 0.68);
+  --ghost: rgba(11, 18, 13, 0.6);
+  --line: rgba(11, 18, 13, 0.28);
   --accent: #22523a;
   --accent-dim: rgba(34, 82, 58, 0.6);
   --tint: rgba(34, 82, 58, 0.08);
   --tint-2: rgba(34, 82, 58, 0.14);
-  --row-hover: rgba(34, 82, 58, 0.08);
+  --row-hover: rgba(34, 82, 58, 0.1);
   --row-hover-name: #000;
+  /* Chrome carries further by day: thin icon strokes and a 2px tick lose more
+     to a light ground than body type does, and a row faded to 0.38 on paper
+     goes to grey where the same fade on black only goes quiet. */
+  --icon-c: var(--dim);
+  --hint-c: var(--strong);
+  --tick-op: 0.85;
+  --tick-op-hi: 1;
+  --sib-dim: 0.5;
   /* The first design was night-only, so day has no original to copy: same
      construction, alphas solved against the paper. The sweep inverts — a white
      highlight is what reads as gloss on a light pill, where a dark one would
      just look like a shadow crossing it. */
-  --badge-fg: rgba(11, 18, 13, 0.62);
-  --badge-bg: rgba(11, 18, 13, 0.04);
-  --badge-line: transparent;
-  --badge-fg-hi: rgba(11, 18, 13, 0.9);
+  --badge-fg: rgba(11, 18, 13, 0.74);
+  --badge-bg: rgba(11, 18, 13, 0.07);
+  /* the one place day departs from night's construction: a pill with no edge
+     vanishes on paper, where on black the ground alone was enough to hold it */
+  --badge-line: rgba(11, 18, 13, 0.13);
+  --badge-fg-hi: rgba(11, 18, 13, 0.94);
   --badge-line-hi: rgba(11, 18, 13, 0.22);
   --shine: rgba(255, 255, 255, 0.75);
-  --book-hover: rgba(34, 82, 58, 0.06);
-  --scrim-a: rgba(213, 228, 245, 0.28);
-  --scrim-b: rgba(213, 228, 245, 0.1);
-  --scrim-top: rgba(213, 228, 245, 0.12);
-  --scrim-bot: rgba(213, 228, 245, 0.3);
-  --halo-a: rgba(255, 206, 92, 0.34);
-  --halo-b: rgba(255, 178, 66, 0.15);
-  --disc: rgba(206, 138, 26, 0.9);
-  --disc-glow-a: rgba(255, 190, 74, 0.5);
-  --disc-glow-b: rgba(255, 160, 48, 0.28);
+  --book-hover: rgba(34, 82, 58, 0.08);
+  /* Pulled up close to night's 0.74: the day forest is dark ink on a light
+     ground, so the trees crowd dark type exactly the way night's pale trees
+     crowded pale type. A wash this thin left the reading column standing on
+     the canopy. */
+  --scrim-a: rgba(216, 231, 246, 0.62);
+  --scrim-b: rgba(216, 231, 246, 0.28);
+  --scrim-top: rgba(216, 231, 246, 0.3);
+  --scrim-bot: rgba(216, 231, 246, 0.62);
+  --halo-a: rgba(255, 199, 74, 0.42);
+  --halo-b: rgba(255, 172, 56, 0.2);
+  /* Deep enough to hold against a light sky, but held at a gold hue rather
+     than pushed down the ramp into orange — darkening a sun toward red reads
+     as an eclipse, not as noon. The feathered limb does the rest. */
+  --disc: #a07607;
+  --disc-glow-a: rgba(198, 150, 30, 0.45);
+  --disc-glow-b: rgba(186, 132, 20, 0.22);
   --ground-c: rgba(126, 104, 76, 0.4);
   --logs-c: #4a3f34;
   --logo-plate: rgba(255, 255, 255, 0.9);
@@ -136,6 +172,13 @@ body:has(.proto) {
 
 body:has(.proto[data-theme="day"]) {
   background: #d5e4f5;
+}
+
+/* globals.css selects with white on 12% white — invisible on paper. Selection
+   is the one piece of chrome the browser draws for us, so day gets its own. */
+.proto[data-theme="day"] ::selection {
+  background: rgba(34, 82, 58, 0.2);
+  color: #0b120d;
 }
 
 /* ── Section paging ─────────────────────────────────────────
@@ -336,6 +379,8 @@ html:has(.proto) {
 
 .moon:hover { filter: brightness(1.3); }
 
+.proto[data-theme="day"] .moon:hover { filter: brightness(0.9) saturate(1.2); }
+
 .moon:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 10px;
@@ -526,12 +571,12 @@ html:has(.proto) {
   height: 2px;
   border-radius: 1px;
   background: var(--ghost);
-  opacity: 0.5;
+  opacity: var(--tick-op);
   transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease,
     background-color 0.3s ease;
 }
 
-.rail a:hover .rail-tick { width: 22px; opacity: 0.85; }
+.rail a:hover .rail-tick { width: 22px; opacity: var(--tick-op-hi); }
 
 .rail a[aria-current="true"] .rail-tick {
   width: 28px;
@@ -547,7 +592,7 @@ html:has(.proto) {
   display: flex;
   justify-content: flex-end;
   width: 34px;
-  color: var(--dim);
+  color: var(--hint-c);
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
@@ -805,7 +850,7 @@ html:has(.proto) {
 
 /* Touch latches :hover after a tap, which would strand the other rows dim. */
 @media (hover: hover) {
-  .rows:hover > :not(:hover) { opacity: 0.38; }
+  .rows:hover > :not(:hover) { opacity: var(--sib-dim); }
 }
 
 .row {
@@ -1026,7 +1071,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 }
 
 .socials a {
-  color: var(--faint);
+  color: var(--icon-c);
   display: inline-flex;
   padding: var(--foot-tap);
   transition: color 0.2s ease, transform 0.2s ease;
@@ -1056,7 +1101,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 
 /* ── Tablet / small laptop ─────────────────────────────────── */
 @media (max-width: 1024px) {
-  .proto { --fire-x: calc(3vw + 46px); }
+  .proto { --fire-x: calc(3vw + 46px); --cloud-scale: 0.78; }
   .campfire { --fire-scale: 0.62; }
   .moon { --moon-scale: 0.8; right: 5vw; }
 }
@@ -1071,6 +1116,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 /* ── Mobile ────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .proto {
+    --cloud-scale: 0.55;
     /* the bar sits tighter and its icons carry tap padding */
     --foot-offset: 22px;
     --foot-pad: 12px;
@@ -1136,7 +1182,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
   .rows-work .row-meta { font-size: 12px; margin-left: 55px; }
 
   /* --faint is too low-contrast for something you're meant to tap */
-  .socials a { color: var(--dim); }
+  .socials a { color: var(--icon-c); }
 }
 
 /* ── Small phones ──────────────────────────────────────────── */
