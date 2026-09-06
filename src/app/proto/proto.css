@@ -78,7 +78,9 @@
 
 /* ── Daylight ──────────────────────────────────────────────── */
 .proto[data-theme="day"] {
-  --bg: #e7ede6;
+  /* A cool paper rather than a warm one: the sky wash overhead is blue, and
+     a green-grey ground under it read as two different days. */
+  --bg: #e4eaf1;
   /* Alphas solved against the paper rather than mirrored from night: the same
      alpha carries far less contrast as dark-on-light than as light-on-dark.
      faint clears 4.5:1 and ghost 3:1, since both carry real content. */
@@ -122,6 +124,7 @@
   --logs-c: #4a3f34;
   --logo-plate: rgba(255, 255, 255, 0.9);
   --puff: rgba(88, 96, 90, 0.5);
+  --cloud: rgba(58, 92, 130, 0.55);
 }
 
 /* Switched in one frame, not cross-faded: the trees and the disc are redrawn
@@ -236,6 +239,49 @@ html:has(.proto) {
 
 @media (prefers-reduced-motion: reduce) {
   .star { animation: none; opacity: var(--a); }
+}
+
+/* Daytime sky. The wash is what makes it read as blue: --bg is the whole
+   document's ground and would carry a gradient across every panel, so the
+   colour lives on this fixed layer instead and stops above the treeline. */
+.clouds {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  overflow: hidden;
+  background: linear-gradient(
+    to bottom,
+    rgba(132, 178, 226, 0.5) 0%,
+    rgba(163, 199, 234, 0.28) 24%,
+    rgba(198, 219, 240, 0.1) 44%,
+    transparent 62%
+  );
+}
+
+.cloud {
+  position: absolute;
+  left: 0;
+  margin: 0;
+  color: var(--cloud);
+  font-family: var(--mono);
+  line-height: 1.06;
+  white-space: pre;
+  opacity: var(--a);
+  will-change: transform;
+  animation: cloud-drift var(--dur) linear infinite;
+  animation-delay: var(--delay);
+}
+
+/* one full crossing, offscreen to offscreen, so the loop has no seam */
+@keyframes cloud-drift {
+  from { transform: translateX(-26vw); }
+  to { transform: translateX(114vw); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud { animation: none; transform: translateX(var(--x)); }
 }
 
 /* keeps the reading column winning against the trees */

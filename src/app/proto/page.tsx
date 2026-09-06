@@ -8,6 +8,7 @@ import AsciiForest from "@/components/ascii-forest";
 import Campfire from "@/components/campfire";
 import Moon, { type Sky } from "@/components/moon";
 import Stars from "@/components/stars";
+import Clouds from "@/components/clouds";
 import "./proto.css";
 
 /* ── Reveal on scroll ── */
@@ -261,7 +262,7 @@ export default function ProtoPage() {
   return (
     <div className="proto" data-theme={sky === "day" ? "day" : undefined}>
       {/* before the forest, so the trees paint over them */}
-      {sky === "night" && <Stars />}
+      {sky === "night" ? <Stars /> : <Clouds />}
       <Moon sky={sky} onToggle={() => setSky((s) => (s === "day" ? "night" : "day"))} />
       <AsciiForest sky={sky} />
       <div className="scrim" />

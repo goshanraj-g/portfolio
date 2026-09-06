@@ -7,8 +7,8 @@ import { useEffect, useState } from "react";
    compositor can't do on its own. */
 
 const COUNT = 74;
-/** how far down the viewport stars reach, before the trees take over */
-const SKY_VH = 62;
+/** how far down the viewport stars reach, well above the treeline */
+const SKY_VH = 44;
 
 type Star = {
   x: number;
@@ -39,15 +39,16 @@ export default function Stars() {
 
     setStars(
       Array.from({ length: n }, () => {
-        // squared toward the zenith, so they thin out as they near the trees
-        const depth = Math.pow(rand(), 0.62);
+        // biased toward the zenith, so the field is dense overhead and only
+        // trails off toward the trees rather than filling the sky evenly
+        const depth = Math.pow(rand(), 1.45);
         return {
           x: 1 + rand() * 97,
           y: depth * SKY_VH,
           size: 7 + rand() * 5,
           glyph: rand() < 0.11 ? "*" : "·",
           // dimmer toward the horizon, where the air is thicker
-          a: (0.48 + rand() * 0.5) * (1 - 0.45 * depth),
+          a: (0.48 + rand() * 0.5) * (1 - 0.5 * depth),
           dur: 2.8 + rand() * 4.6,
           delay: -rand() * 6,
         };
