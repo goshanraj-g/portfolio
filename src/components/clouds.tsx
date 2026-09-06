@@ -1,12 +1,6 @@
-/* Daytime clouds: a handful of line-drawn ASCII puffs crossing the sky.
-   Deterministic, so they render server-side and never pop in, and drifted in
-   CSS rather than on a frame loop — same bargain the stars make. */
+/* Deterministic ASCII clouds animated in CSS. */
 
-/* Kept to the ( ) - _ . family so they read as one hand's drawing. Four sizes
-   rather than three, and the new one is a good deal wider than the old
-   largest: depth in a flat sky comes from the spread between the nearest
-   shape and the farthest, and three drawings within a few characters of each
-   other left the sky reading as one distance. */
+/* A shared glyph set keeps the cloud drawings visually consistent. */
 const SMALL = ["  .-.", " (   ).", "(__(___)"] as const;
 
 const MEDIUM = ["   .--.", ".-(    ).", "(___.__)__)"] as const;
@@ -18,8 +12,6 @@ const LARGE = [
   "  `--.._____..--'",
 ] as const;
 
-/* Two humps on one base, so the nearest cloud reads as a cloud with weather in
-   it rather than as a small one held up to the eye. */
 const HUGE = [
   "        .--.      .-.",
   "    .--(    )----(   )--.",
@@ -32,15 +24,15 @@ type Shape = readonly string[];
 
 type Cloud = {
   shape: Shape;
-  /** lane top, in vh */
+  /** Lane top in vh. */
   y: number;
-  /** font size in vh, before the viewport scale in the stylesheet */
+  /** Font size in vh before the CSS viewport scale. */
   size: number;
   a: number;
-  /** one crossing, in seconds */
+  /** Seconds per crossing. */
   dur: number;
   delay: number;
-  /** where it sits with the drift switched off */
+  /** Static horizontal position. */
   x: number;
 };
 
@@ -58,43 +50,25 @@ type Range = readonly [number, number];
 
 type Band = {
   shapes: readonly Shape[];
-  /** font size in vh, before the viewport scale in the stylesheet */
+  /** Font size in vh before the CSS viewport scale. */
   size: Range;
   a: Range;
-  /** seconds for one crossing — one figure for the whole lane, see below */
+  /** Shared crossing duration for the lane. */
   dur: number;
-  /** the lane the band sits in: cloud top, in vh */
+  /** Cloud top range in vh. */
   y: Range;
   count: number;
 };
 
-/* Three lanes, nearest first, and they do not overlap — that is the whole
-   point of the shape of this table.
-
-   Vertically: every lane's floor (its top plus the tallest cloud it can hold)
-   clears the next lane's ceiling. That holds at any window height because the
-   sizes are in vh, not px — a cloud's height in vh is the same on a laptop as
-   on a monitor, so the lanes can be checked once here rather than hoped for.
-
-   Horizontally: every cloud in a lane crosses at the same speed, and they are
-   started evenly around the loop, so the gaps between them are fixed for as
-   long as the page is open. Per-cloud durations were what let clouds catch
-   each other up — with those, any two of them overlap sooner or later no
-   matter where they start out.
-
-   Nearest is highest, which is the way a sky actually reads: the treeline is
-   the horizon, so distance runs toward it and the far puffs bunch just above
-   it. Near still moves fastest. */
+/* Non-overlapping depth lanes, nearest and fastest first. Shared lane speeds
+   and evenly spaced starts keep horizontal gaps stable. */
 const BANDS: readonly Band[] = [
   { shapes: [HUGE], size: [2.7, 3.0], a: [0.58, 0.72], dur: 135, y: [1.5, 2.3], count: 1 },
   { shapes: [LARGE, MEDIUM], size: [1.95, 2.3], a: [0.42, 0.55], dur: 200, y: [18.5, 19.5], count: 2 },
   { shapes: [MEDIUM, SMALL], size: [1.15, 1.42], a: [0.25, 0.38], dur: 300, y: [29.5, 31], count: 4 },
 ];
 
-/* A roll inside a slice rather than across the whole range: free rolls put
-   five of these clouds in the top eighth of the sky and left the rest bare.
-   Each cloud owns a slice and jitters within it, so the spread is guaranteed
-   and the spacing still isn't regular. */
+/* Give each cloud a jittered slice to guarantee an irregular spread. */
 function spread(i: number, n: number, [lo, hi]: Range, jitter: number): number {
   return lo + ((i + jitter * 0.9) / n) * (hi - lo);
 }
@@ -105,15 +79,13 @@ const CLOUDS: Cloud[] = (() => {
 
   return BANDS.flatMap((band) =>
     Array.from({ length: band.count }, (_, i) => ({
-      // cycled, not rolled: a band of two is meant to show both its shapes,
-      // and a roll happily hands back the same drawing twice
+      // Cycle shapes so every drawing in a lane appears.
       shape: band.shapes[i % band.shapes.length],
       y: spread(i, band.count, band.y, rand()),
       size: pick(band.size),
       a: pick(band.a),
       dur: band.dur,
-      // Spaced around the loop rather than over it: the jitter is kept to half
-      // a slice so no two in a lane can start close enough to touch.
+      // Half-slice jitter prevents clouds in a lane from touching.
       delay: -((i + rand() * 0.5) / band.count) * band.dur,
       x: spread(i, band.count, [2, 92], rand()),
     })),
@@ -130,14 +102,9 @@ export default function Clouds() {
           style={
             {
               top: `${c.y}vh`,
-              // vh through a scale the stylesheet owns — the vh is what keeps
-              // the lanes honest, the scale is what keeps a phone from wearing
-              // the near cloud edge to edge
+              // vh preserves lanes; the CSS scale constrains mobile width.
               fontSize: `calc(${c.size}vh * var(--cloud-scale, 1))`,
-              // The lanes mean this should never be asked to settle anything.
-              // It is here for the case they don't cover — a mono face whose
-              // advance is wider than the 0.6em the lane widths assume — and
-              // the answer there is the one you'd want: bigger wins.
+              // Larger clouds win if font metrics make lanes overlap.
               zIndex: Math.round(c.size * 100),
               "--a": c.a,
               "--dur": `${c.dur}s`,

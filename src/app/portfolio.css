@@ -1,10 +1,5 @@
-/* Portfolio theme and layout. Component dimensions use px/clamp so their
-   proportions stay predictable across breakpoints. */
-
 .portfolio {
-  /* Night is the default; clicking the moon sets data-theme="day" below.
-     Everything that takes a colour reads one of these, so the day palette
-     stays a single block rather than a parallel stylesheet. */
+  /* Night is the default theme. */
   --bg: #070a08;
   --fg: #eef1ee;
   --name-c: #fafcfa;
@@ -23,18 +18,11 @@
   --tint-2: rgba(143, 191, 159, 0.1);
   --row-hover: rgba(143, 191, 159, 0.05);
   --row-hover-name: #fff;
-  /* Chrome that isn't type: the rail ticks, the social icons, the scroll
-     hints, and how far a row dims when a sibling is hovered. Broken out
-     because dark-on-light needs more of all four than light-on-dark does —
-     the same alpha that reads as "quiet" at night reads as "missing" by
-     day, and these are the parts you're meant to be able to click. */
   --icon-c: var(--faint);
   --hint-c: var(--dim);
   --tick-op: 0.5;
   --tick-op-hi: 0.85;
   --sib-dim: 0.38;
-  /* A gold winner's pill, as on the first site: warm against the night sky and
-     lit further on hover. --shine is the sweep that crosses it. */
   --badge-fg: rgba(244, 205, 120, 0.92);
   --badge-bg: rgba(214, 164, 60, 0.12);
   --badge-line: rgba(234, 194, 100, 0.34);
@@ -57,29 +45,20 @@
   --ground-c: rgba(214, 152, 94, 0.42);
   --puff: rgba(198, 208, 202, 0.9);
 
-  /* The fire's base, in viewport coords. The campfire stands on it and the
-     forest lights itself from it, so both read the same point. */
+  /* Shared origin for the campfire and forest lighting. */
   --fire-x: calc(4.5vw + 58px);
   --fire-y: 22px;
 
-  /* The panel foot is absolutely positioned and so contributes no height of
-     its own, and the panels deliberately don't reserve a strip for it: each
-     one centres on the middle of the viewport, so the eye lands in the same
-     place on every panel and the bar reads as a fixture the page scrolls
-     past rather than as a thing the content is squeezed above. */
   --social-icon: 23px;
   --social-gap: 23px;   /* optical gap between icons, tap padding excluded */
   --foot-offset: 34px;  /* panel bottom to the bar */
   --foot-pad: 18px;     /* the bar's rule to its icons */
   --foot-tap: 0px;      /* padding inflating each icon's hit area */
 
-  /* width the rail owns down the right edge, kept clear of the text column */
+  /* Space reserved for the fixed section rail. */
   --rail-zone: 88px;
 
-  /* The clouds are sized in vh — that is what keeps their lanes from
-     overlapping at any window height — so this is the one knob that narrows
-     them, and it exists because a narrow window is not a short one: a phone
-     would otherwise wear the near cloud from edge to edge. */
+  /* Narrows viewport-height-based clouds on small screens. */
   --cloud-scale: 1;
 
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "DejaVu Sans Mono", monospace;
@@ -94,15 +73,7 @@
 
 /* ── Daylight ──────────────────────────────────────────────── */
 .portfolio[data-theme="day"] {
-  /* A cool paper rather than a warm one: the sky wash overhead is blue, and
-     a green-grey ground under it read as two different days. */
   --bg: #e4eaf1;
-  /* Alphas solved against the paper rather than mirrored from night: the same
-     alpha carries far less contrast as dark-on-light than as light-on-dark.
-     Measured against the paper *and* against the paper with the day forest
-     over it, since the trees are what the column actually stands on: faint
-     clears 4.5:1 either way, and ghost — the dates and the ticks — clears it
-     on paper and stays above 3:1 under the canopy. */
   --fg: #0b120d;
   --name-c: #080d0a;
   --strong: rgba(11, 18, 13, 0.94);
@@ -120,17 +91,11 @@
   --tint-2: rgba(34, 82, 58, 0.14);
   --row-hover: rgba(34, 82, 58, 0.1);
   --row-hover-name: #000;
-  /* Chrome carries further by day: thin icon strokes and a 2px tick lose more
-     to a light ground than body type does, and a row faded to 0.38 on paper
-     goes to grey where the same fade on black only goes quiet. */
   --icon-c: var(--dim);
   --hint-c: var(--strong);
   --tick-op: 0.85;
   --tick-op-hi: 1;
   --sib-dim: 0.5;
-  /* The same gold pill solved against paper: a deep amber that holds its own on
-     a light ground where the night's pale gold would wash out. The sweep stays
-     a white highlight — gloss on a light pill, not a shadow crossing it. */
   --badge-fg: rgba(122, 84, 6, 0.96);
   --badge-bg: rgba(196, 146, 28, 0.16);
   --badge-line: rgba(150, 110, 20, 0.34);
@@ -138,19 +103,12 @@
   --badge-line-hi: rgba(150, 110, 20, 0.5);
   --shine: rgba(255, 255, 255, 0.75);
   --book-hover: rgba(34, 82, 58, 0.08);
-  /* Pulled up close to night's 0.74: the day forest is dark ink on a light
-     ground, so the trees crowd dark type exactly the way night's pale trees
-     crowded pale type. A wash this thin left the reading column standing on
-     the canopy. */
   --scrim-a: rgba(216, 231, 246, 0.62);
   --scrim-b: rgba(216, 231, 246, 0.28);
   --scrim-top: rgba(216, 231, 246, 0.3);
   --scrim-bot: rgba(216, 231, 246, 0.62);
   --halo-a: rgba(255, 199, 74, 0.42);
   --halo-b: rgba(255, 172, 56, 0.2);
-  /* Deep enough to hold against a light sky, but held at a gold hue rather
-     than pushed down the ramp into orange — darkening a sun toward red reads
-     as an eclipse, not as noon. The feathered limb does the rest. */
   --disc: #a07607;
   --disc-glow-a: rgba(198, 150, 30, 0.45);
   --disc-glow-b: rgba(186, 132, 20, 0.22);
@@ -161,33 +119,27 @@
   --cloud: rgba(58, 92, 130, 0.55);
 }
 
-/* Switched in one frame, not cross-faded: the trees and the disc are redrawn
-   from inline styles with no transition of their own, so easing the ground
-   under them only desyncs the scene. */
 body:has(.portfolio) {
   background: #070a08;
+  overflow-x: clip;
 }
 
 body:has(.portfolio[data-theme="day"]) {
   background: #d5e4f5;
 }
 
-/* globals.css selects with white on 12% white — invisible on paper. Selection
-   is the one piece of chrome the browser draws for us, so day gets its own. */
 .portfolio[data-theme="day"] ::selection {
   background: rgba(34, 82, 58, 0.2);
   color: #0b120d;
 }
 
-/* ── Section paging ─────────────────────────────────────────
-   The document is the scroll container. Every panel fills the screen and
-   snaps to the top, so one scroll gesture lands on the next section — the
-   page moves a section at a time rather than a continuous ribbon. */
+/* ── Section paging ───────────────────────────────────────── */
 html:has(.portfolio) {
   scroll-snap-type: y mandatory;
-  /* only affects the rail's anchor jumps — the wheel and trackpad are
-     untouched — so a tick glides to its panel instead of teleporting */
+  /* Smooths rail anchor jumps. */
   scroll-behavior: smooth;
+  overflow-x: clip;
+  overscroll-behavior-x: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -204,10 +156,8 @@ html:has(.portfolio) {
   overflow: hidden;
 }
 
-/* The near slice rides above the campfire so its trees pass in front of it. */
 .forest-front { z-index: 2; }
 
-/* Zero-size marker the forest measures to place its firelight. */
 .fire-anchor {
   position: absolute;
   left: var(--fire-x);
@@ -216,7 +166,6 @@ html:has(.portfolio) {
   height: 0;
 }
 
-/* A warm duplicate of the same trees, clipped to how far the fire carries. */
 .firelight {
   position: absolute;
   inset: 0;
@@ -234,7 +183,7 @@ html:has(.portfolio) {
   .firelight { animation: none; }
 }
 
-/* Top-edge fade is set inline per slice — only the topmost dissolves. */
+/* Slice-specific top fades are set inline. */
 .forest-art {
   position: absolute;
   left: 0;
@@ -246,17 +195,12 @@ html:has(.portfolio) {
   overflow: hidden;
 }
 
-/* Sky, above the treeline. Fixed like the forest, the scrim and the moon: the
-   scene is one backdrop the panels scroll in front of, so the stars stay put
-   instead of belonging to the hero alone and sliding off after one panel. */
 .sky {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   user-select: none;
-  /* the field only reaches partway down the viewport, so there is nothing to
-     clip below it — this just keeps an edge glyph from widening the page */
   overflow: hidden;
 }
 
@@ -282,9 +226,6 @@ html:has(.portfolio) {
   .star { animation: none; opacity: var(--a); }
 }
 
-/* Daytime sky. The wash is what makes it read as blue: --bg is the whole
-   document's ground and would carry a gradient across every panel, so the
-   colour lives on this fixed layer instead and stops above the treeline. */
 .clouds {
   position: fixed;
   inset: 0;
@@ -315,7 +256,7 @@ html:has(.portfolio) {
   animation-delay: var(--delay);
 }
 
-/* one full crossing, offscreen to offscreen, so the loop has no seam */
+/* Crosses fully offscreen to keep the loop seamless. */
 @keyframes cloud-drift {
   from { transform: translateX(-26vw); }
   to { transform: translateX(114vw); }
@@ -325,7 +266,6 @@ html:has(.portfolio) {
   .cloud { animation: none; transform: translateX(var(--x)); }
 }
 
-/* keeps the reading column winning against the trees */
 .firefly {
   position: absolute;
   top: 0;
@@ -352,13 +292,11 @@ html:has(.portfolio) {
 }
 
 /* ── Moon ──────────────────────────────────────────────────── */
-/* Opposite the fire. The disc never moves; only the halo breathes. */
 .moon {
   --moon-scale: 1;
   position: fixed;
   top: 8vh;
   right: 7vw;
-  /* above the reading column: it's the one thing up here you can click */
   z-index: 5;
   display: block;
   padding: 0;
@@ -385,7 +323,6 @@ html:has(.portfolio) {
   border-radius: 12px;
 }
 
-/* offset toward the lit limb, so the glow sits on the crescent */
 .moon-halo {
   position: absolute;
   pointer-events: none;
@@ -404,7 +341,6 @@ html:has(.portfolio) {
   animation: moon-breathe 14s ease-in-out infinite;
 }
 
-/* the sun is a full disc, so its glow centres and carries further */
 .portfolio[data-theme="day"] .moon-halo {
   left: 50%;
   width: 520px;
@@ -432,7 +368,6 @@ html:has(.portfolio) {
 }
 
 /* ── Campfire ──────────────────────────────────────────────── */
-/* Stands on --fire-x/--fire-y, between the mid and near tree slices. */
 .campfire {
   --fire-scale: 0.78;
   position: fixed;
@@ -442,12 +377,10 @@ html:has(.portfolio) {
   pointer-events: none;
   user-select: none;
   font-family: var(--mono);
-  /* one knob for flame, logs, glow and smoke, pinned to the ground */
   transform: translateX(-50%) scale(var(--fire-scale));
   transform-origin: bottom center;
 }
 
-/* Both glows flicker together off one opacity write. */
 .campfire-light {
   position: absolute;
   inset: 0;
@@ -469,7 +402,6 @@ html:has(.portfolio) {
   );
 }
 
-/* Light pooling on the forest floor — a flat ellipse, not a floating orb. */
 .campfire-pool {
   position: absolute;
   left: 50%;
@@ -486,7 +418,6 @@ html:has(.portfolio) {
   );
 }
 
-/* Same cell size the mid tree slice uses, so the fire sits on their grid. */
 .flame {
   position: relative;
   margin: 0;
@@ -507,7 +438,6 @@ html:has(.portfolio) {
   text-shadow: none;
 }
 
-/* Wider than the fire, so the clearing thins out into the trees. */
 .ground {
   position: absolute;
   top: 100%;
@@ -541,9 +471,7 @@ html:has(.portfolio) {
 }
 
 /* ── Section rail ──────────────────────────────────────────── */
-/* One tick per panel down the right edge. The hit area is the anchor, a good
-   deal taller than the 2px tick it draws, so the ticks can sit close together
-   without becoming impossible to click. */
+/* Anchors provide larger hit areas than their visible ticks. */
 .rail {
   position: fixed;
   right: 26px;
@@ -582,10 +510,6 @@ html:has(.portfolio) {
   background: var(--accent);
 }
 
-/* Bracket the ticks and drift, so the rail reads as an instruction and not only
-   as a position readout. Slow, and on --dim rather than --ghost so it carries
-   at a glance — it should register when you look at it without pulling the eye
-   off the writing. */
 .rail-hint {
   display: flex;
   justify-content: flex-end;
@@ -594,23 +518,14 @@ html:has(.portfolio) {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-/* Each drifts the way it points, and the drift lives on the chevron itself
-   rather than on the span. Both chevrons mount together and never stop, so the
-   two loops stay locked to one clock: pausing the drift on a spent hint would
-   restart it from zero on the way back, and the pair would read as two
-   arrows breathing against each other for the rest of the page. */
 .rail-hint svg {
   animation: rail-drift 2.8s ease-in-out infinite;
 }
 
-/* Same keyframes both ways — the direction comes from the sign, so up and down
-   reach their outward extreme on the same beat. */
 .rail-hint.up { --drift: -1; margin-bottom: 8px; }
 .rail-hint.down { --drift: 1; margin-top: 8px; }
 
-/* Spent = nothing that way to go: the first panel's up arrow, the last one's
-   down arrow. The span fades and retreats toward the ticks while the chevron
-   inside it keeps its place in the loop. */
+/* Preserve rail spacing when a direction is unavailable. */
 .rail-hint.spent {
   opacity: 0;
   pointer-events: none;
@@ -625,7 +540,6 @@ html:has(.portfolio) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* The hover states still resolve; only the travelling band is dropped. */
   .chip::before,
   .row-badge::before { display: none; }
 
@@ -639,9 +553,7 @@ html:has(.portfolio) {
 .shell {
   position: relative;
   z-index: 4;
-  /* A 740px column plus its padding needs ~916px of viewport before the fixed
-     rail stops overlapping it, so between there and mobile the column gives
-     way instead — narrower, still centred, and never under the ticks. */
+  /* Keep the content column clear of the fixed rail. */
   max-width: min(740px, calc(100vw - 2 * var(--rail-zone)));
   margin: 0 auto;
   padding: 0 28px;
@@ -655,12 +567,6 @@ html:has(.portfolio) {
   justify-content: center;
   scroll-snap-align: start;
   scroll-snap-stop: always;
-}
-
-/* lvh = viewport at its tallest, so the next section stays below the
-   fold on mobile even with the address bar showing. */
-@supports (min-height: 100lvh) {
-  .hero { min-height: 100lvh; }
 }
 
 .name {
@@ -704,10 +610,6 @@ html:has(.portfolio) {
   background: var(--tint-2);
 }
 
-/* A band of light crossing the pill, left to right, once per hover. Shared by
-   the McMaster chip and the hackathon badge, both of which want the same
-   gesture: a small thing catching the light as you pass over it. The element
-   clips it, so the band appears to travel under the pill's own edge. */
 .chip,
 .row-badge {
   position: relative;
@@ -730,8 +632,6 @@ html:has(.portfolio) {
   );
 }
 
-/* The badge takes its cue from the whole row, not from itself: it is a small
-   target inside a large one, and the row is what the pointer is actually on. */
 .chip:hover::before,
 .row:hover .row-badge::before {
   animation: badge-shine 0.6s ease-out forwards;
@@ -760,10 +660,7 @@ html:has(.portfolio) {
 
 
 /* ── Sections ──────────────────────────────────────────────── */
-/* Each section is a full-height snap panel with its content centered.
-   `safe center` falls back to top-alignment if a panel ever outgrows the
-   screen, so nothing clips; `snap-stop: always` keeps a fast scroll from
-   flying past a panel. */
+/* Safe centering prevents tall panels from clipping above the viewport. */
 .section {
   position: relative;
   min-height: 100vh;
@@ -773,16 +670,11 @@ html:has(.portfolio) {
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
-@supports (min-height: 100svh) {
-  .section { min-height: 100svh; }
+@supports (min-height: 100dvh) {
+  .hero,
+  .section { min-height: 100dvh; }
 }
 
-/* Set the way the name is — Playfair, italic — so a panel opens in the same
-   voice the hero speaks in. The tracked-out caps label and the hairline under
-   it are gone: at this size the title separates itself, and a rule would only
-   put a lid back on a page whose panels are already divided by the fold. Held
-   at --dim so it stays the quieter half of the panel; the rows are the part
-   you are meant to read. */
 .section-title {
   font-family: var(--font-display), Georgia, serif;
   font-style: italic;
@@ -799,7 +691,6 @@ html:has(.portfolio) {
   font-size: clamp(17px, 2.5vw, 19px);
   line-height: 1.68;
   color: var(--muted);
-  /* the rows use the full width; prose keeps a readable measure */
   max-width: 60ch;
   margin-bottom: 40px;
 }
@@ -807,12 +698,8 @@ html:has(.portfolio) {
 .lead strong { color: var(--fg); font-weight: 500; }
 .lead + .lead { margin-top: -22px; }
 
-/* when the lead ends on a colon it introduces the threads: pull the list in
-   close so the sentence reads straight into the spec sheet */
 .lead-into { margin-bottom: 20px; }
 
-/* Set as a spec sheet, not as three cards: the label sits out in the margin
-   and the prose runs in a single measure beside it. */
 .threads { display: flex; flex-direction: column; }
 
 .thread {
@@ -828,11 +715,9 @@ html:has(.portfolio) {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--faint);
-  /* sits on the first baseline of the prose rather than above it */
   padding-top: 4px;
 }
 
-/* the prose outweighs its label now, rather than the other way round */
 .thread-body {
   font-size: 16px;
   line-height: 1.62;
@@ -852,7 +737,7 @@ html:has(.portfolio) {
 /* ── Rows ──────────────────────────────────────────────────── */
 .rows { display: flex; flex-direction: column; }
 
-/* Touch latches :hover after a tap, which would strand the other rows dim. */
+/* Avoid sticky touch hover dimming. */
 @media (hover: hover) {
   .rows:hover > :not(:hover) { opacity: var(--sib-dim); }
 }
@@ -874,10 +759,7 @@ a.row:hover { background: var(--row-hover); opacity: 1 !important; }
 
 .row-main { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
 
-/* The marks are dark on transparent, which disappears into the trees. A plate
-   under them keeps every logo legible in either sky. The source SVGs are
-   cropped to their ink, so this padding is the only margin a mark gets — an
-   uncropped logo dropped in here will look small next to the others. */
+/* Logo plates keep transparent marks legible in both themes. */
 .row-logo {
   width: 24px;
   height: 24px;
@@ -889,15 +771,7 @@ a.row:hover { background: var(--row-hover); opacity: 1 !important; }
   flex-shrink: 0;
 }
 
-/* A mark that carries its own ground gets the plate to itself: no padding, and
-   cover rather than contain, so the art reaches the rounded corners instead of
-   sitting on a white rim. `background` comes from the row's `plate` colour, so
-   nothing flashes white in the moment before the image paints.
-
-   Both selectors on purpose: `.rows-work .row-logo` sets the padding at (0,2,0)
-   here and again in the mobile block, so a bare `.row-logo-bleed` would lose
-   the cascade and keep its rim. The compound form outranks it wherever it
-   lands, rather than depending on source order. */
+/* The compound selector must outrank work-row logo padding. */
 .row-logo.row-logo-bleed,
 .rows-work .row-logo.row-logo-bleed {
   padding: 0;
@@ -923,8 +797,6 @@ a.row:hover .row-name { color: var(--row-hover-name); }
   white-space: nowrap;
 }
 
-/* Projects: let the description fall to its own line under the title and wrap
-   in full, rather than sharing the title's baseline and truncating. */
 #projects .row-main { flex-direction: column; align-items: flex-start; gap: 4px; }
 #projects .row-sub { white-space: normal; overflow: visible; text-overflow: clip; }
 
@@ -937,9 +809,6 @@ a.row:hover .row-name { color: var(--row-hover-name); }
   font-variant-numeric: tabular-nums;
 }
 
-/* The first design's badge, restored: 13px on a near-invisible ground, with a
-   transparent border that only resolves on hover. Deliberately not a transition
-   — the original snapped, and the sweep is what carries the movement. */
 .row-badge {
   font-size: 13px;
   color: var(--badge-fg);
@@ -960,10 +829,7 @@ a.row:hover .row-name { color: var(--row-hover-name); }
 .oss-link { color: var(--accent); text-decoration: none; transition: text-shadow 0.3s ease; }
 a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 
-/* ── Work rows ─────────────────────────────────────────────
-   The Work panel carries four roles and nothing else, so the list spends the
-   panel instead of sitting in the middle of it: the mark reads as a logo,
-   and the org and title stack within each row. */
+/* ── Work rows ───────────────────────────────────────────── */
 .rows-work .row {
   gap: 22px;
   padding: 17px 14px;
@@ -978,7 +844,6 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
   border-radius: 9px;
 }
 
-/* Keep the name and title fitted to their contents within the text column. */
 .row-text {
   display: flex;
   flex-direction: column;
@@ -987,16 +852,11 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
   min-width: 0;
 }
 
-/* No mark yet — the initial stands in on the same plate, so the row keeps its
-   left edge and the list stays aligned. */
 .row-logo-mono {
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-display), Georgia, serif;
-  /* Sized by eye against the cropped marks, not against the plate: a serif
-     cap reaches only about two thirds of its font size, so matching the
-     32px the logos now fill takes a good deal more than 32px of type. */
   font-size: 24px;
   font-weight: 600;
   line-height: 1;
@@ -1005,8 +865,6 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 
 .rows-work .row-name { font-size: 17px; }
 
-/* the title is its own line now rather than a trailing aside, so it can carry
-   more contrast and wrap if it ever needs to */
 .rows-work .row-sub {
   font-size: 14px;
   color: var(--dim);
@@ -1033,10 +891,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 .book-author::before { content: "by "; opacity: 0.55; }
 
 /* ── Panel foot ────────────────────────────────────────────── */
-/* Pinned to the bottom of every panel at the same offset, so it holds still
-   while the panel above it moves — one rail, not six footers. Out of flow, so
-   it takes no height from the panel and the content above centres on the full
-   viewport rather than on the space left over. */
+/* Absolute positioning keeps panel content centered on the full viewport. */
 .panel-foot {
   position: absolute;
   left: 0;
@@ -1049,10 +904,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
   border-top: 2px solid var(--foot-line);
 }
 
-/* The gap closes as the tap padding opens, so the icons sit the same distance
-   apart whatever the hit area is doing, and the negative margin hides that
-   padding on the outer edge so the row still ends flush with the text column
-   rather than floating a tap target's width short of it. */
+/* Compensate for tap padding to preserve optical spacing and alignment. */
 .socials {
   display: flex;
   align-items: center;
@@ -1067,8 +919,6 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
-/* CSS owns the icon size: lucide writes 24px onto the svg and this overrides
-   it, so --social-icon is the only place the size lives. */
 .socials svg {
   width: var(--social-icon);
   height: var(--social-icon);
@@ -1096,9 +946,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
   .moon { --moon-scale: 0.8; right: 5vw; }
 }
 
-/* Below this the reading column reaches the disc. Anchoring it to the hero
-   keeps it off the text — it would otherwise sit over the words and, being a
-   button now, swallow clicks meant for them. */
+/* Anchor the moon to the hero before it overlaps the reading column. */
 @media (max-width: 1100px) {
   .moon { position: absolute; }
 }
@@ -1107,22 +955,14 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 @media (max-width: 640px) {
   .portfolio {
     --cloud-scale: 0.55;
-    /* the bar sits tighter and its icons carry tap padding */
     --foot-offset: 22px;
     --foot-pad: 12px;
     --foot-tap: 8px;
   }
 
-  /* the column takes the full width back here — the rail goes decorative
-     below, so it no longer needs its own gutter */
   .shell { padding: 0 20px; max-width: none; }
 
-  /* A 2px tick is not something you aim at with a thumb, and its hit area
-     would sit on top of the rows, which bleed 12px past the column to the
-     screen edge — the rail would quietly eat taps meant for them. Swiping is
-     the gesture here anyway (the panels snap), so on a phone the rail stops
-     being navigation and becomes what it looks like: a progress readout.
-     Keyboard activation still works; only pointers are dropped. */
+  /* The mobile rail is a progress display and must not intercept row taps. */
   .rail { right: 4px; gap: 2px; pointer-events: none; }
   .rail a { width: 20px; height: 14px; }
   .rail-tick { width: 9px; }
@@ -1154,25 +994,19 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
   .thread { grid-template-columns: 1fr; gap: 5px; padding: 13px 0; }
   .thread-label { padding-top: 0; }
 
-  /* one line doesn't fit a phone: the logo stays beside the name and only
-     the description drops below it */
   .row-main { flex-flow: row wrap; align-items: center; gap: 2px 10px; }
   .row-sub { flex: 1 0 100%; white-space: normal; overflow: visible; }
 
-  /* Work rows stack their own text, so they opt out of the wrap above: the
-     mark stays beside the org, and .row-sub — inside .row-text here, where a
-     100% flex-basis would read as height — keeps its natural size. The year
-     still drops to its own line with the column .row above. */
+  /* Work text stacks inside a non-wrapping logo row. */
   .rows-work .row { gap: 7px; padding: 14px 12px; }
   .rows-work .row-main { flex-wrap: nowrap; }
   .rows-work .row-sub { flex: 0 0 auto; }
   .rows-work .row-logo { width: 35px; height: 35px; padding: 4px; }
   .rows-work .row-logo-mono { font-size: 20px; }
   .rows-work .row-name { font-size: 15.5px; }
-  /* 35px mark + its 15px gap: the year lines up under the text, not the mark */
+  /* Align the year with the text column. */
   .rows-work .row-meta { font-size: 11.5px; margin-left: 50px; }
 
-  /* --faint is too low-contrast for something you're meant to tap */
   .socials a { color: var(--icon-c); }
 }
 

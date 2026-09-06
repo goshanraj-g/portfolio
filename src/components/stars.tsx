@@ -2,12 +2,10 @@
 
 import { useEffect, useState } from "react";
 
-/* Sparse stars over the top of the sky, thinning toward the treeline.
-   Twinkled in CSS rather than on a frame loop — there is nothing here the
-   compositor can't do on its own. */
+/* Stars thin toward the treeline and twinkle in CSS. */
 
 const COUNT = 74;
-/** how far down the viewport stars reach, well above the treeline */
+/** Star field depth in viewport height. */
 const SKY_VH = 44;
 
 type Star = {
@@ -39,15 +37,14 @@ export default function Stars() {
 
     setStars(
       Array.from({ length: n }, () => {
-        // biased toward the zenith, so the field is dense overhead and only
-        // trails off toward the trees rather than filling the sky evenly
+        // Bias stars toward the zenith.
         const depth = Math.pow(rand(), 1.45);
         return {
           x: 1 + rand() * 97,
           y: depth * SKY_VH,
           size: 7 + rand() * 5,
           glyph: rand() < 0.11 ? "*" : "·",
-          // dimmer toward the horizon, where the air is thicker
+          // Dim stars toward the horizon.
           a: (0.48 + rand() * 0.5) * (1 - 0.5 * depth),
           dur: 2.8 + rand() * 4.6,
           delay: -rand() * 6,

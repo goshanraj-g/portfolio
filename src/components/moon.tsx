@@ -1,17 +1,15 @@
-/* The sky's one clickable thing: a crescent at night, the sun by day.
-   Both are drawn light-on-dark, so denser glyphs read as brighter, and both
-   are deterministic, so they render server-side and never move. */
+/* Deterministic ASCII crescent and sun used as the sky toggle. */
 
-/** disc radius, in character rows */
+/** Disc radius in character rows. */
 const RADIUS = 7;
-/** monospace cell aspect (advance width / line height) */
+/** Monospace cell aspect ratio: width / line height. */
 const CELL_ASPECT = 0.6 / 0.66;
 
-/** lit fraction of the disc: 0.5 is a half moon, lower is a thinner crescent */
+/** Lit disc fraction; lower values create a thinner crescent. */
 const PHASE = 0.22;
-/** the terminator ellipse, from the lit fraction. +1 is new, -1 is full */
+/** Terminator ellipse: +1 is new; -1 is full. */
 const TERMINATOR = 1 - 2 * PHASE;
-/** how far the terminator feathers, in disc radii */
+/** Terminator feathering in disc radii. */
 const TERMINATOR_SOFTNESS = 0.2;
 
 const RAMP = [".", ":", "-", "=", "+", "*", "#", "%", "@"];
@@ -45,17 +43,17 @@ function drawMoon(): string {
   for (let dy = -RADIUS; dy <= RADIUS; dy++) {
     let line = "";
     for (let dx = -colsHalf; dx <= colsHalf; dx++) {
-      // column offsets into row units, so the disc is round on screen
+      // Convert column offsets to row units for a round screen shape.
       const nx = dx * CELL_ASPECT;
       const dist = Math.sqrt(nx * nx + dy * dy) / RADIUS;
 
-      // a hair past 1, else the disc comes to a point at the poles
+      // Slight overscan prevents pointed poles.
       if (dist > 1.04) {
         line += " ";
         continue;
       }
 
-      // limb darkening, plus a lift toward the upper right so it reads as a ball
+      // Limb darkening and upper-right light make the disc spherical.
       let b = 1 - 0.34 * Math.min(1, dist) ** 2;
       b += 0.1 * ((nx - dy) / RADIUS);
 
@@ -64,13 +62,12 @@ function drawMoon(): string {
         if (cd < c.r) b -= c.depth * (1 - cd / c.r);
       }
 
-      // The terminator is an ellipse: at each row it crosses the disc at
-      // TERMINATOR of that row's half-chord. Lit to the right of it.
+      // Place the elliptical terminator along each row's half-chord.
       const halfChord = Math.sqrt(Math.max(0, 1 - (dy / RADIUS) ** 2));
       const t = (nx / RADIUS - TERMINATOR * halfChord) / TERMINATOR_SOFTNESS;
       const lit = Math.max(0, Math.min(1, t * 0.5 + 0.5));
 
-      // The unlit side is dropped entirely, so only the crescent is drawn.
+      // Omit the unlit side.
       if (lit <= 0.02) {
         line += " ";
         continue;
@@ -92,19 +89,10 @@ function drawMoon(): string {
   return lines.join("\n");
 }
 
-/** supersamples per axis when measuring how much of a cell the disc covers */
+/** Supersamples per axis for cell coverage. */
 const SUN_SS = 6;
 
-/* The sun is the same disc with nothing taken out of it: no terminator and no
-   craters, flat and hot through the middle, falling off only at the limb.
-
-   Where the moon can get away with testing one point per cell — a crescent is
-   read by its two curves, not by its roundness — a filled disc that size is
-   judged on being a circle, and one sample per cell only ever answers in or
-   out. The limb came out as a staircase with a hard edge. So each cell is
-   measured for coverage instead, and dimmed by it: a cell the edge merely
-   clips lands low on the ramp, exactly the way an antialiased pixel lands on
-   a lighter grey, and the ramp feathers the limb into a curve. */
+/* Supersampled cell coverage softens the sun's otherwise stair-stepped edge. */
 function drawSun(): string {
   const colsHalf = Math.ceil(RADIUS / CELL_ASPECT);
 
@@ -116,7 +104,7 @@ function drawSun(): string {
       let distSum = 0;
       for (let sy = 0; sy < SUN_SS; sy++) {
         for (let sx = 0; sx < SUN_SS; sx++) {
-          // column offsets into row units, so the disc is round on screen
+          // Convert column offsets to row units.
           const nx = (dx + (sx + 0.5) / SUN_SS - 0.5) * CELL_ASPECT;
           const ny = dy + (sy + 0.5) / SUN_SS - 0.5;
           const d = Math.sqrt(nx * nx + ny * ny) / RADIUS;
@@ -133,8 +121,7 @@ function drawSun(): string {
       }
 
       const cover = inside / (SUN_SS * SUN_SS);
-      // averaged over the covered part only, so an edge cell is placed by the
-      // bit of disc it actually holds rather than by its centre
+      // Average only covered samples so partial edge cells stay dim.
       const dist = distSum / inside;
 
       const b = (1 - 0.34 * dist ** 4) * cover;

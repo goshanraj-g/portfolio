@@ -3,27 +3,27 @@
 import { useEffect, useRef } from "react";
 import type { Sky } from "./moon";
 
-/* Campfire: a flame grid redrawn a few times a second, plus rising smoke. */
+/* Animated ASCII flames and rising smoke. */
 
 const FLAME_ROWS = 9;
 const FLAME_HALF = 6;
-/** flame redraws per second */
+/** Flame redraws per second. */
 const FLAME_FPS = 11;
 
-/** seconds for the fire to sink into the logs, and to catch again */
+/** Seconds to extinguish and relight the fire. */
 const DIE_S = 1.6;
 const LIGHT_S = 0.9;
-/** a fire going out billows: how fast that builds, and how long it hangs */
+/** Seconds for extinguishing smoke to build and clear. */
 const BILLOW_S = 0.5;
 const CLEAR_S = 3.4;
 
 const PUFFS = 32;
-/** how far a puff climbs before it's spent, in px */
+/** Puff rise distance in pixels. */
 const RISE = 460;
-/** sideways travel over a puff's life — the prevailing wind */
+/** Puff drift over its lifetime. */
 const DRIFT = 92;
 
-// tips are wispy, the base is dense
+// Wispy at the tips and dense at the base.
 const FLAME_PALETTE: string[][] = [
   [" ", ".", "'", " ", " "],
   [" ", ".", "'", "^", " "],
@@ -50,15 +50,13 @@ const FLAME_COLORS = [
 ];
 
 const LOGS = ["    \\\\|//    ", " __/_____\\__ "];
-/** a ring of stones settles the fire into the ground instead of onto it */
 const STONES = ".oOo(___)oOo.";
 
-/** ground scatter, wider than the fire so the clearing thins into the trees */
 const GROUND_COLS = 34;
 
 const SMOKE_CHARS = [".", ":", "o", "~", "'"];
 
-/* First painted frame only, so SSR and hydration agree. */
+/* Deterministic first frame avoids a hydration mismatch. */
 function seeded(a: number) {
   return function () {
     a |= 0;
@@ -69,7 +67,6 @@ function seeded(a: number) {
   };
 }
 
-/* Same glyphs the forest uses for undergrowth, so the floor is one surface. */
 const GROUND = (() => {
   const rand = seeded(77);
   const glyphs = [".", ",", "'", '"'];
@@ -128,8 +125,7 @@ export default function Campfire({ sky }: { sky: Sky }) {
   const puffEls = useRef<(HTMLSpanElement | null)[]>([]);
   const glowEl = useRef<HTMLDivElement>(null);
 
-  // Read through refs rather than re-running the effect, so the flames and the
-  // smoke column keep their state across a switch instead of restarting.
+  // Refs preserve animation state when the sky changes.
   const skyRef = useRef(sky);
   const wake = useRef(() => {});
 
@@ -142,8 +138,7 @@ export default function Campfire({ sky }: { sky: Sky }) {
     Array.from({ length: FLAME_ROWS }, (_, r) => flameRow(r, seeded(9001 + r)))
   ).current;
 
-  /* Reduced motion skips the animation loop below, which would otherwise leave
-     the fire burning through the daylight. Put it in the right state outright. */
+  /* Set the final state directly when animation is disabled. */
   useEffect(() => {
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const out = sky === "day";
@@ -161,16 +156,16 @@ export default function Campfire({ sky }: { sky: Sky }) {
     const rand = Math.random;
     const start = performance.now();
     const puffs: Puff[] = Array.from({ length: PUFFS }, (_, i) =>
-      // stagger births so the column is already full on first paint
+      // Fill the smoke column on the first frame.
       newPuff(0, rand, (i / PUFFS) * 7)
     );
 
     let raf = 0;
     let lastFlame = 0;
     let lastNow = 0;
-    /** 1 is burning, 0 is out */
+    /** 1 is burning; 0 is out. */
     let burn = skyRef.current === "night" ? 1 : 0;
-    /** extra smoke thrown off by a fire that is going out */
+    /** Extra smoke while the fire goes out. */
     let billow = 0;
 
     const tick = (now: number) => {
@@ -182,16 +177,14 @@ export default function Campfire({ sky }: { sky: Sky }) {
       if (burn < target) burn = Math.min(target, burn + dt / LIGHT_S);
       else if (burn > target) burn = Math.max(target, burn - dt / DIE_S);
 
-      // Smoke builds while the flames sink, hangs after they're gone, and is
-      // cleared quickly if the fire catches again.
+      // Smoke builds as the fire dies and clears faster when relit.
       if (target === 0 && burn > 0) billow = Math.min(1, billow + dt / BILLOW_S);
       else if (target === 0) billow = Math.max(0, billow - dt / CLEAR_S);
       else billow = Math.max(0, billow - dt / 0.7);
 
       if (now - lastFlame > 1000 / FLAME_FPS) {
         lastFlame = now;
-        // The fire sinks into the logs rather than fading: the wispy tips go
-        // first and the hot base is the last thing left, so it reads as embers.
+        // Remove rows from the top so the last rows read as embers.
         const alive = Math.ceil(FLAME_ROWS * burn);
         for (let r = 0; r < FLAME_ROWS; r++) {
           const el = flameEls.current[r];
@@ -210,8 +203,7 @@ export default function Campfire({ sky }: { sky: Sky }) {
         let p = puffs[i];
         let age = (t - p.born) / p.life;
         if (age >= 1) {
-          // a fire that's out stops feeding the column; what's up there
-          // finishes its climb and the smoke thins away on its own
+          // Existing smoke finishes rising after the fire goes out.
           if (burn <= 0.02 && billow <= 0.04) {
             el.style.opacity = "0";
             continue;
@@ -225,8 +217,7 @@ export default function Campfire({ sky }: { sky: Sky }) {
         const y = -RISE * age;
         const alpha = Math.min(1, Math.sin(Math.PI * Math.pow(age, 0.7)) * 0.62 * (1 + 1.5 * billow));
 
-        // young smoke catches firelight, then cools — and a dead fire has no
-        // light left to lend it, so it goes grey straight away
+        // Smoke cools from firelit orange to grey as it rises.
         const warm = Math.min(1, age * 2.2 + (1 - burn));
         const r = Math.round(238 + (194 - 238) * warm);
         const b = Math.round(174 + (202 - 174) * warm);
@@ -237,7 +228,7 @@ export default function Campfire({ sky }: { sky: Sky }) {
         el.style.opacity = String(alpha);
       }
 
-      // nothing burning and nothing left in the air: stop until it's relit
+      // Pause the loop until the fire is relit.
       if (burn === 0 && burn === target && billow === 0 && !smoking) {
         raf = 0;
         return;

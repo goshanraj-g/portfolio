@@ -11,7 +11,6 @@ import Stars from "@/components/stars";
 import Clouds from "@/components/clouds";
 import "./portfolio.css";
 
-/* ── Reveal on scroll ── */
 function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const [shown, setShown] = useState(false);
@@ -27,14 +26,12 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
     };
 
     observers = [
-      // fire once the section is into frame, not as its top edge grazes
+      // Reveal after the section enters the viewport.
       new IntersectionObserver(([e]) => e.isIntersecting && show(), {
         threshold: 0,
         rootMargin: "0px 0px -14% 0px",
       }),
-      // The last block on the page can never clear that bottom margin — on a
-      // phone the footer would sit at opacity 0 — so anything that ends up
-      // wholly on screen reveals as well.
+      // Fallback for the final block, which may never cross the root margin.
       new IntersectionObserver(([e]) => e.isIntersecting && show(), { threshold: 1 }),
     ];
 
@@ -48,8 +45,6 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
     </div>
   );
 }
-
-/* ── Data ── */
 
 type Thread = { label: string; body: string };
 
@@ -71,15 +66,6 @@ const threads: Thread[] = [
   },
 ];
 
-/* Most recent first. `image` and `orgLink` are optional: a role with no mark
-   falls back to a monogram on the same plate, so a missing logo never leaves a
-   broken image in the row.
-
-   `plate` is for a mark that ships with its own ground rather than as ink on
-   transparent — a photo, or a solid-fill tile like TOConnect's. Those don't
-   want a plate under them, they want to be the plate, so setting this colour
-   lets the art bleed to the rounded corners and keeps the tile from flashing
-   white while it loads. Leave it off for anything with a transparent field. */
 type Experience = {
   title: string;
   org: string;
@@ -92,7 +78,7 @@ type Experience = {
 const experiences: Experience[] = [
   { title: "Software Engineering Intern", org: "IBM", orgLink: "https://ibm.com/", image: "/images/experiences/ibm.svg", year: "01/26 — Present" },
   { title: "Machine Learning Research Assistant", org: "McMaster University", orgLink: "https://www.mcmaster.ca/", image: "/images/education/mcmaster.svg", year: "09/25 — 12/25" },
-  // #FFCF25 sampled from the tile's corners — it is 66% of the artwork
+  // Matches the background of the TOConnect artwork.
   { title: "Software Engineering Intern", org: "TOConnect", orgLink: "https://toconnect.ca/", image: "/images/experiences/TOConnect.jpg", plate: "#FFCF25", year: "05/25 — 08/25" },
   { title: "Community Manager", org: "Google Developer Groups", orgLink: "https://gdg.community.dev/", image: "/images/experiences/gdsc.svg", year: "09/24 — 09/25" },
 ];
@@ -161,8 +147,7 @@ const books: Book[] = [
   { title: "Discourses and Selected Writings", author: "Epictetus" },
 ];
 
-/* Panel order, and the ids the rail scrolls to. Kept next to the sections that
-   carry these ids — the two lists have to stay in step. */
+// Must match the section ids below.
 const panels = [
   { id: "top", label: "Intro" },
   { id: "about", label: "About Me" },
@@ -176,8 +161,6 @@ function SectionHead({ title }: { title: string }) {
   return <h2 className="section-title">{title}</h2>;
 }
 
-/* Every panel closes on the same bar, at the same offset, so scrolling reads as
-   the panel above sliding past a fixed rail rather than as separate footers. */
 function PanelFoot() {
   return (
     <div className="panel-foot">
@@ -196,18 +179,11 @@ function PanelFoot() {
   );
 }
 
-/* One tick per panel down the right edge, with the current one drawn long and
-   lit: the ticks below the active one are the page telling you how much is
-   left, and they say where you are while they do it. Clicking one jumps to
-   that panel. A chevron above and below drifts on a slow loop — the ticks are
-   a readout, and these are the part that actually asks you to scroll. */
 function ScrollRail() {
   const [active, setActive] = useState(panels[0].id);
 
   useEffect(() => {
-    // A band one pixel tall across the middle of the screen: whichever panel is
-    // crossing it owns the rail. Cheaper and steadier than ratio thresholds,
-    // and it never leaves two panels lit at once.
+    // The panel crossing the viewport midpoint owns the rail.
     const obs = new IntersectionObserver(
       (entries) => {
         for (const e of entries) if (e.isIntersecting) setActive(e.target.id);
@@ -222,16 +198,12 @@ function ScrollRail() {
     return () => obs.disconnect();
   }, []);
 
-  // A hint only points where there is somewhere to go: down alone on the first
-  // panel, up alone on the last, both on everything between.
   const atStart = active === panels[0].id;
   const atEnd = active === panels[panels.length - 1].id;
 
   return (
     <nav className="rail" aria-label="Sections">
-      {/* Both arrows stay mounted and fade rather than unmounting — the rail is
-          centred on the viewport, so a hint appearing or vanishing outright
-          would shunt the ticks up and down the screen as you scroll. */}
+      {/* Keep arrows mounted so the rail does not shift between panels. */}
       <span className={`rail-hint up ${atStart ? "spent" : ""}`} aria-hidden="true">
         <ChevronUp size={15} strokeWidth={1.5} />
       </span>
@@ -255,12 +227,11 @@ function ScrollRail() {
 }
 
 export default function PortfolioPage() {
-  // Night by default on every visit; the moon is the only way out of it.
   const [sky, setSky] = useState<Sky>("night");
 
   return (
     <div className="portfolio" data-theme={sky === "day" ? "day" : undefined}>
-      {/* before the forest, so the trees paint over them */}
+      {/* Sky paints behind the forest. */}
       {sky === "night" ? <Stars /> : <Clouds />}
       <Moon sky={sky} onToggle={() => setSky((s) => (s === "day" ? "night" : "day"))} />
       <AsciiForest sky={sky} />
@@ -269,7 +240,6 @@ export default function PortfolioPage() {
       <ScrollRail />
 
       <div className="shell">
-        {/* ── Hero ── */}
         <header className="hero" id="top">
           <Reveal>
             <h1 className="name">Goshanraj Govindaraj</h1>
@@ -294,7 +264,6 @@ export default function PortfolioPage() {
           <PanelFoot />
         </header>
 
-        {/* ── 01 About ── */}
         <section className="section" id="about">
           <Reveal>
             <SectionHead title="About Me" />
@@ -316,13 +285,9 @@ export default function PortfolioPage() {
           <PanelFoot />
         </section>
 
-        {/* ── 02 Work ── */}
         <section className="section" id="work">
           <Reveal>
             <SectionHead title="Work" />
-            {/* This panel holds nothing but the list, so the roles get the room:
-                a full-size mark, and the title on its own line under the org
-                rather than trailing it. */}
             <div className="rows rows-work">
               {experiences.map((e) => {
                 const inner = (
@@ -366,7 +331,6 @@ export default function PortfolioPage() {
           <PanelFoot />
         </section>
 
-        {/* ── 03 Projects ── */}
         <section className="section" id="projects">
           <Reveal>
             <SectionHead title="Projects" />
@@ -397,7 +361,6 @@ export default function PortfolioPage() {
           <PanelFoot />
         </section>
 
-        {/* ── 04 Open Source ── */}
         <section className="section" id="open-source">
           <Reveal>
             <SectionHead title="Open Source" />
@@ -427,7 +390,6 @@ export default function PortfolioPage() {
           <PanelFoot />
         </section>
 
-        {/* ── 05 Reading ── */}
         <section className="section" id="reading">
           <Reveal>
             <SectionHead title="Reading" />
