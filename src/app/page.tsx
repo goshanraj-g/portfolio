@@ -1,311 +1,449 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Github, Mail, Linkedin } from "lucide-react";
+import { ChevronDown, ChevronUp, Github, Mail, Linkedin } from "lucide-react";
+import AsciiForest from "@/components/ascii-forest";
+import Campfire from "@/components/campfire";
+import Moon, { type Sky } from "@/components/moon";
+import Stars from "@/components/stars";
+import Clouds from "@/components/clouds";
+import "./portfolio.css";
 
-const WEBRING_URL = "https://mac-csse-webring.vercel.app/";
-const MY_SITE = "goshanraj.ca";
-
-/* ── Intersection observer for scroll reveal ── */
-function useReveal() {
+/* ── Reveal on scroll ── */
+function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  const [shown, setShown] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.15 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
+
+    let observers: IntersectionObserver[] = [];
+    const show = () => {
+      setShown(true);
+      observers.forEach((o) => o.disconnect());
+    };
+
+    observers = [
+      // fire once the section is into frame, not as its top edge grazes
+      new IntersectionObserver(([e]) => e.isIntersecting && show(), {
+        threshold: 0,
+        rootMargin: "0px 0px -14% 0px",
+      }),
+      // The last block on the page can never clear that bottom margin — on a
+      // phone the footer would sit at opacity 0 — so anything that ends up
+      // wholly on screen reveals as well.
+      new IntersectionObserver(([e]) => e.isIntersecting && show(), { threshold: 1 }),
+    ];
+
+    observers.forEach((o) => o.observe(el));
+    return () => observers.forEach((o) => o.disconnect());
   }, []);
 
-  return { ref, visible };
-}
-
-function RevealSection({
-  children,
-  className = "",
-  delay = 0,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
-}) {
-  const { ref, visible } = useReveal();
   return (
-    <div
-      ref={ref}
-      className={`reveal-section ${visible ? "revealed" : ""} ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
+    <div ref={ref} className={`reveal ${shown ? "shown" : ""}`} style={{ transitionDelay: `${delay}ms` }}>
       {children}
     </div>
   );
 }
 
 /* ── Data ── */
-const experiences = [
+
+type Thread = { label: string; body: string };
+
+const threads: Thread[] = [
   {
-    title: "Software Engineering Intern",
-    org: "IBM",
-    orgLink: "https://ibm.com/",
-    image: "/images/experiences/ibm.svg",
-    year: "01/26 - Present",
+    label: "agents",
+    body:
+      "built web agents, code agents, voice agents, ERP agents and content agents",
   },
   {
-    title: "Machine Learning Research Assistant",
-    org: "McMaster University",
-    orgLink: "https://www.mcmaster.ca/",
-    image: "/images/education/mcmaster.svg",
-    year: "09/25 - 12/25",
+    label: "media",
+    body:
+      "built an AI video dubber from scratch, worked with video processing, and improved media pipelines through GPU integration",
   },
   {
-    title: "Community Manager",
-    org: "Google Developer Groups",
-    orgLink: "https://gdg.community.dev/",
-    image: "/images/experiences/gdsc.svg",
-    year: "09/24-09/25",
+    label: "full stack",
+    body:
+      "shipped end-to-end products & features used by thousands",
   },
 ];
 
-const openSource = [
-  {
-    name: "LlamaIndex",
-    url: "https://github.com/run-llama/llama_index",
-    description: "Integrated web tools for the agentic web",
-  },
-  {
-    name: "Ruby",
-    url: "https://github.com/ruby/ruby",
-    description: "Optimized the new ZJIT compiler",
-    descParts: { before: "Optimized the new ", highlight: "ZJIT", after: " compiler" },
-    articleURL: "https://railsatscale.com/2025-12-24-launch-zjit/",
-  },
+/* Most recent first. `image` and `orgLink` are optional: a role with no mark
+   falls back to a monogram on the same plate, so a missing logo never leaves a
+   broken image in the row.
+
+   `plate` is for a mark that ships with its own ground rather than as ink on
+   transparent — a photo, or a solid-fill tile like TOConnect's. Those don't
+   want a plate under them, they want to be the plate, so setting this colour
+   lets the art bleed to the rounded corners and keeps the tile from flashing
+   white while it loads. Leave it off for anything with a transparent field. */
+type Experience = {
+  title: string;
+  org: string;
+  orgLink?: string;
+  image?: string;
+  plate?: string;
+  year: string;
+};
+
+const experiences: Experience[] = [
+  { title: "Software Engineering Intern", org: "IBM", orgLink: "https://ibm.com/", image: "/images/experiences/ibm.svg", year: "01/26 — Present" },
+  { title: "Machine Learning Research Assistant", org: "McMaster University", orgLink: "https://www.mcmaster.ca/", image: "/images/education/mcmaster.svg", year: "09/25 — 12/25" },
+  { title: "Community Manager", org: "Google Developer Groups", orgLink: "https://gdg.community.dev/", image: "/images/experiences/gdsc.svg", year: "09/24 — 09/25" },
+  // #FFCF25 sampled from the tile's corners — it is 66% of the artwork
+  { title: "Software Engineering Intern", org: "TOConnect", orgLink: "https://toconnect.ca/", image: "/images/experiences/TOConnect.jpg", plate: "#FFCF25", year: "05/25 — 08/25" },
 ];
 
-const projects = [
+type Project = { title: string; description: string; url?: string; badge?: string };
+
+const projects: Project[] = [
+  {
+    title: "Agentic Manufacturing Scheduler",
+    url: "https://github.com/goshanraj-g/forge",
+    description: "a scheduling tool for factories that predicts and prevents late orders",
+  },
+  {
+    title: "AI Web Monitor",
+    url: "https://github.com/goshanraj-g/vigil",
+    description: "tracks topics you care about and delivers summarized web updates straight to Slack",
+  },
+  {
+    title: "AI Repository Auditor",
+    url: "https://github.com/goshanraj-g/CodeTurret",
+    description: "an agent that audits projects and opens fix PRs",
+    badge: "🏆 Hackathon Winner",
+  },
   {
     title: "CampusThread",
     url: "https://campusthread.vercel.app/",
-    description: "Agent-driven university Q&A for 250+ users",
-  },
-  {
-    title: "LookAlive",
-    url: "https://github.com/goshanraj-g/lookalive",
-    description: "Real-time eye tracking for screen fatigue",
-  },
-  {
-    title: "Terminal Chat",
-    url: "https://github.com/goshanraj-g/terminal-chat",
-    description: "Multithreaded TCP chat server from scratch",
-  },
-  {
-    title: "CodeTurret",
-    url: "https://github.com/goshanraj-g/CodeTurret",
-    description: "Agents that scan & fix your code vulnerabilities",
-    badge: "\ud83c\udfc6 Hackathon Winner",
+    description: "an RAG chatbot for 250+ university students",
   },
 ];
 
-/* ── Magnetic icon ── */
-function MagneticIcon({
-  children,
-  href,
-  label,
-}: {
-  children: React.ReactNode;
-  href: string;
-  label: string;
-}) {
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
+type OSS = {
+  name: string;
+  url: string;
+  description?: string;
+  before?: string;
+  link?: string;
+  after?: string;
+  meta?: string;
+};
 
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>) => {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      setOffset({ x: (e.clientX - cx) * 0.35, y: (e.clientY - cy) * 0.35 });
-    },
-    []
-  );
+const openSource: OSS[] = [
+  {
+    name: "LlamaIndex",
+    url: "https://github.com/run-llama/llama_index",
+    description: "Tavily and Parallel integrations for agent web access",
+  },
+  {
+    name: "Ruby",
+    url: "https://railsatscale.com/2025-12-24-launch-zjit/",
+    before: "Batched array pushes into one allocation in ",
+    link: "ZJIT",
+    after: "",
+  },
+  {
+    name: "Shopify",
+    url: "https://github.com/Shopify/type_toolkit",
+    description: "Fixed a runtime inheritance conflict in Type Toolkit",
+  },
+];
 
+type Book = { title: string; author: string };
+
+const books: Book[] = [
+  { title: "Designing Data-Intensive Applications", author: "Martin Kleppmann" },
+  { title: "Inference Engineering", author: "Philip Kiely" },
+  { title: "Discourses and Selected Writings", author: "Epictetus" },
+];
+
+/* Panel order, and the ids the rail scrolls to. Kept next to the sections that
+   carry these ids — the two lists have to stay in step. */
+const panels = [
+  { id: "top", label: "Intro" },
+  { id: "about", label: "About Me" },
+  { id: "work", label: "Work" },
+  { id: "projects", label: "Projects" },
+  { id: "open-source", label: "Open Source" },
+  { id: "reading", label: "Reading" },
+];
+
+function SectionHead({ title }: { title: string }) {
+  return <h2 className="section-title">{title}</h2>;
+}
+
+/* Every panel closes on the same bar, at the same offset, so scrolling reads as
+   the panel above sliding past a fixed rail rather than as separate footers. */
+function PanelFoot() {
   return (
-    <Link
-      href={href}
-      target={href.startsWith("mailto") ? undefined : "_blank"}
-      aria-label={label}
-      className="social-icon"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={() => setOffset({ x: 0, y: 0 })}
-      style={{
-        transform: `translate(${offset.x}px, ${offset.y}px)`,
-        transition: offset.x === 0 ? "transform 0.5s cubic-bezier(.22,1,.36,1)" : "none",
-      }}
-    >
-      {children}
-    </Link>
+    <div className="panel-foot">
+      <div className="socials">
+        <Link href="https://github.com/goshanraj-g" target="_blank" aria-label="GitHub">
+          <Github />
+        </Link>
+        <Link href="https://linkedin.com/in/goshanrajgovindaraj" target="_blank" aria-label="LinkedIn">
+          <Linkedin />
+        </Link>
+        <Link href="mailto:govindag@mcmaster.ca" aria-label="Email">
+          <Mail />
+        </Link>
+      </div>
+    </div>
   );
 }
 
-/* ── Page ── */
-export default function Page() {
-  return <Portfolio />;
+/* One tick per panel down the right edge, with the current one drawn long and
+   lit: the ticks below the active one are the page telling you how much is
+   left, and they say where you are while they do it. Clicking one jumps to
+   that panel. A chevron above and below drifts on a slow loop — the ticks are
+   a readout, and these are the part that actually asks you to scroll. */
+function ScrollRail() {
+  const [active, setActive] = useState(panels[0].id);
+
+  useEffect(() => {
+    // A band one pixel tall across the middle of the screen: whichever panel is
+    // crossing it owns the rail. Cheaper and steadier than ratio thresholds,
+    // and it never leaves two panels lit at once.
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) if (e.isIntersecting) setActive(e.target.id);
+      },
+      { rootMargin: "-50% 0px -50% 0px" },
+    );
+
+    for (const p of panels) {
+      const el = document.getElementById(p.id);
+      if (el) obs.observe(el);
+    }
+    return () => obs.disconnect();
+  }, []);
+
+  // A hint only points where there is somewhere to go: down alone on the first
+  // panel, up alone on the last, both on everything between.
+  const atStart = active === panels[0].id;
+  const atEnd = active === panels[panels.length - 1].id;
+
+  return (
+    <nav className="rail" aria-label="Sections">
+      {/* Both arrows stay mounted and fade rather than unmounting — the rail is
+          centred on the viewport, so a hint appearing or vanishing outright
+          would shunt the ticks up and down the screen as you scroll. */}
+      <span className={`rail-hint up ${atStart ? "spent" : ""}`} aria-hidden="true">
+        <ChevronUp size={15} strokeWidth={1.5} />
+      </span>
+
+      {panels.map((p) => (
+        <a
+          key={p.id}
+          href={`#${p.id}`}
+          aria-label={p.label}
+          aria-current={active === p.id ? "true" : undefined}
+        >
+          <span className="rail-tick" />
+        </a>
+      ))}
+
+      <span className={`rail-hint down ${atEnd ? "spent" : ""}`} aria-hidden="true">
+        <ChevronDown size={15} strokeWidth={1.5} />
+      </span>
+    </nav>
+  );
 }
 
-/* ── Portfolio ── */
-function Portfolio() {
+export default function PortfolioPage() {
+  // Night by default on every visit; the moon is the only way out of it.
+  const [sky, setSky] = useState<Sky>("night");
+
   return (
-    <>
-      {/* Ambient glow */}
-      <div className="ambient-glow" />
-      {/* Film grain */}
-      <div className="grain-overlay" />
-      {/* Grid lines */}
-      <div className="grid-lines" />
-      {/* Vignette */}
-      <div className="vignette" />
+    <div className="portfolio" data-theme={sky === "day" ? "day" : undefined}>
+      {/* before the forest, so the trees paint over them */}
+      {sky === "night" ? <Stars /> : <Clouds />}
+      <Moon sky={sky} onToggle={() => setSky((s) => (s === "day" ? "night" : "day"))} />
+      <AsciiForest sky={sky} />
+      <div className="scrim" />
+      <Campfire sky={sky} />
+      <ScrollRail />
 
-      <main className="max-w-lg mx-auto px-6 py-20 relative z-10">
-        {/* ── Header ── */}
-        <RevealSection className="mb-3">
-          <h1 className="name-heading">Goshanraj Govindaraj</h1>
-        </RevealSection>
+      <div className="shell">
+        {/* ── Hero ── */}
+        <header className="hero" id="top">
+          <Reveal>
+            <h1 className="name">Goshanraj Govindaraj</h1>
+          </Reveal>
 
-        <RevealSection className="mb-2">
-          <p className="bio-text">
-            <span className="glow-word" style={{ fontWeight: 600 }}>Computer Science</span>
-            <span className="mcmaster-badge">
-              <img
-                src="/images/education/mcmaster.svg"
-                alt="McMaster University"
-                width={18}
-                height={18}
-                className="mcmaster-badge-icon"
-              />
-              McMaster University
-            </span>
-          </p>
-        </RevealSection>
-
-        <RevealSection className="mb-4" delay={100}>
-          <p className="bio-text">
-            Interested in building <span className="highlight-word">impactful</span> <span className="glow-word">software</span> and <span className="glow-word">agents</span>
-          </p>
-        </RevealSection>
-
-        {/* ── Work ── */}
-        <RevealSection className="mb-7" delay={200}>
-          <h2 className="section-heading">Work</h2>
-          <div className="hover-group">
-            {experiences.map((exp) => (
-              <Link
-                key={exp.org}
-                href={exp.orgLink}
-                target="_blank"
-                className="item-row"
-              >
-                <div className="item-left">
-                  <Image
-                    src={exp.image}
-                    alt={exp.org}
-                    width={24}
-                    height={24}
-                    className="inline-img"
-                    style={{ margin: 0, objectFit: "cover", borderRadius: 3 }}
-                  />
-                  <span className="item-org">{exp.org}</span>
-                  <span className="item-title">{exp.title}</span>
-                  <span className="item-year mobile-year">{exp.year}</span>
-                </div>
-                <span className="item-year desktop-year">{exp.year}</span>
+          <Reveal delay={80}>
+            <div className="role">
+              <span>Computer Science</span>
+              <Link href="https://www.mcmaster.ca/" target="_blank" className="chip">
+                <Image src="/images/education/mcmaster.svg" alt="" width={15} height={15} />
+                McMaster University
               </Link>
-            ))}
-          </div>
-        </RevealSection>
-
-        {/* ── Projects ── */}
-        <RevealSection className="mb-7" delay={250}>
-          <h2 className="section-heading">Projects</h2>
-          <div className="hover-group">
-            {projects.map((p) => (
-              <Link
-                key={p.title}
-                href={p.url}
-                target="_blank"
-                className="project-row"
-              >
-                <div className="project-left">
-                  <span className="project-title">{p.title}</span>
-                  <span className="project-desc">{p.description}</span>
-                </div>
-                {p.badge && (
-                  <span className="project-badge">{p.badge}</span>
-                )}
-              </Link>
-            ))}
-          </div>
-        </RevealSection>
-
-        {/* ── Open Source ── */}
-        <RevealSection className="mb-5" delay={300}>
-          <h2 className="section-heading">Open Source</h2>
-          <div className="hover-group">
-            {openSource.map((c) => (
-              <div key={c.name} className="item-row oss-row">
-                <div className="item-left">
-                  <span className="item-org">{c.name}</span>
-                  <span className="item-desc oss-desc">
-                    {c.descParts ? (
-                      <>
-                        {c.descParts.before}
-                        <Link href={c.articleURL} target="_blank" rel="noopener noreferrer" className="glow-link">{c.descParts.highlight}</Link>
-                        {c.descParts.after}
-                      </>
-                    ) : (
-                      c.description
-                    )}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </RevealSection>
-
-        {/* ── Footer ── */}
-        <RevealSection delay={350}>
-          <div className="section-divider mb-6" />
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-5">
-              <MagneticIcon href="https://github.com/goshanraj-g" label="GitHub">
-                <Github size={16} />
-              </MagneticIcon>
-              <MagneticIcon href="https://linkedin.com/in/goshanrajgovindaraj" label="LinkedIn">
-                <Linkedin size={16} />
-              </MagneticIcon>
-              <MagneticIcon href="mailto:govindag@mcmaster.ca" label="Email">
-                <Mail size={16} />
-              </MagneticIcon>
             </div>
-            <div className="webring">
-              <a href={`${WEBRING_URL}#${MY_SITE}?nav=prev`} title="Previous site" className="webring-arrow">&larr;</a>
-              <a href={WEBRING_URL} target="_blank" rel="noopener noreferrer" title="McMaster CS & SE Webring" className="webring-logo">
-                <Image src="https://www.macwebring.xyz/assets/icons/icon.black.svg" alt="McMaster CS & SE Webring" width={20} height={20} unoptimized />
-              </a>
-              <a href={`${WEBRING_URL}#${MY_SITE}?nav=next`} title="Next site" className="webring-arrow">&rarr;</a>
+          </Reveal>
+
+          <Reveal delay={160}>
+            <p className="thesis">
+              I build <em>agents</em>, plus the full stack they run on
+            </p>
+          </Reveal>
+
+          <PanelFoot />
+        </header>
+
+        {/* ── 01 About ── */}
+        <section className="section" id="about">
+          <Reveal>
+            <SectionHead title="About Me" />
+            <p className="lead lead-into">
+              Software Engineer, studying Computer Science at McMaster University,
+              currently at <strong>IBM</strong>. Most of my work has revolved around a few threads:
+            </p>
+            <div className="threads">
+              {threads.map((t) => (
+                <div key={t.label} className="thread">
+                  <div className="thread-label">{t.label}</div>
+                  <p className="thread-body">{t.body}</p>
+                </div>
+              ))}
             </div>
-          </div>
-        </RevealSection>
-      </main>
-    </>
+            <p className="thread-body hobbies-line">outside of tech, you’ll find me reading, at the gym, around cars, or travelling</p>
+          </Reveal>
+
+          <PanelFoot />
+        </section>
+
+        {/* ── 02 Work ── */}
+        <section className="section" id="work">
+          <Reveal>
+            <SectionHead title="Work" />
+            {/* This panel holds nothing but the list, so the roles get the room:
+                a full-size mark, and the title on its own line under the org
+                rather than trailing it. */}
+            <div className="rows rows-work">
+              {experiences.map((e) => {
+                const inner = (
+                  <>
+                    <div className="row-main">
+                      {e.image ? (
+                        <Image
+                          src={e.image}
+                          alt=""
+                          width={44}
+                          height={44}
+                          className={`row-logo${e.plate ? " row-logo-bleed" : ""}`}
+                          style={e.plate ? { background: e.plate } : undefined}
+                        />
+                      ) : (
+                        <span className="row-logo row-logo-mono" aria-hidden="true">
+                          {e.org[0]}
+                        </span>
+                      )}
+                      <span className="row-text">
+                        <span className="row-name">{e.org}</span>
+                        <span className="row-sub">{e.title}</span>
+                      </span>
+                    </div>
+                    <span className="row-meta">{e.year}</span>
+                  </>
+                );
+                return e.orgLink ? (
+                  <Link key={e.org} href={e.orgLink} target="_blank" className="row">
+                    {inner}
+                  </Link>
+                ) : (
+                  <div key={e.org} className="row">
+                    {inner}
+                  </div>
+                );
+              })}
+            </div>
+          </Reveal>
+
+          <PanelFoot />
+        </section>
+
+        {/* ── 03 Projects ── */}
+        <section className="section" id="projects">
+          <Reveal>
+            <SectionHead title="Projects" />
+            <div className="rows">
+              {projects.map((p) => {
+                const inner = (
+                  <>
+                    <div className="row-main">
+                      <span className="row-name">{p.title}</span>
+                      <span className="row-sub">{p.description}</span>
+                    </div>
+                    {p.badge && <span className="row-badge">{p.badge}</span>}
+                  </>
+                );
+                return p.url ? (
+                  <Link key={p.title} href={p.url} target="_blank" className="row">
+                    {inner}
+                  </Link>
+                ) : (
+                  <div key={p.title} className="row">
+                    {inner}
+                  </div>
+                );
+              })}
+            </div>
+          </Reveal>
+
+          <PanelFoot />
+        </section>
+
+        {/* ── 04 Open Source ── */}
+        <section className="section" id="open-source">
+          <Reveal>
+            <SectionHead title="Open Source" />
+            <div className="rows">
+              {openSource.map((c) => (
+                <Link key={c.name} href={c.url} target="_blank" className="row">
+                  <div className="row-main">
+                    <span className="row-name">{c.name}</span>
+                    <span className="row-sub">
+                      {c.link ? (
+                        <>
+                          {c.before}
+                          <span className="oss-link">{c.link}</span>
+                          {c.after}
+                        </>
+                      ) : (
+                        c.description
+                      )}
+                    </span>
+                  </div>
+                  {c.meta && <span className="row-meta">{c.meta}</span>}
+                </Link>
+              ))}
+            </div>
+          </Reveal>
+
+          <PanelFoot />
+        </section>
+
+        {/* ── 05 Reading ── */}
+        <section className="section" id="reading">
+          <Reveal>
+            <SectionHead title="Reading" />
+            <div className="shelf">
+              {books.map((b) => (
+                <div key={b.title} className="book">
+                  <div className="book-title">{b.title}</div>
+                  <div className="book-author">{b.author}</div>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+
+          <PanelFoot />
+        </section>
+      </div>
+    </div>
   );
 }

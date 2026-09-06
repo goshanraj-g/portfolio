@@ -1,7 +1,7 @@
-/* Scoped under .proto, sized in px/clamp so the global
-   `:root { font-size: 108% }` in globals.css can't rescale it. */
+/* Portfolio theme and layout. Component dimensions use px/clamp so their
+   proportions stay predictable across breakpoints. */
 
-.proto {
+.portfolio {
   /* Night is the default; clicking the moon sets data-theme="day" below.
      Everything that takes a colour reads one of these, so the day palette
      stays a single block rather than a parallel stylesheet. */
@@ -93,7 +93,7 @@
 }
 
 /* ── Daylight ──────────────────────────────────────────────── */
-.proto[data-theme="day"] {
+.portfolio[data-theme="day"] {
   /* A cool paper rather than a warm one: the sky wash overhead is blue, and
      a green-grey ground under it read as two different days. */
   --bg: #e4eaf1;
@@ -164,17 +164,17 @@
 /* Switched in one frame, not cross-faded: the trees and the disc are redrawn
    from inline styles with no transition of their own, so easing the ground
    under them only desyncs the scene. */
-body:has(.proto) {
+body:has(.portfolio) {
   background: #070a08;
 }
 
-body:has(.proto[data-theme="day"]) {
+body:has(.portfolio[data-theme="day"]) {
   background: #d5e4f5;
 }
 
 /* globals.css selects with white on 12% white — invisible on paper. Selection
    is the one piece of chrome the browser draws for us, so day gets its own. */
-.proto[data-theme="day"] ::selection {
+.portfolio[data-theme="day"] ::selection {
   background: rgba(34, 82, 58, 0.2);
   color: #0b120d;
 }
@@ -183,7 +183,7 @@ body:has(.proto[data-theme="day"]) {
    The document is the scroll container. Every panel fills the screen and
    snaps to the top, so one scroll gesture lands on the next section — the
    page moves a section at a time rather than a continuous ribbon. */
-html:has(.proto) {
+html:has(.portfolio) {
   scroll-snap-type: y mandatory;
   /* only affects the rail's anchor jumps — the wheel and trackpad are
      untouched — so a tick glides to its panel instead of teleporting */
@@ -191,7 +191,7 @@ html:has(.proto) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html:has(.proto) { scroll-behavior: auto; }
+  html:has(.portfolio) { scroll-behavior: auto; }
 }
 
 /* ── Forest backdrop ───────────────────────────────────────── */
@@ -377,7 +377,7 @@ html:has(.proto) {
 
 .moon:hover { filter: brightness(1.3); }
 
-.proto[data-theme="day"] .moon:hover { filter: brightness(0.9) saturate(1.2); }
+.portfolio[data-theme="day"] .moon:hover { filter: brightness(0.9) saturate(1.2); }
 
 .moon:focus-visible {
   outline: 2px solid var(--accent);
@@ -405,7 +405,7 @@ html:has(.proto) {
 }
 
 /* the sun is a full disc, so its glow centres and carries further */
-.proto[data-theme="day"] .moon-halo {
+.portfolio[data-theme="day"] .moon-halo {
   left: 50%;
   width: 520px;
   height: 520px;
@@ -1091,7 +1091,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 
 /* ── Tablet / small laptop ─────────────────────────────────── */
 @media (max-width: 1024px) {
-  .proto { --fire-x: calc(3vw + 46px); --cloud-scale: 0.78; }
+  .portfolio { --fire-x: calc(3vw + 46px); --cloud-scale: 0.78; }
   .campfire { --fire-scale: 0.62; }
   .moon { --moon-scale: 0.8; right: 5vw; }
 }
@@ -1105,7 +1105,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 
 /* ── Mobile ────────────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .proto {
+  .portfolio {
     --cloud-scale: 0.55;
     /* the bar sits tighter and its icons carry tap padding */
     --foot-offset: 22px;
@@ -1139,7 +1139,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
     right: 6vw;
   }
 
-  .proto { --fire-x: calc(5vw + 30px); --fire-y: 13px; }
+  .portfolio { --fire-x: calc(5vw + 30px); --fire-y: 13px; }
   .campfire { --fire-scale: 0.41; opacity: 0.85; }
   .row {
     flex-direction: column;
@@ -1178,7 +1178,7 @@ a.row:hover .oss-link { text-shadow: 0 0 12px var(--accent-dim); }
 
 /* ── Small phones ──────────────────────────────────────────── */
 @media (max-width: 400px) {
-  .proto { --fire-x: calc(5vw + 26px); --fire-y: 10px; }
+  .portfolio { --fire-x: calc(5vw + 26px); --fire-y: 10px; }
   .campfire { --fire-scale: 0.354; }
   .moon { --moon-scale: 0.48; }
 }
