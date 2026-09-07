@@ -679,12 +679,11 @@ html:has(.portfolio) {
   .section { min-height: 100dvh; }
 }
 
-/* Mandatory snapping fights touch momentum and can strand the overflow of a
-   panel taller than the viewport, so touch devices get proximity paging.
-   Declared after the panel rules so scroll-snap-stop wins the cascade. */
+/* Forcing a stop at every panel is what made touch scrolling feel like it was
+   fighting the drag; snapping itself is what keeps a flick from resting
+   half-way between panels. Touch keeps mandatory snapping and drops only the
+   forced stop, so a flick can carry across panels and still land on one. */
 @media (pointer: coarse) {
-  html:has(.portfolio) { scroll-snap-type: y proximity; }
-
   .hero,
   .section { scroll-snap-stop: normal; }
 }
